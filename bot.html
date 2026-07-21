@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>뚜누 CS 가이드</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#f0f0f0;font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;height:100%;}
+
+.app{max-width:720px;margin:20px auto;height:calc(100vh - 40px);display:flex;flex-direction:column;background:#fff;position:relative;border-radius:20px;border:1px solid #e0e0e0;box-shadow:0 4px 20px rgba(0,0,0,.1);overflow:hidden;}
+
+/* 헤더 */
+.header{background:#1a1a1a;padding:18px 22px;display:flex;align-items:center;gap:13px;flex-shrink:0;}
+.h-logo{height:36px;width:auto;display:block;flex-shrink:0;}
+.h-title{font-size:24px;font-weight:600;color:#fff;letter-spacing:0.01em;line-height:1.3;}
+.h-sub{font-size:12px;color:#888;margin-top:2px;}
+
+/* 채팅 영역 */
+.chat{flex:1;overflow-y:auto;padding:30px 16px 18px;display:flex;flex-direction:column;gap:16px;}
+
+/* 봇 말풍선 */
+.row-bot{display:flex;gap:11px;align-items:flex-start;}
+.b-av{width:48px;height:48px;border-radius:50%;background:#ffe066;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;overflow:hidden;}
+.b-av img{width:32px;height:32px;object-fit:contain;}
+.bubble-bot{background:#f2f2f2;border-radius:4px 16px 16px 16px;padding:14px 17px;font-size:17px;color:#222;line-height:1.7;max-width:520px;}
+
+/* 유저 말풍선 */
+.row-user{display:flex;justify-content:flex-end;}
+.bubble-user{background:#1a1a1a;border-radius:16px 4px 16px 16px;padding:11px 16px;font-size:16px;color:#fff;font-weight:500;max-width:420px;}
+
+/* 채널 칩 */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;}
+.chip{background:#fff;border:1.5px solid #ddd;border-radius:8px;padding:8px 16px;font-size:14px;color:#333;cursor:pointer;transition:all .12s;font-weight:500;}
+.chip:hover{border-color:#1a1a1a;}
+.chip.sel{background:#1a1a1a;border-color:#1a1a1a;color:#ffe066;font-weight:700;}
+
+/* 답변 카드 */
+.ans-wrap{display:flex;gap:8px;align-items:flex-start;max-width:600px;}
+.ans-card{flex:1;font-size:15px;color:#222;line-height:1.7;}
+.draft-box{background:#fff;border:1.5px solid #e8e8e8;border-radius:10px;padding:16px 18px;margin-bottom:10px;position:relative;}
+.draft-lbl{font-size:15px;font-weight:700;color:#888;margin-bottom:8px;letter-spacing:.02em;}
+.draft-txt{font-size:15px;color:#333;line-height:1.75;white-space:pre-wrap;}
+.copy-btn{display:flex;align-items:center;gap:4px;margin-top:12px;background:#f7f7f7;border:1px solid #e0e0e0;border-radius:6px;padding:7px 14px;font-size:14px;color:#555;cursor:pointer;font-family:inherit;transition:all .1s;}
+.copy-btn:hover{background:#efefef;}
+.copy-btn.copied{color:#1a7a34;border-color:#b6dfc0;background:#f0faf2;}
+
+.range-wrap{position:relative;padding:6px 0 0 6px;margin-bottom:14px;}
+.range-wrap::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-radius:18px;background:#DCEBFA;}
+.range-box{position:relative;background:#F1F8FD;border-radius:14px;padding:14px 18px;}
+.range-lbl{font-size:15px;font-weight:600;color:#0C447C;margin-bottom:10px;letter-spacing:.02em;}
+.range-txt{font-size:15px;color:#1a1a1a;line-height:1.75;white-space:pre-wrap;}
+
+.caution-wrap{position:relative;padding:6px 0 0 6px;margin-bottom:14px;}
+.caution-wrap::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-radius:18px;background:#F7C1C1;}
+.caution-box{position:relative;background:#FCEBEB;border-radius:14px;padding:14px 18px;}
+.caution-lbl{font-size:15px;font-weight:600;color:#501313;margin-bottom:10px;letter-spacing:.02em;}
+.caution-txt{font-size:15px;color:#1a1a1a;line-height:1.75;white-space:pre-wrap;}
+
+.tip-wrap{position:relative;padding:6px 0 0 6px;margin-bottom:14px;}
+.tip-wrap::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-radius:18px;background:#FFE066;}
+.tip-box{position:relative;background:#FFF8DC;border-radius:14px;padding:14px 18px;}
+.tip-lbl{font-size:15px;font-weight:600;color:#412402;margin-bottom:10px;letter-spacing:.02em;}
+.tip-txt{font-size:15px;color:#1a1a1a;line-height:1.75;}
+
+.guide-wrap{position:relative;padding:6px 0 0 6px;margin-bottom:14px;}
+.guide-wrap::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-radius:18px;background:#DCEBFA;}
+.guide-box{position:relative;background:#F1F8FD;border-radius:14px;padding:14px 18px;}
+.guide-lbl{font-size:15px;font-weight:600;color:#0C447C;margin-bottom:10px;letter-spacing:.02em;}
+.guide-txt{font-size:15px;color:#1a1a1a;line-height:1.75;white-space:pre-wrap;}
+
+.reset-btn{display:inline-flex;align-items:center;gap:5px;margin-top:8px;background:#fff;border:1.5px solid #e0e0e0;border-radius:20px;padding:9px 18px;font-size:15px;color:#666;cursor:pointer;font-family:inherit;transition:all .12s;}
+.reset-btn:hover{border-color:#1a1a1a;color:#1a1a1a;}
+
+/* 하단 입력 고정 */
+.input-area{flex-shrink:0;position:relative;padding:12px 16px 16px;background:#fff;border-top:1px solid #eee;}
+.dropdown{position:absolute;bottom:calc(100% + 2px);left:16px;right:16px;background:#fff;border:1.5px solid #e0e0e0;border-radius:12px;box-shadow:0 -4px 16px rgba(0,0,0,.1);z-index:100;max-height:280px;overflow-y:auto;display:none;}
+.dropdown.show{display:block;}
+.drop-cat{padding:7px 18px;font-size:13px;font-weight:700;color:#bbb;letter-spacing:.06em;background:#fafafa;}
+.drop-item{padding:13px 18px;font-size:15px;color:#333;cursor:pointer;border-bottom:1px solid #f5f5f5;transition:background .1s;}
+.drop-item:last-child{border-bottom:none;}
+.drop-item:hover,.drop-item.active{background:#ffe066;}
+.no-result{padding:14px 16px;font-size:14px;color:#aaa;text-align:center;}
+.input-row{display:flex;gap:8px;align-items:center;}
+.input-box{flex:1;background:#f5f5f5;border:none;border-radius:24px;padding:14px 18px;font-size:16px;color:#222;font-family:inherit;outline:none;}
+.input-box:disabled{color:#bbb;cursor:not-allowed;}
+.input-box::placeholder{color:#aaa;}
+.input-box:focus{background:#eee;}
+.send-btn{width:46px;height:46px;border-radius:50%;background:#1a1a1a;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#ffe066;}
+.send-btn svg{width:22px;height:22px;}
+.send-btn:hover{background:#333;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <img class="h-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAPoCAYAAABNo9TkAAA/4ElEQVR4nO3d65Ukxb3u4Vdn7e+qbYECCyhZoMYCBgtoLAAsYLAAsIDBAg0WqGUBJQsIWbBLFnA+ZI96GObSl8yKSz7PWr0adPaB/2KqM+LXkZX1p99++y0AAABAW/+v9QAAAACAQAcAAIAuCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADvxP6wEAoGOHJMfbr49vvx+SlDbjDKfefp2T/DPJKclNq2EAoHd/+u2331rPAAA9OSR5luTz3AU563qZ5OckL9qOAQB9EegAsDgk+TLJVxHll1KznKh/e/vXALBrAh2AvTtEmPfgeZIfstwODwC7JNAB2LOrJD/Ge8p7UbOcpr9oOwYAtOEp7gDs1XdJ/hFx3pOS5Rcm3zWeAwCacIIOwN6UJH/P8gA4+nVK8lm8Nx2AHRHoAOxJiVPzkdQkn0SkA7ATbnEHYC9KxPloSvyZAbAjTtAB2INDkl8i9EZVk/w1nvAOwOScoAOwB57UPraS5bkBADA1gQ7A7L5J8qz1EDzZVZbPqgeAabnFHYCZlSS/th6CVX0UD40DYFJO0AGYmdui5/Nj6wEAYCsCHYBZXcdnnc/o6vYLAKbjFncAZvVrPBhuVjdZPh8dAKbiBB2AGT2LOJ/ZVZyiAzAhgQ7AjD5vPQCb+6b1AACwNre4AzCbEk9u34v/TXJuPQQArMUJOgCzuWo9ABdz3XoAAFiTQAdgNp+2HoCL+bj1AACwJre4AzAbT2/fj3OW29wBYApO0AGYySHifE8O8ecNwEQEOgAzObYegIs7th4AANYi0AGYSWk9ABd3aD0AAKxFoAMwk9J6AC6utB4AANYi0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgA//TegBgNYckV0lKkr/c/v2rrySpSf6d5JzkdPt1vtBsAADABwh0GNtVkk+TPMsS5g91k+TnJC+zBDwAANCIW9xhPIck3yT5vyT/SPJVHhfnyRL43yX59fafdf3E2QAAgEcS6DCOQ5Yw/zXJ89zdur6WqyQ/3v7zr1f+ZwMAAB8g0GEMz7JdmL+p5C7Uy8b/LgAA4JZAh74dssTy37N9mL+pZIn0by787wUAgF3ykDjoV8nyvvDSdow8T3JM8kU89R0A3nS4/Sq3X6/+/s/58C/Xz0n+c/v9nOWBra9/B3ZGoEOfjlni/NB2jP96lmWmT+Jp7wDs0yHLWnhM8nHugrxs9O875+4jUf8ZH5EKuyDQoT/H9BXnr5Qsc4l0APagZPkF9cdZHqRaLvzvP9z+e3M7xys1S6i/ivabSw0EbE+gQ1+O6TPOXykR6QDM6ZAlhP92+/3QbpT3Krn75UGynKjfJPn59nu99EDAegQ69OOYvuP8lRKRDsAcDlk+WvTT3J1Wj+aQJdaf3f79KUusv7z9a2AgnuIOfThmjDh/paSPB9gBwEMdknyVZR37vyTfZdw4f5tjlk9g+eX26zrWaxiGE3Ro75ix4vyVEifpAIzjKstJ+XXGW3Mf65jl41qT5UT9p9vvQKecoENbx4wZ56+UOEkHoG/XWdaqf2Q5OT80nKWlZ0n+nuTXOFWHbgl0aOeYseP8lRKRDkBfDllu8/6/LCfIVy2H6UzJ8t/kl9vvpeUwwO8JdGjjmDni/JUSkQ5Ae4csYf5rkueZZ53dwiHLSfqvEerQDYEOl3fMXHH+SolIB6AdYf541xHq0AWBDpd1zJxx/kqJSAfgsq4izNdynbv36gMNCHS4nGPmjvNXSkQ6ANsruXv4W2k6yVxKlo+e+zV3n60OXIhAh8s4Zh9x/kqJDRMA2zjk7nb2q6aTzK1keeq7297hggQ6bO+YfcX5KyUiHYB1XWV5+vjztmPsynWW9fy67RiwDwIdtnXMPuP8lRKRDsDTHbLcdm1NaaNkOUl3mg4bE+iwnWP2HeevlNhQAfB4JR5c1ovrOE2HTQl02MYx4vx1JSIdgIf7Msst7cfGc3CnZDlJ/6bxHDAlgQ7rO0acv02JSAfgfg5Zbmn/PtbTXj3P8suT0nYMmItAh3UdI87fp0SkA/B+JW5pH8Uxy5/Vse0YMA+BDus5RpzfR4lIB+DtjhF8oylZTtK/ajsGzEGgwzqOEecPUSLSAfi9z2NtGNl38b50eDKBDk93jDh/jBIbMQAWXyZ5EWvp6J5nCXXgkQQ6PM0x4vwpSkQ6wN59k+VhcMzhqyxPeQceQaDD4x0jztdQItIB9uqbLKeuzOU6y/vSD23HgPEIdHicY8T5mkpEOsDeiPO5HWOvBA8m0OHhjrHgbKFEpAPshTjfh2PsmeBBBDo8zDEWmi2ViHSA2YnzfTnGg+Pg3gQ63N8x4vwSSkQ6wKzE+T5dx4Pj4F4EOtzPMeL8kkpEOsBsnkWc79l1fE46fJBAhw87Rpy3UCLSAWZR4gSV5Rc0XzWeAbom0OH9jhHnLZWIdIDRlVhLufNdkqvWQ0CvBDq82zE2FD0oEekAI/t7XMP5vR/jNQFvJdDh7Y4R5z0pEekAI/omy5oKrytZfnFzaDsG9Eegwx8dI857VCLSAUZyHQ+F492O8dA4+AOBDr93jDjvWYlIBxhBic++5sO+yvJ0f+CWQIc7x4jzEZSIdIDeWU+5L+9Hh9cIdFgcYzMxkhKRDtCrb+L6zP0d4iP44L8EOojzUZWIdIDelHjfOQ93FZ+PDkkEOhwjzkdWItIBevKP1gMwLHdeQAQ6+3aMOJ9BiUgH6IHA4ikOcas7CHR26xhxPpMSkQ7QUolblHm6q9sv2C2Bzh4dI85nVCLSAVr5JtZV1vFjvJbYMYHO3hwjzmdWItIBLu0qyXXjGZhHibsx2DGBzp4cI873oESkA1yS9w2zti9jv8ZOCXT24hhxviclIh3gEq7jWsv6DlneNgG7I9DZg2PE+R6ViHSArYkotvJVrOHskEBndseI8z0rEekAW7mO6yvb8gsgdkegM7NjxDkiHWAr4omtXcf6zc4IdGZ1jDjnTolIB1jTdVxTuYyvWg8AlyTQmdEx4pw/KhHpAGtxes6lfB57OnZEoDObY8Q571Yi0gGe6iquo1zOIU7R2RGBzkyOEed8WIlIB3iKL1sPwO74XHR2Q6Azi5Lk73Hx5n5KRDrAY5QkzxrPwP4csty5AdMT6MzgELHFw5V43QA8lPee04o7N9gFgc4MvovI4nFKRDrAQ1y1HoDdusrydkaYmkBndNe3X/BYJSId4D6u4lpJW89aDwBbE+iM7BC32rGOEpEO8CGftx6A3XObO9MT6Izsywgq1lMi0gHe51nrAdi9Q7zNgskJdEZV4tZ21lci0gHe5ll8Ugp9eNZ6ANiSQGdUVxFRbKNEpAO86dPWA8Atb7VgagKdUXnvOVsqEekAr3vWegC4dYjb3JmYQGdEVxFObK9EpAMky7p7aDwDvO6q9QCwFYHOiNzaxKWUiHSAZ60HgDf8rfUAsBWBzoiOrQdgV0pEOrBvH7ceAN5wFXd1MCmBzmgOEehcXolIB/bpELcT06dj6wFgCwKd0RxbD8BulYh0YH+OrQeAd3jWegDYgkBnNMfWA7BrJSId2Jer1gPAO3jrBVMS6IymtB6A3SsR6cB+eBgXvTq2HgC2INAZzaH1ABCRDuzHsfUA8A6HWIeZkEBnNH9pPQDcKhHpwNxK/GKcvl21HgDWJtABHq9EpAPzKq0HgA84th4A1ibQGc259QDwhhKRDszp2HoA+IDSegBYm0BnNP9pPQC8RYlIB+ZzbD0AfIAnuTMdgc5ozq0HgHcoEenAXDz3hd6V1gPA2gQ6ozm1HgDeo0SkA/MorQeAeyitB4A1CXRGU1sPAB9QItKBOZTWA8A9lNYDwJoEOqM5tR4A7qFEpANjK60HgHsqrQeANQl0RnNOctN4BriPEpEOjKu0HgDu6dB6AFiTQGdE/2w9ANxTiUgHgC0dWg8AaxLojOhF6wHgAUpEOjCe0noAuCefNsBUBDojqnGbO2MpEekAAHyAQGdUP7UeAB6oRKQD4yitB4B7+t/WA8CaBDqjehEfucZ4SkQ6AKzpz60HgDUJdEb2besB4BFKRDqs6dB6AABYi0BnZC/iveiMqUSkw1qcngEwDYHO6L5uPQA8UolIBwDgNQKd0Z0i0hlXiUiHp/KAKACmIdCZwfdJXjaeAR6rRKTDU7jFHYBpCHRm8UWW03QYUYlIh8cqrQcAgLUIdGZxTvJZfPQa4yoR6UA/ausB4J5q6wFgTQKdmdQkn8SFmnGViHR4qEPrAQBgLQKd2dSIdMZWItLhIQ6tB5jUufUAcE//bj0ArEmgM6Makc7YSkQ6PERpPcCEausB4J7OrQeANQl0ZlUj0hlbiUiH+zq0HmBC59YDwD3V1gPAmgQ6M6sR6YytRKTDfRxaDzCh2noAuKdz6wFgTQKd2dWIdMZWItLhQ0rrASZVWw8A91BbDwBrEujsQY1IZ2wlIh3e59B6gEmdWw8A91BbDwBrEujsRY1IZ2wlIh3epbQeYFL/aj0AfMCp9QCwNoHOntSIdMZWItLhbf7ceoBJnVoPAB/gI9aYjkBnb2pEOmMrEenwpmPrASZVWw8AH3BqPQCsTaCzRzUinbGViHR43aH1AJM6tR4APuDUegBYm0Bnr2pEOmMrEenwSmk9wKRqPCiOvtXWA8DaBDp7ViPSGVuJSIdXSusBJnXTegB4h3OcoDMhgc7e1Yh0xlYi0iHxPvSteJI7vTq1HgC2INBBpDO+EpEOh9YDTOqm9QDwDv9sPQBsQaDDokakM7YSkc6+HVsPMKlT6wHgHW5aDwBbEOhwp0akM7YSkc5++Sz0bZwjhOjTTesBYAsCHX6vRqQzthKRzj4dWw8wMbcS05ub1gPAVgQ6/FGNSGdsJSKd/SmtB5jYTesB4A0/tx4AtiLQ4e1qRDpjKxHp7MshXu9buYnPQ6cvN60HgK0IdHi3GpHO2EpEOvtybD3AxJxY0osaDy9kYgId3q9GpDO2EpHOfpTWA0zsResB4JZfFjE1gQ4fViPSGVuJSGcfPm49wMROcZs7fXjZegDYkkCH+6kR6YytRKQzv2PrASZ2TvJT6yHYvRrvP2dyAh3ur0akM7YSkc7cSusBJvey9QDsnl8SMT2BDg9TI9IZW4lIZ16HeG1v6SZuc6etF60HgK0JdHi4GpHO2EpEOvM6th5gcj+0HoDduom9Fzsg0OFxakQ6YysR6czpqvUAk/u+9QDsltvb2QWBDo9XI9IZW4lIZz6l9QCTO8dDuri8Gre3sxMCHZ6mRqQzthKRzlz+1nqAHfi29QDsjrdWsBsCHZ6uRqQzthKRzjwO8Vre2k2conNZL1sPAJci0GEdNSKdsZWIdOZxbD3ADjhF51JexP6KHRHosJ4akc7YSkQ6c7hqPcAO3MR6x2X4ZRC7ItBhXTUinbGViHTG93HrAXZCOLG1F7GnYmcEOqyvRqQzthKRztiOrQfYiRex1rEtvwRidwQ6bKNGpDO2EpHOuA5xm/ulfNF6AKb1IvZR7JBAh+3UiHTGViLSGdex9QA7cRNPdGd9NU7P2SmBDtuqEemMrUSkM6ar1gPsiJBibT/E3omdEuiwvRqRzthKRDrj+VvrAXbkJslPrYdgGjXJ941ngGYEOlxGjUhnbCUinbEc4jb3S/oqybnxDMzh69YDQEsCHS6nRqQzthKRzliuWg+wI+e41Z2ne5HkZeMZoCmBDpdVI9IZW4lIZxxXrQfYme/jgXE8Xo1f8oBAhwZqRDpjKxHpjMH70C/vi7jVncf5NvZGINChkRqRzthKRDr9O8Qp+qXVOAXl4V7cfsHuCXRop0akM7YSkU7/rloPsEPfx63u3F+NX+rAfwl0aKtGpDO2EpFO39zm3oZb3bmvr2MfBP8l0KG9GpHO2EpEOv26ynKrO5dVs0Q6vM+38dR2+B2BDn2oEemMrUSk069nrQfYqZdJfmg9BN06JXneeAbojkCHftSIdMZWItLpk9vc2/kq3o/OH9Ukn7UeAnok0KEvNSKdsZWIdPrzrPUAO/dZrGvcOcdeB95JoEN/aixcjK1EpNOXQzzNvaVzlnXt3HYMOuHzzuE9BDr0qUakM7YSkU5fnrUeYOdq3NLMEufftx4CeibQoV81Ip2xlYh0+vF56wHITTzZfc++jYfCwQcJdOhbjUhnbCUinT4c4jb3HrzIEmrsy08R53AvAh36VyPSGVuJSKcPz1oPQJIl1ET6fvyU5Lr1EDAKgQ5jqBHpjK1EpNOe29z78TwifQ/EOTyQQIdx1Ih0xlYi0mnrELe59+R5RPrMxDk8gkCHsdSIdMZWItJp61nrAfid5xHpMxLn8EgCHcZTI9IZW4lIpx23uffneZKvWw/Bar6NOIdHE+gwphqRzthKRDptHOI29x59n2VdO7cdgyfyUWrwRAIdxlUj0hlbiUinjS9bD8Bb3ST5a6xrIzpn+Yz7523HgPEJdBhbjUhnbCUincu7ynKSTn9qlnXt1HYMHqBm+TN70XYMmINAh/HViHTGViLSuaxDvEe2ZzXLSbqHx/XvJsuf1antGDAPgQ5zqBHpjK1EpHNZn7YegA96nuW26dp2DN7h23huAKxOoMM8akQ6YysR6VzOVTwsbgQv4pb33tQsfybP244BcxLoMJcakc7YSkQ6l/Os9QDcS41b3nvxU5Y/i5vGc8C0BDrMp0akM7YSkc5lfB4PixvJ8yQfxfrWwjnJZ1me3XBuOQjMTqDDnGpEOmMrEels7xAPixtNzRLp30YoXsoPWf6bv2w8B+yCQId51Yh0xlYi0tmeh8WN6XmWW61/ajzHzG6y7CO+il+GwMUIdJhbjUhnbCUinW1dxcPiRlWz3AFhnVvXOcnXWf673jSdBHZIoMP8amxeGFuJSGdb37QegCe5yXILto9ke5pzlrcOfJTk+6aTwI4JdNiHGpHO2EpEOtu5itfWDF5EqD/GOXdh/jxuZ4emBDrsR41IZ2wlIp3tXLcegNW8iFC/j3OEOXRHoMO+1Ih0xlYi0tnGl/GRa7N5kSU+P4v3Ur/uJst7zIU5dEigw/7UiHTGViLSWd8hy9Oqmc/LLOveR1me+l5bDtPIOXf/HT7J8h7zc7NpgHcS6LBPNSKdsZWIdNbnFH1uNctbGV6dqr9sOMul3OTutNydBDAAgQ77VSPSGVuJSGddhzhF34uXWYL1f7O8V/1l5jlRvskS5f8bp+UwnD/99ttvrWcA2ioROYyt5u6XTc/jI7N4mnOW08Zz2zFo5CrJsyR/S3JsOcgDnLP8guGfmesXDbBLAh1IRDrjq1ki/ToCnaf7Oj4HmmVNPGaJ9o9vv/egZjkl/1eWIK/tRgHWJtCBV0pEOmOrWTat102nYAY1yV/jJJI/OuYu3D++/euSbZ5dUJOckvw7d9e3Gq9LmJpAB15XItIBkuXzoZ+3HoJhHHIX6q++H27/3/7yjv8//8ldbNfbv379O7BDAh14U4lIBzjHe9EBuDBPcQfeVOPp7gCHeKI7ABfmBB14lxIn6cC+neMUHYALcoIOvEuNk3Rg3w5xig7ABTlBBz6kxEk6sF/nLE90r23HAGAPnKADH1LjJB3Yr0OSb1oPAcA+OEEH7qvESTqwX59k+RxqANiME3TgvmqcpAP75RQdgM0JdOAhakQ6sE9XSa4bzwDA5NziDjxGidvdgf05x8euAbAhJ+jAY9Q4SQf25xC3ugOwISfowFOUOEkH9scD4wDYhBN04ClqnKQD++MUHYBNCHTgqWpEOrAvV0m+ajwDABNyizuwlhK3uwP7cU7y1/jlJAArcoIOrKXGSTqwH4ckP7YeAoC5CHRgTTUiHdiPq7jVHYAVucUd2EKJ292BfTjHre4ArMQJOrCFGifpwD4c4lZ3AFYi0IGt1Ih0YB+u4lZ3AFbgFndgayVudwf24ZMkN62HAGBcAh24hBKRDsyvZnk/+rntGACMyi3uwCXUuN0dmF9J8l3rIQAYl0AHLqVGpAPzu473owPwSG5xBy6txO3uwPz+muTUeggAxuIEHbi0GifpwPz+nuUj2ADg3gQ60EKNSAfmVrJEOgDcm0AHWqkR6cDcruKhcQA8gPegA62VeE86MLfrJD+1HgKA/gl0oAclIh2Y1znLHUOntmMA0Du3uAM9qHG7OzCvQ5b3o5e2YwDQOyfoQE9KnKQD86pZPn7t3HYMAHrlBB3oSY2TdGBeJcsvIQHgrQQ60JsakQ7M65jkx9ZDANAngQ70qEakA/O6TvJN6yEA6I9AB3pVI9KBeT2PSAfgDQId6FmNSAfm9TwiHYDXCHSgdzUiHZjX84h0AG4JdGAENSIdmNfziHQAItCBcdSIdGBezyPSAXZPoAMjqRHpwLyeR6QD7JpAB0ZTI9KBeT2PSAfYLYEOjKhGpAPzeh6RDrBLAh0YVY1IB+b1PCIdYHf+9Ntvv7WeAeApSpJ/3H4HmM33Sb5uPQQAlyHQgRmUiHRgXqcsdwyd244BwNbc4g7MoMbt7sC8jkl+iV9CAkxPoAOzqBHpwLxK3CkEMD2BDsykRqQD8ypZTtK/ajsGAFsR6MBsakQ6MK9Dku/iCe8AU/KQOGBWJW4HBeb2MssT3mvbMQBYi0AHZlYi0oG51bhrCGAabnEHZlZj4wrMrST5Nd6XDjAFgQ7MrkakA/P7LsmPWd6jDsCg3OIO7EWJ292B+dX4pSTAsJygA3tRY9MKzK9kueXdU94BBuQEHdibEifpwD7U+MUkwFCcoAN7U2PDCuxDSfJLPEAOYBhO0IG9KnGSDuzHKcln8ctJgK45QQf2qsZJOrAfx3hvOkD3nKADe1fiJB3Yl5rlNP3UdgwA3uQEHdi7GifpwL6ULO9N/zF+OQnQFSfoAIsSJ+nA/tQkPyT5vu0YACQCHeB1JSId2Kea5NskL9qOAbBvAh3g90pEOrBfN0m+iLf9ADThPegAv1fjPenAfl1ledq796cDNCDQAf6oRqQD+3YdoQ5wcQId4O1qRDrAdYQ6wMUIdIB3qxHpAIlQB7gID4kD+LASD44DeN2LLB/Pdmo7BsBcBDrA/ZSIdIA33ST5KT6eDWAVAh3g/kpEOsDb1Cyfo34TbwsCeDSBDvAwJSId4H1eZDlVv2k7BsB4BDrAw5WIdIAPqXGqDvAgAh3gcUpEOsB9vUjyc5KXbccA6JtAB3i8EpEO8BA1dw+Wu2k5CECPBDrA05SIdIDHqFlO1H+OWAdIItAB1lAi0gGeosbJOoBAB1hJiUgHWMM5y8n6P+MBc8DOCHSA9ZSIdIC13eQu1m9aDgKwNYEOsK4SkQ6wlXOSU5b3rZ8i2IHJCHSA9ZWIdIBLOGcJ9Vcn7Kfb/w1gSAIdYBslIh2ghdPt17/ilB0YjEAH2E6JSAfowSnLw+b+mbuAP7caBuBdBDrAtkpEOkCPzrmL9X9nCfh6+/cATQh0gO2ViHSAkdTXvl6P93MEPLAhgQ5wGSUiHWAW59wF+6u//s8b/9ubXwAfJNDHUJIckxxicw8jK0k+bz0EAE2ccxfq9R3/+5v/9//Zbhx2pObu7RvnhnNwDwK9T4ck10k+TvLs9u8BAACeomYJ9Z+zfMJBbTcKbyPQ+3KV5Jvb7wAAAFt6meSn2+90QKD34SrCHAAAaKMm+TbJi7ZjINDbKkl+jDAHAADaOyX5LG59b+b/tR5gx75M8kvEOQAA0Idjkl+z3N1LA07QL++Q5dT8WdsxAAAA3ullki/iye8XJdAvq8TnIAMAAGOoST6JW94vxi3ul1MizgEAgHGUaJiLEuiXUeKFDQAAjKdEy1yMW9wv45csD1wAAAAY0SnJX1sPMTsn6Nv7JuIcAAAY2zHJd62HmJ0T9G1dZ3liOwAAwAw+SXLTeohZCfTtHLLc2l7ajgEAALCamuVW93PbMebkFvftfBlxDgAAzKUk+arxDNNygr6NkuTX1kMAAABs4JzkozhFX50T9G1803oAAACAjRziFH0TTtC38Wvc3g4AAMzrHKfoq3OCvr7riHMAAGBuhyTPGs8wHYG+vk9bDwAAAHABn7ceYDZucV+f/6AAAMAenOM291U5QV/XVesBAAAALuSQ5Nh4hqkI9HUdWw8AAABwQcfWA8xEoK/rb60HAAAAuKCPWw8wE4G+rkPrAQAAAC7o2HqAmQj0dZXWAwAAAFzQofUAM/EU93X5jwkAAOzNn1oPMAsn6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgQ4AAAAdEOgAAADQAYEOAAAAHRDoAAAA0AGBDgAAAB0Q6AAAANABgb6u2noAAACAC6qtB5iJQF/XufUAAAAAF1RbDzATgb6uf7UeAAAA4IL+03qAmQj0dZ1aDwAAAHBBN60HmIlAX9ep9QAAAAAXdGo9wEz+9Ntvv7WeYSaHJL/efgcAAJjdn1oPMBMn6Os6x2+QAACAffi59QCzEejr+6n1AAAAABfwsvUAs3GL+/oOcZs7AAAwt5rko9ZDzMYJ+vrOSX5oPQQAAMCGbloPMCMn6Ns4xCk6AAAwr4+ynKKzIifo2zjHKToAADCnbyPON+EEfTuHJL8kKW3HAAAAWE1N8tcsh5KszAn6ds5Jvmg9BAAAwIq+jTjfjEDf1k3c6g4AAMzhhyQvWg8xM7e4X8YvSY6thwAAAHikU5Zb29mQE/TL+CweogAAAIypZmkaNibQL6Mm+SQiHQAAGEuNlrkYgX45NV7YAADAOGo0zEUJ9MuqWd638bLtGAAAAO91k6Vdatsx9kWgX945y/s3vm08BwAAwJvOSb7OcnJ+bjrJDnmKe1slyd/jCe8AAEB7N0m+iFPzZpygt1Wz3DbihwAAAGjlJsuJufebN+YEvS/Pknx++x0AAGBLN1neenvTdgxeEeh9Kkmuknya5fb30m4UAABgEucsD6z+V5IX8R7z7gj0MRxyF+ql4RzA0/wlyXXrIQAe6EWSf7ceAni0miXET3H7evcEOsBllCT/iF+yAeOp8b5UgIvwkDiA7ZWIc2BcJa5hABch0AG2VWJjC4yvxLUMYHMCHWA7JTa0wDxKXNMANiXQAbZRYiMLzKfEtQ1gMwIdYH0lNrDAvEpc4wA2IdAB1lVi4wrMr8S1DmB1Ah1gPSU2rMB+lLjmAaxKoAOso8RGFdifEtc+gNUIdICnK7FBBfarxDUQYBUCHeBpSmxMAUpcCwGeTKADPF6JDSnAKyWuiQBPItABHqfERhTgTSWujQCPJtABHq7EBhTgXUpcIwEeRaADPEyJjSfAh5S4VgI8mEAHuL8SG06A+ypxzQR4EIEOcD8lNpoAD1Xi2glwbwId4MNKbDABHqvENRTgXgQ6wPuV2FgCPFWJaynABwl0gHcrsaEEWEuJayrAewl0gLcrsZEEWFuJayvAOwl0gD8qsYEE2EqJayzAWwl0gN8rsXEE2FqJay3AHwh0gDslNowAl1LimgvwOwIdYFFiowhwaSWuvQD/JdABbBABWipxDQZIItABSmwMAVorcS0GEOjArpXYEAL0osQ1Gdg5gQ7sVYmNIEBvSlybgR0T6MAeldgAAvSqxDUa2CmBDuxNiY0fQO9KXKuBHRLowJ6U2PABjKLENRvYGYEO7EWJjR7AaEpcu4EdEejAHpTY4AGMqsQ1HNgJgQ7MrsTGDmB0Ja7lwA4IdGBmJTZ0ALMocU0HJifQgVmV2MgBzKbEtR2YmEAHZlRiAwcwqxLXeGBSAh2YTYmNG8DsSlzrgQkJdGAmJTZsAHtR4poPTEagA7MosVED2JsS135gIgIdmEGJDRrAXpVYA4BJCHRgdCU2ZgB7V2ItACYg0IGRldiQAbAosSYAgxPowKhKbMQA+L0SawMwMIEOjKjEBgyAtyuxRgCDEujAaEpsvAB4vxJrBTAggQ6MpMSGC4D7KbFmAIMR6MAoSmy0AHiYEmsHMBCBDoygxAYLgMcpsYYAgxDoQO9KbKwAeJoSawkwAIEO9KzEhgqAdZRYU4DOCXSgVyU2UgCsq8TaAnRMoAM9KrGBAmAbJdYYoFMCHehNiY0TANsqsdYAHRLoQE9KbJgAuIwSaw7QGYEO9KLERgmAyyqx9gAdEehAD0pskABoo8QaBHRCoAOtldgYAdBWibUI6IBAB1oqsSECoA8l1iSgMYEOtFJiIwRAX0qsTUBDAh1oocQGCIA+lVijgEYEOnBpJTY+APStxFoFNCDQgUsqseEBYAwl1izgwgQ6cCklNjoAjKXE2gVckEAHLqHEBgeAMZVYw4ALEejA1kpsbAAYW4m1DLgAgQ5sqcSGBoA5lFjTgI0JdGArJTYyAMylxNoGbEigA1sosYEBYE4l1jhgIwIdWFuJjQsAcyux1gEbEOjAmkpsWADYhxJrHrAygQ6spcRGBYB9KbH2ASsS6MAaSmxQANinEmsgsBKBDjxViY0JAPtWYi0EViDQgacosSEBgMSaCKxAoAOPVWIjAgCvK7E2Ak8g0IHHKLEBAYC3KbFGAo8k0IGHKrHxAID3KbFWAo8g0IGHKLHhAID7KLFmAg8k0IH7KrHRAICHKLF2Ag8g0IH7KLHBAIDHKLGGAvck0IEPKbGxAICnKLGWAvcg0IH3KbGhAIA1lFhTgQ8Q6MC7lNhIAMCaSqytwHsIdOBtSmwgAGALJdZY4B0EOvCmEhsHANhSibUWeAuBDryuxIYBAC6hxJoLvEGgA6+U2CgwtprkReMZuLyfsvzZw4hKrL3AawQ6kNggML6a5JMk/248B5dXs/zZ17ZjwKOVWIOBWwIdKLExYGw1Am3varwGGFuJtRiIQIe9K7EhYGw1woxFjdcCYyuxJsPuCXTYrxIbAcZWI8j4vRqvCcZWYm2GXRPosE8lNgCMrUaI8XY1XhuMrcQaDbsl0GF/Siz8jK1GgPF+NV4jjK3EWg27JNBhX0os+IytRnhxPzVeK4ytxJoNuyPQYT9KLPSMrUZw8TA1XjOMrcTaDbsi0GEfSizwjK1GaPE4NV47jK3EGg67IdBhfiUWdsZWI7B4mhqvIcZWYi2HXRDoMLcSCzpjqxFWrKPGa4mxlVjTYXoCHeZVYiFnbDWCinXVeE0xthJrO0xNoMOcSizgjK1GSLGNGq8txlZijYdpCXSYT4mFm7HVCCi2VeM1xthKrPUwJYEOcymxYDO2GuHEZdR4rTG2Ems+TEegwzxKLNSMrUYwcVk1XnOMrcTaD1MR6DCHEgs0Y6sRSrRR47XH2ErsAWAaAh3GV2JhZmw1Aom2arwGGVuJvQBMQaDD2EosyIytRhjRhxqvRcZWYk8AwxPoMK4SCzFjqxFE9KXGa5KxldgbwNAEOoypxALM2GqEEH2q8dpkbCX2CDAsgQ7jKbHwMrYaAUTfarxGGVuJvQIMSaDDWEosuIytRvgwhhqvVcZWYs8AwxHoMI4SCy1jqxE8jKXGa5axldg7wFAEOoyhxALL2GqEDmOq8dplbCX2EDAMgQ79K7GwMrYagcPYaryGGVuJvQQMQaBD30osqIytRtgwhxqvZcZWYk8B3RPo0K8SCyljqxE0zKXGa5qxldhbQNcEOvSpxALK2GqEDHOq8dpmbCX2GNAtgQ79KbFwMrYaAcPcarzGGVuJvQZ0SaBDX0osmIytRriwDzVe64ytxJ4DuiPQoR8lFkrGViNY2Jcar3nGVmLvAV0R6NCHEgskY6sRKuxTjdc+YyuxB4FuCHRor8TCyNhqBAr7VuNngLGV2ItAFwQ6tFViQWRsNcIEEj8LjK/EngSaE+jQTomFkLHVCBJ4XY2fCcZWYm8CTQl0aKPEAsjYaoQIvE2Nnw3GVmKPAs0IdLi8EgsfY6sRIPA+NX5GGFuJvQo0IdDhskoseIytRnjAfdT4WWFsJfYscHECHS6nxELH2GoEBzxEjZ8ZxlZi7wIXJdDhMkoscIytRmjAY9T42WFsJfYwcDECHbZXYmFjbDUCA56ixs8QYyuxl4GLEOiwrRILGmOrERawhho/S4ytxJ4GNifQYTslFjLGViMoYE01fqYYW4m9DWxKoMM2SixgjK1GSMAWavxsMbYSexzYjECH9ZVYuBhbjYCALdX4GWNsJfY6sAmBDusqsWAxthrhAJdQ42eNsZXY88DqBDqsp8RCxdhqBANcUo2fOcZWYu8DqxLosI4SCxRjqxEK0EKNnz3GVmIPBKsR6PB0JRYmxlYjEKClGj+DjK3EXghWIdDhaUosSIytRhhAD2r8LDK2EnsieDKBDo9XYiFibDWCAHpS42eSsZXYG8GTCHR4nBILEGOrEQLQoxo/m4ytxB4JHk2gw8OVWHgYW40AgJ7V+BllbCX2SvAoAh0epsSCw9hqbPxhBDV+VhlbiT0TPJhAh/srsdAwthobfhhJjZ9ZxlZi7wQPItDhfkosMIytxkYfRlTjZ5exldhDwb0JdPiwEgsLY6uxwYeR1fgZZmwl9lJwLwId3q/EgsLYamzsYQY1fpYZW4k9FXyQQId3K7GQMLYaG3qYSY2facZWYm8F7yXQ4e1KLCCMrcZGHmZU42ebsZXYY8E7CXT4oxILB2OrsYGHmdX4GWdsJfZa8FYCHX6vxILB2Gps3GEPavysM7YSey74A4EOd0osFIytxoYd9qTGzzxjK7H3gt8R6LAosUAwthobddijGj/7jK3EHgz+S6CDhYHx1digw57VuAYwthJ7MUgi0KHEgsDYamzMAdcCxldiTwYCnV0rsRAwthobcuBOjWsCYyuxN2PnBDp7VWIBYGw1NuLAH9W4NjC2Ens0dkygs0clLvyMrcYGHHi3GtcIxlZir8ZOCXT2psQFn7HV2HgDH1bjWsHYSuzZ2CGBzp6UuNAzthobbuD+alwzGFuJvRs7I9DZixIXeMZWY6MNPFyNawdjK7GHY0cEOntQ4sLO2GpssIHHq3ENYWwl9nLshEBndiUu6IytxsYaeLoa1xLGVmJPxw4IdGZW4kLO2GpsqIH11LimMLYSezsmJ9CZVYkLOGOrsZEG1lfj2sLYSuzxmJhAZ0YlLtyMrcYGGthOjWsMYyux12NSAp3ZlLhgM7YaG2dgezWuNYytxJ6PCQl0ZlLiQs3YamyYgcupcc1hbCX2fkxGoDOLQ1ygGVuNjTJweTWuPYytJPl7lr0gDE+gM4sfI84ZV40NMtBOjWsQYztm2QvC8AQ6M/gmybPWQ8Aj1dgYA+3VuBYxtmdJvmo8AzyZQGd0JcnzxjPAY9XYEAP9qHFNYmzfZTlNh2EJdEb3j9YDwCPV2AgD/alxbWJs37UeAJ5CoDOy63jfOWOqsQEG+lXjGsW4rrLsEWFIAp2RfdN6AHiEGhtfoH81rlWMyx6RYQl0RnUdp+eMp8aGFxhHjWsWYypxis6gBDqj+rz1APBANTa6wHhqXLsYk70iQxLojKhkeX8RjKLGBhcYV41rGOO5irstGZBAZ0TPWg8AD1BjYwuMr8a1jPFctx4AHkqgM6JPWw8A91RjQwvMo8Y1jbH8rfUA8FACndEc4vZ2xlBjIwvMp8a1jXFcZdk7wjAEOqM5th4A7qHGBhaYV41rHOM4th4AHkKgM5pj6wHgA2psXIH51bjWMYbSegB4CIHOaA6tB4D3qLFhBfajxjWP/h1bDwAPIdAZTWk9ALxDjY0qsD81rn307c+tB4CHEOiM5i+tB4C3qLFBBfarxjWQfv1v6wHgIQQ6wNPU2JgC1LgW0icn6AxFoDOac+sB4DU1NqQAr9S4JgI8iUBnNP9pPQDcqrERBXhTjWsjfamtB4CHEOiM5tx6AIgNKMD71LhG0g+HOwxFoDOa2noAdq/GxhPgQ2pcK+lDbT0APIRAZzS19QDsWo0NJ8B91bhm0t6p9QDwEAKd0dy0HoDdqrHRBHioGtdO2jq1HgAeQqAzmnMs8lxejQ0mwGPVuIbSximeX8RgBDoj+rn1AOxKjY0lwFPVuJZyeafWA8BDCXRG9LL1AOxGjQ0lwFpqXFO5rJ9aDwAPJdAZ0U3crsT2amwkAdZW49rKZdR4dhEDEuiM6ofWAzC1GhtIgK3UuMayvW9bDwCPIdAZ1fdxis42amwcAbZW41rLdmqcnjMogc6oznGKzvpqbBgBLqXGNZdt/BSvKwYl0BnZ93GKznpqbBQBLq3GtZd11Sx7RBiSQGdk5yRftB6CKdTYIAK0UuMazHq+jQMcBibQGd3L+AgNnqbGxhCgtRrXYp7uxe0XDEugM4OvYkHncWpsCAF6UeOazOPVJF+3HgKeSqAzg3OWBf3cdgwGU2MjCNCbGtdmHq7GXpBJCHRmUePCzP3V2AAC9KrGNZr7Oyf5LF4vTEKgM5NTRDofVmPjB9C7GtdqPuyc5XVyajsGrEegM5tTRDrvVmPDBzCKGtds3u0ccc6EBDozOkWk80c1NnoAo6lx7eaPzhHnTEqgM6tTRDp3amzwAEZV4xrOnXPEORMT6MzsFJGOjR3ADGpcyxHn7IBAZ3aniPQ9q7GhA5hFjWv6np0jztkBgc4enCLS96jGRg5gNjWu7Xt0jjhnJwQ6e3GKSN+TGhs4gFnVuMbvyTninB0R6OzJKSJ9D2ps3ABmV+NavwfniHN2RqCzN6eI9JnV2LAB7EWNa/7MzhHn7JBAZ49OEekzqrFRA9ibGtf+GZ0jztkpgc5enSLSZ1JjgwawVzXWgJmcI87ZMYHOnp0i0mdQY2MGsHc11oIZnCPO2TmBzt6dItJHVmNDBsCixpowsnPEOQh0iEgfVY2NGAC/V2NtGNE54hySCHR45RSRPpIaGzAA3q7GGjGSc8Q5/JdAhzuniPQR1Nh4AfB+NdaKEZwjzuF3BDr83ikivWc1NlwA3E+NNaNn54hz+AOBDn90ikjvUY2NFgAPU2Pt6NE54hzeSqDD250i0ntSY4MFwOPUWEN6co44h3cS6PBup4j0HtTYWAHwNDXWkh6cI87hvQQ6vN8pIr2lGhsqANZRY01p6RxxDh8k0OHDThHpLdTYSAGwrhprSwvniHO4F4EO93OKSL+kGhsoALZRY425pHPEOdybQIf7O0WkX0KNjRMA26qx1lzCOeIcHkSgw8OcItK3VGPDBMBl1FhztnSOOIcHE+jwcKeI9C3U2CgBcFk11p4tnCPO4VEEOjzOKSJ9TTU2SAC0UWMNWtM54hweTaDD450i0tdQY2MEQFs11qI1nCPO4UkEOjzNKSL9KWpsiADoQ4016SnOEefwZAIdnu4Ukf4YNTZCAPSlxtr0GOeIc1iFQId1nCLSH6LGBgiAPtVYox7iHHEOqxHosJ5TRPp91Nj4ANC3GmvVfZwjzmFVAh3WdYpIf58aGx4AxlBjzXqfc8Q5rE6gw/pOEelvU2OjA8BYaqxdb3OOOIdNCHTYxiki/XU1NjgAjKnGGva6c8Q5bEagw3ZOEemJjQ0A46uxliXiHDYn0GFbp+w70mtsaACYQ82+17RzxDlsTqDD9k7ZZ6TX7HsjA8B8ava5tp0jzuEiBDpcxin7ivSafW5gAJhfzb7WuHPEOVyMQIfLOWUfkV6zr40LAPtTs4+17hxxDhcl0OGyTpk70mv2sWEBgJq517xzxDlcnECHyztlzkivmXujAgBvqplz7TtHnEMTAh3aOGWuSK+Zc4MCAB9SM9caeI44h2YEOrRzyhyRXjPXxgQAHqpmjrXwHHEOTQl0aOuUsSO9Zo4NCQA8Vc3Ya+I54hyaE+jQ3iljRnrN2BsRAFhbzZhr4zniHLog0KEPp4wV6TVjbkAAYGs1Y62R54hz6IZAh36cMkak14y18QCAS6sZY608R5xDVwQ69OWUviO9ZowNBwC0VtP3mnmOOIfuCHTozyl9Luin9DkXAPSqps+18xxxDl0S6NCnU/pa0F+mr3kAYBQ1yV+zrKU9qFnmObUdA3gbgQ79qlkW0J8az/F1ks/S7233ANC7c5a19NvGc/yUZW9RG88BvINAh76dk1wn+SKXX0xvsizi31/43wsAs3qe5KNcfk0/Z/kFwXX8wh26JtBhDC+yxPK32X5Rr1l+IeC9aQCwvpol0i/xy/dzlr3DR+nnFnvgPQQ6jOOc5Tfvn2SbRf3m9p/7UZZfCAAA23mRu1C/Wfmffc5dmD+PU3MYxv+0HgB4sJplUX+R5CrL7WofJzk+4p91k+Sft/+s+sS5AICHe3H7VZI8S/JplvX9oWqSn7OclN88eSqgCYEOY7vJ3SJ8yBLpxyyL/J9vvyfLb87PSf6T5bb1evv9vPF8AMD91CzPffk+v1/TD0n+krev6fX26ybWdJiCQId5nPP7YAcAxnSONR12yXvQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh0AAAA6INABAACgAwIdAAAAOiDQAQAAoAMCHQAAADog0AEAAKADAh2AmdTWA3BxtfUAALAWgQ7ATM6tB+DiausBAGAtAh2AmZxaD8DFnVoPAABrEegAzKTGKfqe1PjzBmAiAh2A2fzcegAu5l+tBwCANQl0AGZzaj0AF/Oy9QAAsKY//fbbb61nAIA1HZL8X+shuIiP4iFxAEzECToAszknuWk8A9v7OeIcgMkIdABm9G3rAdjci9YDAMDa3OIOwKz+keSq9RBsoma5vR0ApuIEHYBZOUWflz9bAKbkBB2AmTlFn88pyV9bDwEAWxDoAMysJPm19RCsypPbAZiWW9wBmFlN8nXrIVjNtxHnAEzMCToAe+BW9/G9TPJZ6yEAYEsCHYA9OCT5Jcst74ynZnnf+bntGACwLbe4A7AH5ySfxO3RI6pZ/uzObccAgO0JdAD2okakj6bGnxkAOyLQAdiTmiX4Tm3H4B5OEecA7IxAB2Bvapb3M//QeA7e7Ycsf0a18RwAcFECHYC9+irJFxGBPalZTs2/ajsGALThKe4A7N0hSxB+03aMXTtnOTX/Ph4GB8COCXQAWJQkz5P8LT6O7VLOEeYA8F8CHQD+6DrJp0metR1jSucsD4D7KcnLCHMA+C+BDgDvd5XkmOVk/ZDldL20GmYwNXdB/q/b76eIcgB4K4EOAAAAHfAUdwAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADgh0AAAA6IBABwAAgA4IdAAAAOiAQAcAAIAOCHQAAADogEAHAACADvx/INLgZpoNIkEAAAAASUVORK5CYII=" alt="뚜누">
+    <div class="h-title">뚜누 CS 가이드</div>
+  </div>
+
+  <div class="chat" id="chat">
+    <div class="row-bot">
+      <div class="b-av"><img src="data:image/png;base64,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" alt="봇"></div>
+      <div class="bubble-bot">안녕하세요. 뚜누 CS 가이드 봇입니다!<br>안내드릴 유형을 선택해 주세요.
+        <div class="chips">
+          <span class="chip" onclick="pickType(this,'inquiry')">문의</span>
+          <span class="chip" onclick="pickType(this,'review')">리뷰</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="dropdown" id="dropdown"></div>
+    <div class="input-row">
+      <input class="input-box" id="input-box" placeholder="문의/리뷰를 먼저 선택해주세요" autocomplete="off" disabled
+        oninput="onInput(this.value)"
+        onkeydown="onKeyDown(event)"
+      />
+      <button class="send-btn" onclick="sendEnter()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="6 11 12 5 18 11"></polyline></svg></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ITEMS = [
+  {cat:'클레임', label:'출고 전 취소', keys:['취소','주문 취소','출고 전']},
+  {cat:'클레임', label:'취소 불가 안내 (출고 후)', keys:['취소 불가','출고 후 취소','출고 후']},
+  {cat:'클레임', label:'변심 반품', keys:['반품','변심 반품']},
+  {cat:'클레임', label:'변심 교환', keys:['교환','변심 교환']},
+  {cat:'클레임', label:'반품/교환 불가', keys:['반품 불가','교환 불가','불가']},
+  {cat:'클레임', label:'불량 여부 확인', keys:['불량','불량 여부','불량 확인','하자']},
+  {cat:'클레임', label:'배송 완료 미수령', keys:['미수령','배송 완료','분실']},
+  {cat:'출고/배송', label:'출고 일정', keys:['출고','출고 일정','배송 일정']},
+  {cat:'출고/배송', label:'출고 일정 > 운송장 번호', keys:['운송장','송장']},
+  {cat:'출고/배송', label:'배송지 변경', keys:['배송지','주소 변경']},
+  {cat:'출고/배송', label:'누락 오인지 [분리 출고] > 출고 전', keys:['분리 출고','누락 오인지','출고 전']},
+  {cat:'출고/배송', label:'누락 오인지 [분리 출고] > 출고 후', keys:['분리 출고','누락 오인지','출고 후']},
+  {cat:'상품-공통', label:'재입고 > 품절/단종', keys:['재입고','품절','단종']},
+  {cat:'상품-공통', label:'재입고 > 품절/단종 (테크류)', keys:['테크류','휴대폰 케이스','맥세이프']},
+  {cat:'상품-공통', label:'재입고 > 품절 오류', keys:['품절 오류']},
+  {cat:'상품-공통', label:'안전 인증 (FITI)', keys:['fiti','안전 인증','인증']},
+  {cat:'상품-공통', label:'디자인 불량 오인지', keys:['디자인 불량','빈티지','오인지']},
+  {cat:'상품-사이즈', label:'포스터/액자 사이즈 추천', keys:['액자 사이즈','포스터 사이즈','사이즈 추천']},
+  {cat:'상품-사이즈', label:'침구류 사이즈 호환 여부', keys:['매트리스 사이즈','침구 사이즈','사이즈 호환']},
+  {cat:'상품-사이즈', label:'사이즈 오인지 [쇼핑백 옵션]', keys:['쇼핑백','사이즈 옵션']},
+  {cat:'상품-사이즈', label:'쇼핑백 사이즈 추천', keys:['쇼핑백 사이즈','쇼핑백 추천']},
+  {cat:'상품-침구', label:'차렵이불 > 두께 복원', keys:['차렵이불','두께','복원']},
+  {cat:'상품-침구', label:'차렵이불 차이점 (리버시블-알러지케어)', keys:['차이점','알러지케어 차이','리버시블 차이']},
+  {cat:'상품-침구', label:'차렵이불 > 리버시블 온스', keys:['온스','리버시블']},
+  {cat:'상품-침구', label:'차렵이불 > 알러지케어 여부', keys:['알러지','항균']},
+  {cat:'상품-침구', label:'차렵이불 > 촉감/재질', keys:['촉감','재질','소재']},
+  {cat:'상품-침구', label:'차렵이불 > 솜 분리(탈착) 가능 여부', keys:['솜 분리','탈착']},
+  {cat:'상품-침구', label:'차렵이불 > 솜 추가 가능 여부', keys:['솜 추가','충전재']},
+  {cat:'상품-침구', label:'차렵이불 > 초기 세탁 여부', keys:['초기 세탁','세탁']},
+  {cat:'상품-침구', label:'차렵이불 > 세트 구성', keys:['세트 구성','이불 세트']},
+  {cat:'상품-발매트/러그', label:'규조토 > 세탁 방법', keys:['규조토 세탁','규조토']},
+  {cat:'상품-발매트/러그', label:'규조토 > 고무 냄새', keys:['규조토 냄새','고무 냄새']},
+  {cat:'상품-발매트/러그', label:'규조토 > 소재 (극세사 차이점)', keys:['규조토 소재','극세사 차이']},
+  {cat:'상품-발매트/러그', label:'규조토 > 검정 이물질 (미끄럼방지 고무)', keys:['검정 이물질','이물질']},
+  {cat:'상품-발매트/러그', label:'규조토 > 미끄럼 방지', keys:['규조토 미끄럼','논슬립']},
+  {cat:'상품-발매트/러그', label:'극세사 > 스크래치', keys:['극세사 스크래치','스크래치']},
+  {cat:'상품-발매트/러그', label:'극세사 > 미끄럼 방지', keys:['극세사 미끄럼']},
+  {cat:'상품-발매트/러그', label:'극세사 > 리뉴얼 여부', keys:['리뉴얼']},
+  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 접힘 자국', keys:['pvc','접힘 자국','주방매트 접힘']},
+  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 접힘 자국 2차 인입', keys:['접힘 2차','2차 인입']},
+  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 냄새', keys:['pvc 냄새','주방매트 냄새']},
+  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 이염', keys:['이염']},
+  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 논슬립 제거 후 뜯어짐', keys:['논슬립 제거','뜯어짐']},
+  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 화이트 색상 불량 오인지', keys:['화이트 불량','색상 불량']},
+  {cat:'상품-발매트/러그', label:'러그 > 소재', keys:['러그 소재','러그']},
+  {cat:'상품-발매트/러그', label:'러그 > 접힘 자국', keys:['러그 접힘']},
+  {cat:'상품-포스터/액자', label:'포스터 > 액자 내 포스터 교체 방법', keys:['포스터 교체','교체 방법']},
+  {cat:'상품-포스터/액자', label:'포스터 > 액자 단품 구매 (29CM)', keys:['액자 단품','단품 구매']},
+  {cat:'상품-포스터/액자', label:'포스터 > 지관통 개방 방법', keys:['지관통','개봉 방법']},
+  {cat:'상품-쿠션커버', label:'쿠션커버 > 사이즈 오차', keys:['쿠션커버 사이즈','사이즈 오차']},
+  {cat:'상품-쿠션커버', label:'쿠션커버 > 사이즈 추천', keys:['쿠션커버 추천']},
+  {cat:'상품-쿠션커버', label:'쿠션커버 > 세트 오인지 (리버시블)', keys:['쿠션커버 세트','리버시블 쿠션']},
+  {cat:'쿠폰/프로모션', label:'쿠폰 적용 불가', keys:['쿠폰','할인']},
+  {cat:'쿠폰/프로모션', label:'프로모션 기간 쿠폰/적립금 사용 제한', keys:['프로모션','적립금','블랙프라이데이']},
+  {cat:'기타', label:'주문 제작 > 유의사항 안내', keys:['주문 제작','제작 유의']},
+  {cat:'기타', label:'주문 제작 > 개인결제창', keys:['개인결제창','결제창']},
+  {cat:'기타', label:'작가 입점 문의', keys:['작가 입점','입점']},
+  {cat:'기타', label:'브랜드 협업 문의', keys:['브랜드 협업','협업']},
+  {cat:'기타', label:'아이디 문의', keys:['아이디','계정']},
+  {cat:'기타', label:'휴면 계정', keys:['휴면']},
+];
+
+const SCRIPTS = {
+  '출고 전 취소': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님의 요청에 따라 주문 취소가 완료되었습니다.
+사용하신 적립금 및 쿠폰은 취소 완료와 함께 반환되었습니다.
+환불은 결제수단에 따라 반영 시점이 다를 수 있으며, 취소 완료 후 최대 O일(영업일 기준) 이내 처리됩니다.
+
+추가 문의사항이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님의 요청에 따라 주문 취소가 완료되었습니다.
+사용하신 적립금 및 쿠폰은 취소 완료와 함께 반환되었습니다.
+환불은 결제수단에 따라 반영 시점이 다를 수 있으며, 취소 완료 후 최대 O일(영업일 기준) 이내 처리됩니다.
+
+추가 문의사항이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+고객님의 요청에 따라 주문 취소가 완료되었습니다.
+환불은 결제수단에 따라 반영 시점이 다를 수 있으며, 취소 완료 후 영업일 기준 최대 7일 이내 처리됩니다.
+환불 관련하여 추가적인 상세한 확인이 필요하실 경우, 주문을 진행하셨던 29CM 측으로 문의를 남겨주시면 감사하겠습니다.
+
+추가 문의사항이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+고객님의 요청에 따라 주문 취소가 완료되었습니다.
+환불은 결제수단에 따라 반영 시점이 다를 수 있으며, 취소 완료 후 영업일 기준 최대 7일 이내 처리됩니다.
+환불 관련하여 추가적인 상세한 확인이 필요하실 경우, 주문을 진행하셨던 무신사 측으로 문의를 남겨주시면 감사하겠습니다.
+
+추가 문의사항이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    주의사항:`- 반드시 실출고 여부 및 출고 중지 여부 선확인 후 안내 필요
+- 분리 출고 여부 확인 후 센터 내에서 출고 중지 가능 건은 송장 선회수 필요
+- 이미 출고된 경우 → [취소 불가 안내 (출고 후)] 가이드로 전환`,
+    tip:`- 당일 뚜누 출고 건: 센터 내에서 상품 실물 확인 및 회수 시 취소 처리 가능
+- 당일 3PL 출고 건: 출고 중지 가능 여부 별도 확인 필요
+- 환불 금액은 결제수단에 따라 처리 기간 상이
+결제수단별 환불기간 (영업일 기준 / 자사몰 주문 건 해당)
+계좌 간편결제 / 2일 이내
+무통장입금 / 5일 이내
+신용카드 / 5일 이내
+체크카드 / 7일 이내
+간편결제 (카드) / 5일 이내
+간편결제 (머니·포인트) / 즉시
+휴대폰 (당월) / 익월 청구 취소
+휴대폰 (익월) / 계좌 별도 환불`
+  },
+  '취소 불가 안내 (출고 후)': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 주문해 주신 상품은 [OO/OO] 일자에 아래 운송장 번호로 출고되었습니다.
+
+· 운송장 번호 :
+
+출고가 완료된 이후에는 별도 취소 처리가 어려워, 반품으로 진행해 주셔야 하는 점 너른 양해 부탁드립니다.
+이에 따른 회수 배송비 3,000원/6,000원은 추후 환불 금액에서 공제되어 처리될 예정입니다.
+
+반품 의사 회신 주시면 빠르게 접수 도와드리겠습니다.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 주문해 주신 상품은 [OO/OO] 일자에 아래 운송장 번호로 출고되었습니다.
+
+· 운송장 번호 :
+
+출고가 완료된 이후에는 별도 취소 처리가 어려워, 반품으로 진행해 주셔야 하는 점 너른 양해 부탁드립니다.
+이에 따른 회수 배송비 3,000원/6,000원은 추후 환불 금액에서 공제되어 처리될 예정입니다.
+
+반품 의사 회신 주시면 빠르게 접수 도와드리겠습니다.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 주문해 주신 상품은 [OO/OO] 일자에 아래 운송장 번호로 출고되었습니다.
+
+· 운송장 번호 :
+
+출고가 완료된 이후에는 별도 취소 처리가 어려워, 반품으로 진행해 주셔야 하는 점 너른 양해 부탁드립니다.
+이에 따른 회수 배송비 3,000원/6,000원은 추후 환불 금액에서 공제되어 처리될 예정입니다.
+
+반품 의사 회신 주시면 빠르게 접수 도와드리겠습니다.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 주문해 주신 상품은 [OO/OO] 일자에 아래 운송장 번호로 출고되었습니다.
+
+· 운송장 번호 :
+
+출고가 완료된 이후에는 별도 취소 처리가 어려워, 반품으로 진행해 주셔야 하는 점 너른 양해 부탁드립니다.
+이에 따른 회수 배송비 3,000원/6,000원은 추후 환불 금액에서 공제되어 처리될 예정입니다.
+
+반품 의사 회신 주시면 빠르게 접수 도와드리겠습니다.
+감사합니다.`,
+    주의사항:`- 반드시 실출고 여부 및 출고 중지 여부 선확인 후 안내 필요
+- 분리 출고 여부 확인 후 센터 내에서 출고 중지 가능 건은 송장 선회수 필요
+- 29CM·무신사는 플랫폼 자체 반품 시스템으로 접수 안내`,
+    tip:`- 회수 배송비 기준: 초도 배송비 지불 건 3,000원 / 무료배송 건 전체 반품 시 6,000원
+- 당일 뚜누 출고 건: 출고된 상품 회수 시 취소 처리 가능
+- 당일 3PL 출고 건: 출고 중지 가능 여부 별도 확인 필요`
+  },
+  '변심 반품': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님의 요청에 따라 반품 및 회수 접수해 드렸으며, 영업일 기준 3일 이내에 CJ대한통운 배송기사가 방문 드릴 예정입니다.
+상품이 회수될 수 있도록 포장하여 문 앞에 놓아주시면 감사하겠습니다.
+원활한 회수 진행을 위해, 번거로우시겠지만 택배 봉투에 [뚜누 CJ 회수]라고 기재 부탁드리겠습니다.
+
+반품 배송비 3,000원/6,000원은 환불금에서 공제되어 처리될 예정이며,
+회수 상품 입고 및 검수 완료 후 순차적으로 환불이 진행되는 점 양해 부탁드립니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님의 요청에 따라 반품 및 회수 접수해 드렸으며, 영업일 기준 3일 이내에 CJ대한통운 배송기사가 방문 드릴 예정입니다.
+상품이 회수될 수 있도록 포장하여 문 앞에 놓아주시면 감사하겠습니다.
+원활한 회수 진행을 위해, 번거로우시겠지만 택배 봉투에 [뚜누 CJ 회수]라고 기재 부탁드리겠습니다.
+
+반품 배송비 3,000원/6,000원은 환불금에서 공제되어 처리될 예정이며,
+회수 상품 입고 및 검수 완료 후 순차적으로 환불이 진행되는 점 양해 부탁드립니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+고객님의 요청에 따라 반품 및 회수 접수해 드렸으며, 영업일 기준 3일 이내에 CJ대한통운 배송기사가 방문 드릴 예정입니다.
+상품이 회수될 수 있도록 포장하여 문 앞에 놓아주시면 감사하겠습니다.
+원활한 회수 진행을 위해, 번거로우시겠지만 택배 봉투에 [뚜누 CJ 회수]라고 기재 부탁드리겠습니다.
+
+반품 배송비 3,000원/6,000원은 환불금에서 공제되어 처리될 예정이며,
+회수 상품 입고 및 검수 완료 후 순차적으로 환불이 진행되는 점 양해 부탁드립니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+고객님의 요청에 따라 반품 및 회수 접수해 드렸으며, 영업일 기준 3일 이내에 CJ대한통운 배송기사가 방문 드릴 예정입니다.
+상품이 회수될 수 있도록 포장하여 문 앞에 놓아주시면 감사하겠습니다.
+원활한 회수 진행을 위해, 번거로우시겠지만 택배 봉투에 [뚜누 CJ 회수]라고 기재 부탁드리겠습니다.
+
+반품 배송비 3,000원/6,000원은 환불금에서 공제되어 처리될 예정이며,
+회수 상품 입고 및 검수 완료 후 순차적으로 환불이 진행되는 점 양해 부탁드립니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    처리범위:`1. 플랫폼별 반품 접수
+- 자사몰 : 카페24/네이버페이에서 직접 접수
+- 29CM/무신사 : 플랫폼 파트너센터 통해 별도 접수
+
+2. 회수 접수
+- 뚜누 출고 건 : 이지어드민에서 회수 접수
+- 3PL 출고 건 : CJ 건별 회수 접수
+
+이후 반품 처리는 클레임 담당자가 진행
+※ 회수 상품 검수 후 고객에게 직접 추가 안내가 필요한 건은 후단 안내까지 진행`,
+    주의사항:`- 반품 신청 가능 기간 : 상품 수령일로부터 7일 이내 (초도 불량의 경우 1개월)
+- 회수 상품 검수 시 사용 흔적이 확인될 경우 반품 제한/반송될 수 있음
+- 반품 배송비 공제 기준
+  · 초도 배송비 결제 건 3,000원 차감
+  · 무료배송 적용 건 6,000원 차감
+  · 부분 반품 시 잔여 상품 금액 기준으로 무료배송 충족 여부 확인 필요
+- 부분 반품 시 잔여 금액 기준으로 쿠폰 유지/취소 여부 및 사용 적립금 유지/취소 여부 확인 필요
+- 네이버페이 주문 건은 수량 부분 반품 불가 → 전체 반품 접수 후 상품 1개 금액+배송비 계좌 입금 안내 필요`,
+    tip:`- 택배 봉투 미보유 시 별도 박스·봉투 등 대체 포장재 사용 가능 → 회수 배송 중 상품에 훼손 없도록 별도 포장 요청, 포장재 외부에 [뚜누 CJ 회수] 기재 요청
+- 환불 금액은 결제수단에 따라 처리 기간 상이
+결제수단별 환불기간 (영업일 기준 / 자사몰 주문 건 해당)
+계좌 간편결제 / 2일 이내
+무통장입금 / 5일 이내
+신용카드 / 5일 이내
+체크카드 / 7일 이내
+간편결제 (카드) / 5일 이내
+간편결제 (머니·포인트) / 즉시
+휴대폰 (당월) / 익월 청구 취소
+휴대폰 (익월) / 계좌 별도 환불`
+  },
+  '변심 교환': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님의 요청에 따라 교환 및 회수 접수해 드렸으며, 영업일 기준 3일 이내에 CJ대한통운 배송기사가 방문 드릴 예정입니다.
+상품이 회수될 수 있도록 포장하여 문 앞에 놓아주시면 감사하겠습니다.
+원활한 회수 진행을 위해, 번거로우시겠지만 택배 봉투에 [뚜누 CJ 회수]라고 기재 부탁드리겠습니다.
+
+1. 교환 절차상 회수 상품 수거가 확인되는 대로 교환 상품을 출고 드릴 예정입니다.
+2. 주문 제작 상품 특성상, 제작 기간이 소요되어, 교환 상품은 OO/OO~OO/OO 사이 출고될 예정입니다.
+시간 양해 부탁드리며, 교환 진행을 위한 왕복 배송비 6,000원 입금 계좌를 안내드립니다.
+
+▼ 입금 정보
+- 예금주: 주식회사 아트라미
+- 은행: 국민은행
+- 계좌번호: 61580104306831
+- 입금 금액: 6,000원
+
+입금 확인을 위해 입금자명은 주문자명으로 기재 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님의 요청에 따라 교환 및 회수 접수해 드렸으며, 영업일 기준 3일 이내에 CJ대한통운 배송기사가 방문 드릴 예정입니다.
+상품이 회수될 수 있도록 포장하여 문 앞에 놓아주시면 감사하겠습니다.
+원활한 회수 진행을 위해, 번거로우시겠지만 택배 봉투에 [뚜누 CJ 회수]라고 기재 부탁드리겠습니다.
+
+1. 교환 절차상 회수 상품 수거가 확인되는 대로 교환 상품을 출고 드릴 예정입니다.
+2. 주문 제작 상품 특성상, 제작 기간이 소요되어, 교환 상품은 OO/OO~OO/OO 사이 출고될 예정입니다.
+시간 양해 부탁드리며, 교환 진행을 위한 왕복 배송비 6,000원 입금 계좌를 안내드립니다.
+
+▼ 입금 정보
+- 예금주: 주식회사 아트라미
+- 은행: 국민은행
+- 계좌번호: 61580104306831
+- 입금 금액: 6,000원
+
+입금 확인을 위해 입금자명은 주문자명으로 기재 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+고객님의 요청에 따라 교환 및 회수 접수해 드렸으며, 영업일 기준 3일 이내에 CJ대한통운 배송기사가 방문 드릴 예정입니다.
+상품이 회수될 수 있도록 포장하여 문 앞에 놓아주시면 감사하겠습니다.
+원활한 회수 진행을 위해, 번거로우시겠지만 택배 봉투에 [뚜누 CJ 회수]라고 기재 부탁드리겠습니다.
+
+1. 교환 절차상 회수 상품 수거가 확인되는 대로 교환 상품을 출고 드릴 예정입니다.
+2. 주문 제작 상품 특성상, 제작 기간이 소요되어, 교환 상품은 OO/OO~OO/OO 사이 출고될 예정입니다.
+시간 양해 부탁드리며, 29CM 측에서 발송된 알림톡을 확인하신 후, 교환 진행을 위한 왕복 배송비 6,000원 입금 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+고객님의 요청에 따라 교환 및 회수 접수해 드렸으며, 영업일 기준 3일 이내에 CJ대한통운 배송기사가 방문 드릴 예정입니다.
+상품이 회수될 수 있도록 포장하여 문 앞에 놓아주시면 감사하겠습니다.
+원활한 회수 진행을 위해, 번거로우시겠지만 택배 봉투에 [뚜누 CJ 회수]라고 기재 부탁드리겠습니다.
+
+1. 교환 절차상 회수 상품 수거가 확인되는 대로 교환 상품을 출고 드릴 예정입니다.
+2. 주문 제작 상품 특성상, 제작 기간이 소요되어, 교환 상품은 OO/OO~OO/OO 사이 출고될 예정입니다.
+시간 양해 부탁드리며, 교환 진행을 위한 왕복 배송비 6,000원 입금 계좌를 안내드립니다.
+
+▼ 입금 정보
+- 예금주: 주식회사 아트라미
+- 은행: 국민은행
+- 계좌번호: 61580104306831
+- 입금 금액: 6,000원
+
+입금 확인을 위해 입금자명은 주문자명으로 기재 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    처리범위:`1. 플랫폼별 교환 접수
+- 자사몰 : 카페24/네이버페이에서 직접 접수
+- 29CM/무신사 : 플랫폼 파트너센터 통해 별도 접수
+
+2. 회수 접수
+- 뚜누 출고 건 : 이지어드민에서 회수 접수
+- 3PL 출고 건 : CJ 건별 회수 접수
+
+3. 교환 생성
+- POD 상품 : 이지어드민 교환 생성 후 보류 설정 → 긴급 발주 요청까지 진행
+- 3PL 출고 건 : 교환 생성 미진행 (추후 교환 상품 출고 시 클레임 담당자가 생성)
+  ※ 뚜누에서 검수 후 출고 필요 건의 경우, 3PL 발주/출고 요청 후 운송장 채번 확인까지 진행
+
+4. 교환 비용 입금 확인
+
+이후 교환 처리는 클레임 담당자가 진행
+※ 회수 상품 검수 후 고객에게 직접 추가 안내가 필요한 건은 후단 안내까지 진행`,
+    주의사항:`- 교환 신청 가능 기간 : 상품 수령일로부터 7일 이내 (초도 불량의 경우 1개월)
+- 회수 상품 검수 시 사용 흔적이 확인될 경우 교환 제한/반송될 수 있음
+- 상품 차액 발생 시 왕복 배송비에서 +/- 후 금액 안내 필요
+- 부분 교환 시 잔여 금액 기준으로 쿠폰 유지/취소 여부 및 사용 적립금 유지/취소 여부 확인 필요`,
+    tip:`- 택배 봉투 미보유 시 별도 박스·봉투 등 대체 포장재 사용 가능 → 회수 배송 중 상품에 훼손 없도록 별도 포장 요청, 포장재 외부에 [뚜누 CJ 회수] 기재 요청
+- 교환 상품 출고 일정은 아래 구분으로 안내
+  1. 당일 출고 상품 : 회수 확인 후 당일 또는 익일 출고
+  2. POD 상품 : 회수 확인 후 제작 기간 감안하여 출고 예정일 별도 안내`
+  },
+  '반품/교환 불가': {
+    guide:`- 아래 유형의 경우 반품/교환이 제한됩니다.
+
+  1. 교환/반품 가능 기간 (상품 수령일로부터 7일)이 경과하였을 경우
+  2. 상품 사용/세탁을 하셨을 경우
+  3. 교환/반품 불가한 프로모션 상품의 경우
+
+- 29CM는 다른 상품으로 교환, 금액이 다른 옵션으로 교환 접수가 불가합니다. 이에 따라 반품 후 재구매로 안내가 필요하며, 필요에 따라 자체 교환 처리가 진행됩니다. (이력 상세 기재 필수)
+
+- 29CM/무신사는 각 플랫폼의 교환/반품 규정에 따릅니다.`
+  },
+  '불량 여부 확인': {
+    guide:`- 불량 부분에 대해 사진 또는 영상 확인 필수 → 고객에게 확인용 자료 첨부를 요청합니다.
+- 상품 사용 여부를 확인하고, 세탁 이후 발생한 문제일 경우에는 세탁 방법(단독 세탁 여부 / 물 온도 / 세탁 코스 / 건조 방법)을 확인합니다.
+- 초도 불량 여부 특정이 어려운 경우에는 상품 회수 및 검수가 필요할 수 있습니다.`,
+    주의사항:`- 디자인 불량 오인지 건 → [불량 오인지] 가이드로 전환
+- 상품 특성(극세사 발매트, PVC 주방매트 등) 불량 오인지 건 → 각 상품별 가이드로 전환`,
+    tip:`- 노션 페이지에 별도 취합 중인 유형의 경우, 조치 결과에 상관없이 추가 기재 필요 → CS 인입 추이 대시보드 이슈 트래커에 반영`
+  },
+  '배송 완료 미수령': {
+    guide:`- 고객님께 기재된 주소를 먼저 확인하여, 주소 오기재로 인한 오배송 여부를 선확인합니다.
+  ※ 주소 오기재로 인한 오배송일 경우, 회수 및 재배송을 위한 교환 접수 안내
+- 담당 배송 기사에게 정상 배송 여부를 확인합니다 (배송 위치 사진 또는 위탁 사진 전송 여부 확인)
+- 배송 기사의 오배송·분실로 확인될 경우, 분실 사고 접수 혹은 기사 직접 변상 여부를 확인합니다.`,
+    tip:`- 배송 기사가 문제 사항 확인 후 고객에게 직접 연락을 준다고 할 경우, 고객님께 해당 내용을 전달하고 기사 연락처를 안내한 뒤, 연락 수신할 경우 소통을 요청합니다.`
+  },
+  '출고 일정': {
+    rangeLabel:`응대 가이드`,
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+먼저, 뚜누 상품은 주문 제작으로 결제 후 제작이 진행되어 제작·출고까지 시간이 소요되는 점 양해 부탁드립니다.
+
+고객님 주문건은 O월 OO일 결제로, O월 O일부터 제작이 시작되었습니다.
+제작은 영업일 기준 평균 O~O일 정도 소요되어, O월 O일 ~ O월 O일 사이 출고 예정입니다.
+※ 주문 제작 특성상 제작 상황에 따라 정확한 출고일을 확정 안내드리기 어려운 점 양해 부탁드립니다.
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+기다려주신 만큼 만족스러운 상품으로 받아보실 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+먼저, 뚜누 상품은 주문 제작으로 결제 후 제작이 진행되어 제작·출고까지 시간이 소요되는 점 양해 부탁드립니다.
+
+고객님 주문건은 O월 OO일 결제로, O월 O일부터 제작이 시작되었습니다.
+제작은 영업일 기준 평균 O~O일 정도 소요되어, O월 O일 ~ O월 O일 사이 출고 예정입니다.
+※ 주문 제작 특성상 제작 상황에 따라 정확한 출고일을 확정 안내드리기 어려운 점 양해 부탁드립니다.
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+기다려주신 만큼 만족스러운 상품으로 받아보실 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+먼저, 뚜누 상품은 주문 제작으로 결제 후 제작이 진행되어 제작·출고까지 시간이 소요되는 점 양해 부탁드립니다.
+
+고객님 주문건은 O월 OO일 결제로, O월 O일부터 제작이 시작되었습니다.
+제작은 영업일 기준 평균 O~O일 정도 소요되어, O월 O일 ~ O월 O일 사이 출고 예정입니다.
+※ 주문 제작 특성상 제작 상황에 따라 정확한 출고일을 확정 안내드리기 어려운 점 양해 부탁드립니다.
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+기다려주신 만큼 만족스러운 상품으로 받아보실 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+먼저, 뚜누 상품은 주문 제작으로 결제 후 제작이 진행되어 제작·출고까지 시간이 소요되는 점 양해 부탁드립니다.
+
+고객님 주문건은 O월 OO일 결제로, O월 O일부터 제작이 시작되었습니다.
+제작은 영업일 기준 평균 O~O일 정도 소요되어, O월 O일 ~ O월 O일 사이 출고 예정입니다.
+※ 주문 제작 특성상 제작 상황에 따라 정확한 출고일을 확정 안내드리기 어려운 점 양해 부탁드립니다.
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+기다려주신 만큼 만족스러운 상품으로 받아보실 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    처리범위:`- 당일 출고 상품인지 POD(주문 제작) 상품인지 선확인 후 안내 필요
+- 당일 출고 상품은 14시 이전 단독 주문 시 당일 출고로 안내
+- 고객 문의 상품 카테고리 확인 후 아래 표 기준으로 출고 예정일 안내 필요
+
+제품별 제작 기간 (※ 영업일 기준)`,
+    주의사항:`- 발주 시간 기준으로 제작 기간 계산 필요 (발주 일자가 오후, 주말로 확인될 경우 익일 제작 시작)
+- 공휴일·연휴 일정 포함 시 영업일 기준으로 재계산하여 안내 필요
+- 공급사 사정 등 별도 사유로 제작·출고 지연 시 추가 확인 후 안내 필요`,
+    tip:`- 예약 출고 상품은 상세페이지에 사전 고지된 별도 출고일 확인 후 사전 숙지
+- 여러 카테고리 POD 상품 주문 시 제작 기간이 긴 상품 기준으로 전체 출고일 결정
+- 당일 출고 상품(3PL)+POD 상품 주문 시 분리 출고로 진행
+- 명절·연휴 전후 물량 증가로 제작·출고 지연 가능 → 안내 시 여유 기간 포함`
+  }
+,
+  '출고 일정 > 운송장 번호': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 주문해 주신 상품은 금일 출고될 예정으로, 운송장 번호 안내 드립니다.
+아래 송장 번호로 금일 저녁~익일 오전 중으로 배송 현황 조회 가능한 점 참고 부탁드립니다.
+
+· CJ대한통운/한진택배 [ ]
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 주문해 주신 상품은 금일 출고될 예정으로, 운송장 번호 안내 드립니다.
+아래 송장 번호로 금일 저녁~익일 오전 중으로 배송 현황 조회 가능한 점 참고 부탁드립니다.
+
+· CJ대한통운/한진택배 [ ]
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 주문해 주신 상품은 금일 출고될 예정으로, 운송장 번호 안내 드립니다.
+아래 송장 번호로 금일 저녁~익일 오전 중으로 배송 현황 조회 가능한 점 참고 부탁드립니다.
+
+· CJ대한통운/한진택배 [ ]
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 주문해 주신 상품은 금일 출고될 예정으로, 운송장 번호 안내 드립니다.
+아래 송장 번호로 금일 저녁~익일 오전 중으로 배송 현황 조회 가능한 점 참고 부탁드립니다.
+
+· CJ대한통운/한진택배 [ ]
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    주의사항:`- 송장 선출력 상품은 제작 기간 확인 필요하며, 정확한 출고 일자는 각 출고 담당자를 통해 확인 후 안내 필요
+  ※ 송장 선출력 상품 : 포스터 / 포스터+액자 / 티셔츠 / 테이블매트 / 액자 세트(더블유) / 캔버스 액자
+- 분리 출고 건의 경우, 상품명 기재 + 각 운송장 번호 안내
+- 연휴 일정, 3PL 내부 사정에 따라 출고 지연이 있을 경우에는 보수적으로 안내 필요`,
+    tip:`- 고객이 상품 수령일을 추가 문의할 경우, 출고 후 1~2일로 안내하되 택배사 사정에 따라 달라질 수 있어 확답은 어려운 점 참고하여 보수적으로 안내 필요
+- 명절·연휴 성수기에는 택배사 물량 증가로 배송 조회 반영 및 수령이 평소보다 지연될 수 있음`
+  }
+,
+  '배송지 변경': {
+    guide:`- 주소 확인 후 배송 정보 변경
+  · 주문 수집 전 : 카페24 주문 내역에서 정보 수정
+  · 주문 수집 후 : 이지어드민에서 정보 수정 (+ 3PL 출고 건의 경우 사방넷 추가 확인)`,
+    주의사항:`- 출고 완료, 출고 중지 불가 건은 배송지 변경 불가 → 반품 후 재구매/교환으로 안내 필요`,
+    tip:`- 사방넷 발주 건 배송지 변경 방법
+  · 기존 발주 건 출고 취소 → 발주 복사 → 발주 수정 → 주소 변경 → 출고 요청`
+  }
+,
+  '누락 오인지 [분리 출고] > 출고 전': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 주문해 주신 상품은 분리 출고로 진행되었으며, 상품별 배송 현황은 아래와 같습니다.
+
+· [상품명] : O/O 출고 > O/O 배송완료
+· [상품명] : 제작 기간 O~O 영업일 소요되어, O/O~O/O 사이 출고 예정
+
+선출고된 [상품명] 상품을 먼저 수령하신 것으로 확인되며, 함께 주문해 주신 [상품명]은 현재 제작 중에 있어, O/O~O/O 사이 출고될 예정입니다.
+※ 주문 제작 특성상 제작 상황에 따라 정확한 출고일을 확정 안내드리기 어려운 점 양해 부탁드립니다.
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+기다려주신 만큼 만족스러운 상품으로 받아보실 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 주문해 주신 상품은 분리 출고로 진행되었으며, 상품별 배송 현황은 아래와 같습니다.
+
+· [상품명] : O/O 출고 > O/O 배송완료
+· [상품명] : 제작 기간 O~O 영업일 소요되어, O/O~O/O 사이 출고 예정
+
+선출고된 [상품명] 상품을 먼저 수령하신 것으로 확인되며, 함께 주문해 주신 [상품명]은 현재 제작 중에 있어, O/O~O/O 사이 출고될 예정입니다.
+※ 주문 제작 특성상 제작 상황에 따라 정확한 출고일을 확정 안내드리기 어려운 점 양해 부탁드립니다.
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+기다려주신 만큼 만족스러운 상품으로 받아보실 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 주문해 주신 상품은 분리 출고로 진행되었으며, 상품별 배송 현황은 아래와 같습니다.
+
+· [상품명] : O/O 출고 > O/O 배송완료
+· [상품명] : 제작 기간 O~O 영업일 소요되어, O/O~O/O 사이 출고 예정
+
+선출고된 [상품명] 상품을 먼저 수령하신 것으로 확인되며, 함께 주문해 주신 [상품명]은 현재 제작 중에 있어, O/O~O/O 사이 출고될 예정입니다.
+※ 주문 제작 특성상 제작 상황에 따라 정확한 출고일을 확정 안내드리기 어려운 점 양해 부탁드립니다.
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+기다려주신 만큼 만족스러운 상품으로 받아보실 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 주문해 주신 상품은 분리 출고로 진행되었으며, 상품별 배송 현황은 아래와 같습니다.
+
+· [상품명] : O/O 출고 > O/O 배송완료
+· [상품명] : 제작 기간 O~O 영업일 소요되어, O/O~O/O 사이 출고 예정
+
+선출고된 [상품명] 상품을 먼저 수령하신 것으로 확인되며, 함께 주문해 주신 [상품명]은 현재 제작 중에 있어, O/O~O/O 사이 출고될 예정입니다.
+※ 주문 제작 특성상 제작 상황에 따라 정확한 출고일을 확정 안내드리기 어려운 점 양해 부탁드립니다.
+
+출고 후 배송은 평균 1~2일 소요되며, 택배사 사정에 따라 수령일은 변동될 수 있습니다.
+기다려주신 만큼 만족스러운 상품으로 받아보실 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    주의사항:`- 고객이 상품 누락으로 오인지하는 경우가 많으므로, 분리 출고 사실과 잔여 상품의 배송 현황을 명확히 구분하여 안내 필요`
+  }
+,
+  '누락 오인지 [분리 출고] > 출고 후': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 주문해 주신 상품은 분리 출고로 진행되었으며, 상품별 배송 현황은 아래와 같습니다.
+
+· [상품명] : O/O 출고 > O/O 배송완료
+· [상품명] : O/O 출고 > 현재 배송 중
+
+선출고된 [상품명] 상품을 먼저 수령하신 것으로 확인되며, O/O 일자에 출고 드린 [상품명]은 현재 배송 중으로, 아래 운송장 번호로 상세 배송 현황 조회 가능하십니다.
+
+· CJ대한통운/한진택배 [ ]
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 주문해 주신 상품은 분리 출고로 진행되었으며, 상품별 배송 현황은 아래와 같습니다.
+
+· [상품명] : O/O 출고 > O/O 배송완료
+· [상품명] : O/O 출고 > 현재 배송 중
+
+선출고된 [상품명] 상품을 먼저 수령하신 것으로 확인되며, O/O 일자에 출고 드린 [상품명]은 현재 배송 중으로, 아래 운송장 번호로 상세 배송 현황 조회 가능하십니다.
+
+· CJ대한통운/한진택배 [ ]
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 주문해 주신 상품은 분리 출고로 진행되었으며, 상품별 배송 현황은 아래와 같습니다.
+
+· [상품명] : O/O 출고 > O/O 배송완료
+· [상품명] : O/O 출고 > 현재 배송 중
+
+선출고된 [상품명] 상품을 먼저 수령하신 것으로 확인되며, O/O 일자에 출고 드린 [상품명]은 현재 배송 중으로, 아래 운송장 번호로 상세 배송 현황 조회 가능하십니다.
+
+· CJ대한통운/한진택배 [ ]
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 주문해 주신 상품은 분리 출고로 진행되었으며, 상품별 배송 현황은 아래와 같습니다.
+
+· [상품명] : O/O 출고 > O/O 배송완료
+· [상품명] : O/O 출고 > 현재 배송 중
+
+선출고된 [상품명] 상품을 먼저 수령하신 것으로 확인되며, O/O 일자에 출고 드린 [상품명]은 현재 배송 중으로, 아래 운송장 번호로 상세 배송 현황 조회 가능하십니다.
+
+· CJ대한통운/한진택배 [ ]
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    주의사항:`- 고객이 상품 누락으로 오인지하는 경우가 많으므로, 분리 출고 사실과 잔여 상품의 배송 현황을 명확히 구분하여 안내 필요`
+  }
+,
+  '재입고 > 품절/단종': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의 주신 [상품명] 상품은
+현재 재고 소진 후 단종된 상품으로, 재입고 일정이 없는 점 안내드립니다.
+
+아쉬운 답변 전해드려 죄송합니다.
+향후 더 다양한 상품으로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의 주신 [상품명] 상품은
+현재 재고 소진 후 단종된 상품으로, 재입고 일정이 없는 점 안내드립니다.
+
+아쉬운 답변 전해드려 죄송합니다.
+향후 더 다양한 상품으로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+문의 주신 [상품명] 상품은
+현재 재고 소진 후 단종된 상품으로, 재입고 일정이 없는 점 안내드립니다.
+
+아쉬운 답변 전해드려 죄송합니다.
+향후 더 다양한 상품으로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+문의 주신 [상품명] 상품은
+현재 재고 소진 후 단종된 상품으로, 재입고 일정이 없는 점 안내드립니다.
+
+아쉬운 답변 전해드려 죄송합니다.
+향후 더 다양한 상품으로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    주의사항:`- 실제 단종 상품이 맞는지 확인 후 안내 필요 (POD 전환 상품, 시즌 상품 등)`,
+    tip:`- 단순 미진열 상품으로, 별도 주문 제작 가능한 상품의 경우 [주문 제작] 가이드로 전환`
+  }
+,
+  '재입고 > 품절/단종 (테크류)': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누의 테크류 제품은 제작이 중단되어, 휴대폰 케이스/맥세이프 톡 상품의 판매가 종료된 점 안내드립니다.
+이에 따라 주문 제작을 포함한 테크류 전 상품은 구매가 어려우신 점 너른 양해 부탁드립니다.
+
+아쉬운 답변 전해드려 죄송합니다.
+추후 더 다양한 상품으로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 문의 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누의 테크류 제품은 제작이 중단되어, 휴대폰 케이스/맥세이프 톡 상품의 판매가 종료된 점 안내드립니다.
+이에 따라 주문 제작을 포함한 테크류 전 상품은 구매가 어려우신 점 너른 양해 부탁드립니다.
+
+아쉬운 답변 전해드려 죄송합니다.
+추후 더 다양한 상품으로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 문의 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누의 테크류 제품은 제작이 중단되어, 휴대폰 케이스/맥세이프 톡 상품의 판매가 종료된 점 안내드립니다.
+이에 따라 주문 제작을 포함한 테크류 전 상품은 구매가 어려우신 점 너른 양해 부탁드립니다.
+
+아쉬운 답변 전해드려 죄송합니다.
+추후 더 다양한 상품으로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 문의 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누의 테크류 제품은 제작이 중단되어, 휴대폰 케이스/맥세이프 톡 상품의 판매가 종료된 점 안내드립니다.
+이에 따라 주문 제작을 포함한 테크류 전 상품은 구매가 어려우신 점 너른 양해 부탁드립니다.
+
+아쉬운 답변 전해드려 죄송합니다.
+추후 더 다양한 상품으로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 문의 남겨주세요.
+감사합니다.`
+  }
+,
+  '재입고 > 품절 오류': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+먼저 이용에 불편을 드려 죄송합니다.
+확인 결과, 일시적인 전산 설정 오류로 일부 옵션이 품절로 잘못 노출되었던 것으로 확인되었습니다.
+해당 내용은 담당 부서에 전달하여 조치 완료되었으며, 현재는 정상화되어 구매 가능합니다.
+
+번거로우시겠지만 판매 페이지를 새로고침(재접속) 하신 뒤 주문을 다시 진행해 주세요.
+진행 중 불편이 지속되면 말씀 남겨주시면 바로 확인해 드리겠습니다.
+
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+먼저 이용에 불편을 드려 죄송합니다.
+확인 결과, 일시적인 전산 설정 오류로 일부 옵션이 품절로 잘못 노출되었던 것으로 확인되었습니다.
+해당 내용은 담당 부서에 전달하여 조치 완료되었으며, 현재는 정상화되어 구매 가능합니다.
+
+번거로우시겠지만 판매 페이지를 새로고침(재접속) 하신 뒤 주문을 다시 진행해 주세요.
+진행 중 불편이 지속되면 말씀 남겨주시면 바로 확인해 드리겠습니다.
+
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+먼저 이용에 불편을 드려 죄송합니다.
+확인 결과, 일시적인 전산 설정 오류로 일부 옵션이 품절로 잘못 노출되었던 것으로 확인되었습니다.
+해당 내용은 담당 부서에 전달하여 조치 완료되었으며, 현재는 정상화되어 구매 가능합니다.
+
+번거로우시겠지만 판매 페이지를 새로고침(재접속) 하신 뒤 주문을 다시 진행해 주세요.
+진행 중 불편이 지속되면 말씀 남겨주시면 바로 확인해 드리겠습니다.
+
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+먼저 이용에 불편을 드려 죄송합니다.
+확인 결과, 일시적인 전산 설정 오류로 일부 옵션이 품절로 잘못 노출되었던 것으로 확인되었습니다.
+해당 내용은 담당 부서에 전달하여 조치 완료되었으며, 현재는 정상화되어 구매 가능합니다.
+
+번거로우시겠지만 판매 페이지를 새로고침(재접속) 하신 뒤 주문을 다시 진행해 주세요.
+진행 중 불편이 지속되면 말씀 남겨주시면 바로 확인해 드리겠습니다.
+
+감사합니다.`,
+    주의사항:`- 정확한 품절 오류 사유 확인 후, 담당자를 통해 품절 수정 처리 완료 후 고객 안내 필요
+- 이지오토 미연동 여부, 단순 재고 설정 오류 여부 확인 후 MD팀으로 품절 수정 요청`
+  }
+,
+  '안전 인증 (FITI)': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의 주신 [상품명] 상품은 피부에 닿는 제품인 만큼, 공인 시험기관 FITI를 통해 유해물질 및 안전성 관련 시험을 진행했고, 적합 판정을 받은 상품입니다.
+
+해당 제품은 의무 KC 인증 대상은 아니지만, 판매 전 공인 기관 시험 기준에 따라 안전성 확인을 완료하여 사용하셔도 괜찮습니다.
+자세한 내용은 시험성적서(인증서) 파일을 함께 첨부드리며, 현재 뚜누에서 판매 중인 [상품명] 상품에 해당하는 결과입니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 부탁드립니다.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의 주신 [상품명] 상품은 피부에 닿는 제품인 만큼, 공인 시험기관 FITI를 통해 유해물질 및 안전성 관련 시험을 진행했고, 적합 판정을 받은 상품입니다.
+
+해당 제품은 의무 KC 인증 대상은 아니지만, 판매 전 공인 기관 시험 기준에 따라 안전성 확인을 완료하여 사용하셔도 괜찮습니다.
+자세한 내용은 시험성적서(인증서) 파일을 함께 첨부드리며, 현재 뚜누에서 판매 중인 [상품명] 상품에 해당하는 결과입니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 부탁드립니다.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+문의 주신 [상품명] 상품은 피부에 닿는 제품인 만큼, 공인 시험기관 FITI를 통해 유해물질 및 안전성 관련 시험을 진행했고, 적합 판정을 받은 상품입니다.
+
+해당 제품은 의무 KC 인증 대상은 아니지만, 판매 전 공인 기관 시험 기준에 따라 안전성 확인을 완료하여 사용하셔도 괜찮습니다.
+자세한 내용은 시험성적서(인증서) 파일을 함께 첨부드리며, 현재 뚜누에서 판매 중인 [상품명] 상품에 해당하는 결과입니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 부탁드립니다.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+문의 주신 [상품명] 상품은 피부에 닿는 제품인 만큼, 공인 시험기관 FITI를 통해 유해물질 및 안전성 관련 시험을 진행했고, 적합 판정을 받은 상품입니다.
+
+해당 제품은 의무 KC 인증 대상은 아니지만, 판매 전 공인 기관 시험 기준에 따라 안전성 확인을 완료하여 사용하셔도 괜찮습니다.
+자세한 내용은 시험성적서(인증서) 파일을 함께 첨부드리며, 현재 뚜누에서 판매 중인 [상품명] 상품에 해당하는 결과입니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 부탁드립니다.
+감사합니다.`,
+    주의사항:`- FITI 테스트를 거치지 않은 상품이 있어 테스트 진행 여부 사전 확인 필수`,
+    tip:`- 29CM 게시판 등 이미지 첨부가 불가한 채널일 경우 : 시험성적서(인증서) 파일 확인 희망 시, 자료 수신할 연락처/이메일 회신 요청`
+  }
+,
+  '디자인 불량 오인지': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의 주신 내용은 담당 부서와 함께 추가 확인 완료했습니다.
+확인 결과, 해당 부분은 프린팅 불량이 아니라 작품의 의도에 따른 빈티지한 채색(표현) 디자인으로, 정상 상품인 점 안내드립니다.
+
+뚜누의 모든 상품은 작가의 작품을 기반으로 제작되어, 동일한 표현이 반영되어 있으며 상품 상세페이지 사진에서도 동일한 프린팅/채색 표현을 확인하실 수 있습니다.
+빠르게 확인하실 수 있도록 상세 사진을 함께 첨부드립니다.
+
+상품 확인 과정에서 혼란을 드린 점 죄송합니다.
+유사 문의가 반복되지 않도록 담당 부서에 전달하여 상세페이지 내 디자인 안내를 더 명확히 전달 드릴 수 있도록 개선에 참고하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의 주신 내용은 담당 부서와 함께 추가 확인 완료했습니다.
+확인 결과, 해당 부분은 프린팅 불량이 아니라 작품의 의도에 따른 빈티지한 채색(표현) 디자인으로, 정상 상품인 점 안내드립니다.
+
+뚜누의 모든 상품은 작가의 작품을 기반으로 제작되어, 동일한 표현이 반영되어 있으며 상품 상세페이지 사진에서도 동일한 프린팅/채색 표현을 확인하실 수 있습니다.
+빠르게 확인하실 수 있도록 상세 사진을 함께 첨부드립니다.
+
+상품 확인 과정에서 혼란을 드린 점 죄송합니다.
+유사 문의가 반복되지 않도록 담당 부서에 전달하여 상세페이지 내 디자인 안내를 더 명확히 전달 드릴 수 있도록 개선에 참고하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+문의 주신 내용은 담당 부서와 함께 추가 확인 완료했습니다.
+확인 결과, 해당 부분은 프린팅 불량이 아니라 작품의 의도에 따른 빈티지한 채색(표현) 디자인으로, 정상 상품인 점 안내드립니다.
+
+뚜누의 모든 상품은 작가의 작품을 기반으로 제작되어, 동일한 표현이 반영되어 있으며 상품 상세페이지 사진에서도 동일한 프린팅/채색 표현을 확인하실 수 있습니다.
+빠르게 확인하실 수 있도록 상세 사진을 함께 첨부드립니다.
+
+상품 확인 과정에서 혼란을 드린 점 죄송합니다.
+유사 문의가 반복되지 않도록 담당 부서에 전달하여 상세페이지 내 디자인 안내를 더 명확히 전달 드릴 수 있도록 개선에 참고하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+문의 주신 내용은 담당 부서와 함께 추가 확인 완료했습니다.
+확인 결과, 해당 부분은 프린팅 불량이 아니라 작품의 의도에 따른 빈티지한 채색(표현) 디자인으로, 정상 상품인 점 안내드립니다.
+
+뚜누의 모든 상품은 작가의 작품을 기반으로 제작되어, 동일한 표현이 반영되어 있으며 상품 상세페이지 사진에서도 동일한 프린팅/채색 표현을 확인하실 수 있습니다.
+빠르게 확인하실 수 있도록 상세 사진을 함께 첨부드립니다.
+
+상품 확인 과정에서 혼란을 드린 점 죄송합니다.
+유사 문의가 반복되지 않도록 담당 부서에 전달하여 상세페이지 내 디자인 안내를 더 명확히 전달 드릴 수 있도록 개선에 참고하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    주의사항:`- 상세페이지에서 명확히 확인되지 않는 부분은 제작 파일 확인 → 원화 이미지 함께 안내
+- 첨부 이미지는 상품 전체 크롭+불량 오인지 부분 확대 후 추가 크롭하여 첨부`,
+    tip:`- 재고 보유 시 상품 실물 추가 확인
+- 불량 오인으로 동일 상품 지속 인입 혹은 지속 인입이 예상되는 상품으로 판단될 경우 제작 파일 수정 여부 검토 필요`
+  }
+,
+  '포스터/액자 사이즈 추천': {
+    rangeLabel:`응대 가이드`,
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+포스터, 액자 사이즈는 배치하는 공간의 넓이나 주변 가구 배치에 따라 체감되는 크기가 다를 수 있어, 이미지만으로 적합한 사이즈를 확답드리기 어려운 점 양해 부탁드립니다.
+
+구매 전에는 거치하실 공간의 실측 사이즈를 먼저 측정해 보신 후, 상세페이지 내 [사이즈/세탁] 탭에 안내된 상세 사이즈표와 비교하여 선택해 주시면 더욱 만족스러운 사이즈로 결정하실 수 있습니다.
+
+거치하실 공간의 실측 사이즈를 남겨주시면, 확인 후 권장 사이즈를 추천해 드리겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+포스터, 액자 사이즈는 배치하는 공간의 넓이나 주변 가구 배치에 따라 체감되는 크기가 다를 수 있어, 이미지만으로 적합한 사이즈를 확답드리기 어려운 점 양해 부탁드립니다.
+
+구매 전에는 거치하실 공간의 실측 사이즈를 먼저 측정해 보신 후, 상세페이지 내 [사이즈/세탁] 탭에 안내된 상세 사이즈표와 비교하여 선택해 주시면 더욱 만족스러운 사이즈로 결정하실 수 있습니다.
+
+거치하실 공간의 실측 사이즈를 남겨주시면, 확인 후 권장 사이즈를 추천해 드리겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+포스터, 액자 사이즈는 배치하는 공간의 넓이나 주변 가구 배치에 따라 체감되는 크기가 다를 수 있어, 이미지만으로 적합한 사이즈를 확답드리기 어려운 점 양해 부탁드립니다.
+
+구매 전에는 거치하실 공간의 실측 사이즈를 먼저 측정해 보신 후, 상세페이지 하단에 안내된 상세 사이즈표와 비교하여 선택해 주시면 더욱 만족스러운 사이즈로 결정하실 수 있습니다.
+
+거치하실 공간의 실측 사이즈를 남겨주시면, 확인 후 권장 사이즈를 추천해 드리겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+포스터, 액자 사이즈는 배치하는 공간의 넓이나 주변 가구 배치에 따라 체감되는 크기가 다를 수 있어, 이미지만으로 적합한 사이즈를 확답드리기 어려운 점 양해 부탁드립니다.
+
+구매 전에는 거치하실 공간의 실측 사이즈를 먼저 측정해 보신 후, 상세페이지 하단에 안내된 상세 사이즈표와 비교하여 선택해 주시면 더욱 만족스러운 사이즈로 결정하실 수 있습니다.
+
+거치하실 공간의 실측 사이즈를 남겨주시면, 확인 후 권장 사이즈를 추천해 드리겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+    처리범위:`- 실측 사이즈 회신 올 경우, 상품 사이즈표와 비교하여 적합한 사이즈 추천 안내
+- 거실 소파 위, 복도 등 여백이 많고 넓은 공간의 경우 500X700mm~A1 사이즈 선호도가 가장 높음(참고용)
+- 하나의 사이즈로 단정하지 않고 선택 기준에 따라 옵션을 나눠서 안내 필요
+  ex) 여백 여유 있게: 500X700mm / 여백 없이 꽉 채움: A1`,
+    주의사항:`- 사이즈 선호는 개인차가 있을 수 있어, 안내드린 내용은 참고용으로만 확인하도록 안내 필요`
+  }
+,
+  '침구류 사이즈 호환 여부': {
+    rangeLabel:`응대 가이드`,
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+사용하고 계신 매트리스가 [OOXOOcm] 사이즈일 경우, [상품명 - 사이즈 옵션]과 호환이 가능할 것으로 예상됩니다.
+
+다만, 매트리스는 브랜드마다 가로·세로·높이 실측 규격이 상이하여, 정확한 호환 여부는 상세페이지에 안내된 실측 사이즈와 비교하신 후 구매 진행 부탁드립니다.
+
+■ [상품명] [사이즈옵션] 실측
+가로 [ ]cm × 세로 [ ]cm × 높이 [ ]cm
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+사용하고 계신 매트리스가 [OOXOOcm] 사이즈일 경우, [상품명 - 사이즈 옵션]과 호환이 가능할 것으로 예상됩니다.
+
+다만, 매트리스는 브랜드마다 가로·세로·높이 실측 규격이 상이하여, 정확한 호환 여부는 상세페이지에 안내된 실측 사이즈와 비교하신 후 구매 진행 부탁드립니다.
+
+■ [상품명] [사이즈옵션] 실측
+가로 [ ]cm × 세로 [ ]cm × 높이 [ ]cm
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+사용하고 계신 매트리스가 [OOXOOcm] 사이즈일 경우, [상품명 - 사이즈 옵션]과 호환이 가능할 것으로 예상됩니다.
+
+다만, 매트리스는 브랜드마다 가로·세로·높이 실측 규격이 상이하여, 정확한 호환 여부는 상세페이지에 안내된 실측 사이즈와 비교하신 후 구매 진행 부탁드립니다.
+
+■ [상품명] [사이즈옵션] 실측
+가로 [ ]cm × 세로 [ ]cm × 높이 [ ]cm
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+사용하고 계신 매트리스가 [OOXOOcm] 사이즈일 경우, [상품명 - 사이즈 옵션]과 호환이 가능할 것으로 예상됩니다.
+
+다만, 매트리스는 브랜드마다 가로·세로·높이 실측 규격이 상이하여, 정확한 호환 여부는 상세페이지에 안내된 실측 사이즈와 비교하신 후 구매 진행 부탁드립니다.
+
+■ [상품명] [사이즈옵션] 실측
+가로 [ ]cm × 세로 [ ]cm × 높이 [ ]cm
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    처리범위:`- 고객이 사용 중인 매트리스의 실측 치수(가로·세로·높이) 확인 후, 상품 사이즈표와 비교하여 호환 여부 안내
+- 동일한 사이즈 표기(퀸/킹 등)라도 제조사마다 실측 규격이 다를 수 있어, 확답 대신 실측 비교 방식으로 안내`
+  }
+,
+  '사이즈 오인지 [쇼핑백 옵션]': {
+    channels:['채팅','자사몰'],
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의주신 [상품]은 사이즈 단일(One Size) 상품으로, 별도의 사이즈 선택이 필요하지 않습니다.
+
+현재 화면에서 보이는 선택란은 사이즈가 아닌 쇼핑백 사은품/추가 옵션 선택란일 가능성이 있습니다.
+추가 옵션의 경우, 선택하지 않으셔도 상품 구매는 정상적으로 가능합니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의주신 [상품]은 사이즈 단일(One Size) 상품으로, 별도의 사이즈 선택이 필요하지 않습니다.
+
+현재 화면에서 보이는 선택란은 사이즈가 아닌 쇼핑백 사은품/추가 옵션 선택란일 가능성이 있습니다.
+추가 옵션의 경우, 선택하지 않으셔도 상품 구매는 정상적으로 가능합니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`
+  }
+,
+  '쇼핑백 사이즈 추천': {
+    guide:`- 하단 표 기준으로 각 상품별 호환되는 쇼핑백 사이즈 안내
+
+사이즈별 호환 상품`,
+    주의사항:`- 위 표에 없는 상품이거나, 여러 상품 합포장 시 호환되는 쇼핑백 등 추가 확인이 필요한 건은 실물 상품과 쇼핑백 사이즈를 직접 확인 후 안내 필요`,
+    tip:`- 소프트 규조토 발매트는 상품을 접지 않고 그대로 넣을 경우 쇼핑백 L사이즈와 호환
+- 유연한 재질 특성상, 상품을 반으로 접어 수납할 경우 M사이즈 쇼핑백 사용도 가능`
+  }
+,
+  '차렵이불 차이점 (리버시블-알러지케어)': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+리버시블 차렵이불은 사계절용 단일 옵션으로 제작된 6온스 상품입니다.
+너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
+
+알러지케어 차렵이불은 3온스 상품으로, 여름~간절기에 산뜻하게 사용하기 좋은 두께감입니다.
+
+상품별 소재 차이를 추가로 안내 드립니다.
+
+✅️ [3온스 알러지케어 차렵이불] : 알러지케어 소재 적용
+✅️ [리버시블 사계절 차렵이불] : 세미마이크로 폴리에스터 소재로 제작되어 알러지케어 소재는 아닙니다.
+
+다만 리버시블 차렵이불은 항균/소취 관련 기능이 적용되어 있으며, 관련 안전성/품질 검증을 위해 공인 시험기관(FITI) 시험 기준 관련 확인을 거친 제품으로 안심하고 사용하실 수 있습니다.
+
+추가로 궁금하신 점 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+리버시블 차렵이불은 사계절용 단일 옵션으로 제작된 6온스 상품입니다.
+너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
+
+알러지케어 차렵이불은 3온스 상품으로, 여름~간절기에 산뜻하게 사용하기 좋은 두께감입니다.
+
+상품별 소재 차이를 추가로 안내 드립니다.
+
+✅️ [3온스 알러지케어 차렵이불] : 알러지케어 소재 적용
+✅️ [리버시블 사계절 차렵이불] : 세미마이크로 폴리에스터 소재로 제작되어 알러지케어 소재는 아닙니다.
+
+다만 리버시블 차렵이불은 항균/소취 관련 기능이 적용되어 있으며, 관련 안전성/품질 검증을 위해 공인 시험기관(FITI) 시험 기준 관련 확인을 거친 제품으로 안심하고 사용하실 수 있습니다.
+
+추가로 궁금하신 점 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+리버시블 차렵이불은 사계절용 단일 옵션으로 제작된 6온스 상품입니다.
+너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
+
+알러지케어 차렵이불은 3온스 상품으로, 여름~간절기에 산뜻하게 사용하기 좋은 두께감입니다.
+
+상품별 소재 차이를 추가로 안내 드립니다.
+
+✅️ [3온스 알러지케어 차렵이불] : 알러지케어 소재 적용
+✅️ [리버시블 사계절 차렵이불] : 세미마이크로 폴리에스터 소재로 제작되어 알러지케어 소재는 아닙니다.
+
+다만 리버시블 차렵이불은 항균/소취 관련 기능이 적용되어 있으며, 관련 안전성/품질 검증을 위해 공인 시험기관(FITI) 시험 기준 관련 확인을 거친 제품으로 안심하고 사용하실 수 있습니다.
+
+추가로 궁금하신 점 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+리버시블 차렵이불은 사계절용 단일 옵션으로 제작된 6온스 상품입니다.
+너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
+
+알러지케어 차렵이불은 3온스 상품으로, 여름~간절기에 산뜻하게 사용하기 좋은 두께감입니다.
+
+상품별 소재 차이를 추가로 안내 드립니다.
+
+✅️ [3온스 알러지케어 차렵이불] : 알러지케어 소재 적용
+✅️ [리버시블 사계절 차렵이불] : 세미마이크로 폴리에스터 소재로 제작되어 알러지케어 소재는 아닙니다.
+
+다만 리버시블 차렵이불은 항균/소취 관련 기능이 적용되어 있으며, 관련 안전성/품질 검증을 위해 공인 시험기관(FITI) 시험 기준 관련 확인을 거친 제품으로 안심하고 사용하실 수 있습니다.
+
+추가로 궁금하신 점 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    주의사항:`- 리버시블 차렵이불 : 알러지케어 소재는 아니나, 항균/소취 기능이 포함되어 안심하고 사용 가능
+- 알러지 민감도가 높은 고객이라면 [알러지케어 차렵이불]로 안내하는 것이 더 적합할 수 있음
+- 고객이 구매하고자 하는 목적(소재 안전성, 두께감 등)에 따라 추천 안내 필요`,
+    tip:`- Q. 리버시블 차렵이불 여름에 사용 가능한가요? 문의 시, 사계절용으로 무겁지 않은 두께감이라 사용은 가능하나 체감되는 보온력은 사용 환경에 따라 개인차가 있을 수 있음 안내
+- 한여름에 사용할 얇은 이불을 생각하실 경우, 개인 기대치에 따라 두껍게 느껴질 수 있는 점 안내`
+  },
+  '차렵이불 > 두께 복원': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+차렵이불은 압축 포장 상태로 발송되어 배송 과정에서 눌림이 생길 수 있어, 수령 직후에는 두께가 얇게 느껴질 수 있습니다.
+해당 압축 포장은 배송 중 오염/손상 최소화를 위한 포장 방식인 점 양해 부탁드립니다.
+
+포장을 해제하신 뒤에는 솜이 바로 도톰해지기보다, 사용/시간 경과에 따라 눌려 있던 솜의 숨이 살아나며 점차 본래 두께로 복원됩니다.
+(가능하다면) 펼쳐 두고 가볍게 흔들어 정리해 주시면 복원에 도움이 됩니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+차렵이불은 압축 포장 상태로 발송되어 배송 과정에서 눌림이 생길 수 있어, 수령 직후에는 두께가 얇게 느껴질 수 있습니다.
+해당 압축 포장은 배송 중 오염/손상 최소화를 위한 포장 방식인 점 양해 부탁드립니다.
+
+포장을 해제하신 뒤에는 솜이 바로 도톰해지기보다, 사용/시간 경과에 따라 눌려 있던 솜의 숨이 살아나며 점차 본래 두께로 복원됩니다.
+(가능하다면) 펼쳐 두고 가볍게 흔들어 정리해 주시면 복원에 도움이 됩니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+차렵이불은 압축 포장 상태로 발송되어 배송 과정에서 눌림이 생길 수 있어, 수령 직후에는 두께가 얇게 느껴질 수 있습니다.
+해당 압축 포장은 배송 중 오염/손상 최소화를 위한 포장 방식인 점 양해 부탁드립니다.
+
+포장을 해제하신 뒤에는 솜이 바로 도톰해지기보다, 사용/시간 경과에 따라 눌려 있던 솜의 숨이 살아나며 점차 본래 두께로 복원됩니다.
+(가능하다면) 펼쳐 두고 가볍게 흔들어 정리해 주시면 복원에 도움이 됩니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+차렵이불은 압축 포장 상태로 발송되어 배송 과정에서 눌림이 생길 수 있어, 수령 직후에는 두께가 얇게 느껴질 수 있습니다.
+해당 압축 포장은 배송 중 오염/손상 최소화를 위한 포장 방식인 점 양해 부탁드립니다.
+
+포장을 해제하신 뒤에는 솜이 바로 도톰해지기보다, 사용/시간 경과에 따라 눌려 있던 솜의 숨이 살아나며 점차 본래 두께로 복원됩니다.
+(가능하다면) 펼쳐 두고 가볍게 흔들어 정리해 주시면 복원에 도움이 됩니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`
+  },
+  '차렵이불 > 리버시블 온스': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의주신 리버시블 차렵이불은 사계절용 단일 옵션으로 제작된 6온스 상품입니다.
+너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의주신 리버시블 차렵이불은 사계절용 단일 옵션으로 제작된 6온스 상품입니다.
+너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+문의주신 리버시블 차렵이불은 사계절용 단일 옵션으로 제작된 6온스 상품입니다.
+너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+문의주신 리버시블 차렵이불은 사계절용 단일 옵션으로 제작된 6온스 상품입니다.
+너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`
+  },
+  '차렵이불 > 알러지케어 여부': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+- [3온스 알러지케어 차렵이불] : 알러지케어 소재 적용
+- [리버시블 사계절 차렵이불] : 세미마이크로 폴리에스터 소재로 제작되어 알러지케어 소재는 아닙니다.
+
+다만 리버시블 차렵이불은 항균/소취 관련 기능이 적용되어 있으며, 관련 안전성/품질 검증을 위해 공인 시험기관(FITI) 시험 기준 관련 확인을 거친 제품으로 안심하고 사용하실 수 있습니다.
+
+추가로 궁금하신 점 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+- [3온스 알러지케어 차렵이불] : 알러지케어 소재 적용
+- [리버시블 사계절 차렵이불] : 세미마이크로 폴리에스터 소재로 제작되어 알러지케어 소재는 아닙니다.
+
+다만 리버시블 차렵이불은 항균/소취 관련 기능이 적용되어 있으며, 관련 안전성/품질 검증을 위해 공인 시험기관(FITI) 시험 기준 관련 확인을 거친 제품으로 안심하고 사용하실 수 있습니다.
+
+추가로 궁금하신 점 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+- [3온스 알러지케어 차렵이불] : 알러지케어 소재 적용
+- [리버시블 사계절 차렵이불] : 세미마이크로 폴리에스터 소재로 제작되어 알러지케어 소재는 아닙니다.
+
+다만 리버시블 차렵이불은 항균/소취 관련 기능이 적용되어 있으며, 관련 안전성/품질 검증을 위해 공인 시험기관(FITI) 시험 기준 관련 확인을 거친 제품으로 안심하고 사용하실 수 있습니다.
+
+추가로 궁금하신 점 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+- [3온스 알러지케어 차렵이불] : 알러지케어 소재 적용
+- [리버시블 사계절 차렵이불] : 세미마이크로 폴리에스터 소재로 제작되어 알러지케어 소재는 아닙니다.
+
+다만 리버시블 차렵이불은 항균/소취 관련 기능이 적용되어 있으며, 관련 안전성/품질 검증을 위해 공인 시험기관(FITI) 시험 기준 관련 확인을 거친 제품으로 안심하고 사용하실 수 있습니다.
+
+추가로 궁금하신 점 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`
+  },
+  '차렵이불 > 촉감/재질': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누 리버시블 차렵이불은 세미마이크로(폴리에스터 100%) 소재로 제작되어 촉감이 부드럽고 표면이 매끄러운 편입니다.
+소재 특성상 움직일 때 발생하는 사각거림 소리는 비교적 미미한 편입니다.
+다만 소리 체감은 사용 환경(이불 커버 유무, 세탁 후 상태 등)과 개인차가 있을 수 있는 점 참고 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누 리버시블 차렵이불은 세미마이크로(폴리에스터 100%) 소재로 제작되어 촉감이 부드럽고 표면이 매끄러운 편입니다.
+소재 특성상 움직일 때 발생하는 사각거림 소리는 비교적 미미한 편입니다.
+다만 소리 체감은 사용 환경(이불 커버 유무, 세탁 후 상태 등)과 개인차가 있을 수 있는 점 참고 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누 리버시블 차렵이불은 세미마이크로(폴리에스터 100%) 소재로 제작되어 촉감이 부드럽고 표면이 매끄러운 편입니다.
+소재 특성상 움직일 때 발생하는 사각거림 소리는 비교적 미미한 편입니다.
+다만 소리 체감은 사용 환경(이불 커버 유무, 세탁 후 상태 등)과 개인차가 있을 수 있는 점 참고 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누 리버시블 차렵이불은 세미마이크로(폴리에스터 100%) 소재로 제작되어 촉감이 부드럽고 표면이 매끄러운 편입니다.
+소재 특성상 움직일 때 발생하는 사각거림 소리는 비교적 미미한 편입니다.
+다만 소리 체감은 사용 환경(이불 커버 유무, 세탁 후 상태 등)과 개인차가 있을 수 있는 점 참고 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`
+  },
+  '차렵이불 > 솜 분리(탈착) 가능 여부': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누 리버시블 차렵이불은 겉감과 충전재(솜)가 퀼팅(박음질)으로 고정된 퀼팅 고정형 제품입니다.
+제작 공정상 봉제선/구조로 인해 일부 구간이 분리되어 보일 수 있으나, 솜을 넣고 빼는 분리형 구조는 아니며 사용 중 솜이 크게 움직이지 않도록 퀼팅으로 고정되어 있어 관리가 비교적 편한 편입니다.
+
+또한 원단 특성상 표면이 부드럽고 매끄러워 몸에 감기는 느낌이 있을 수 있으나, 해당 사용감이 선호와 맞지 않으실 경우, 고객님께서 원하시는 촉감/두께감(예: 더 보송한 촉감, 덜 밀착되는 사용감 등)에 맞춰 다른 소재/구성의 제품을 안내드릴 수 있으니 편하게 말씀 남겨주세요.
+
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누 리버시블 차렵이불은 겉감과 충전재(솜)가 퀼팅(박음질)으로 고정된 퀼팅 고정형 제품입니다.
+제작 공정상 봉제선/구조로 인해 일부 구간이 분리되어 보일 수 있으나, 솜을 넣고 빼는 분리형 구조는 아니며 사용 중 솜이 크게 움직이지 않도록 퀼팅으로 고정되어 있어 관리가 비교적 편한 편입니다.
+
+또한 원단 특성상 표면이 부드럽고 매끄러워 몸에 감기는 느낌이 있을 수 있으나, 해당 사용감이 선호와 맞지 않으실 경우, 고객님께서 원하시는 촉감/두께감(예: 더 보송한 촉감, 덜 밀착되는 사용감 등)에 맞춰 다른 소재/구성의 제품을 안내드릴 수 있으니 편하게 말씀 남겨주세요.
+
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누 리버시블 차렵이불은 겉감과 충전재(솜)가 퀼팅(박음질)으로 고정된 퀼팅 고정형 제품입니다.
+제작 공정상 봉제선/구조로 인해 일부 구간이 분리되어 보일 수 있으나, 솜을 넣고 빼는 분리형 구조는 아니며 사용 중 솜이 크게 움직이지 않도록 퀼팅으로 고정되어 있어 관리가 비교적 편한 편입니다.
+
+또한 원단 특성상 표면이 부드럽고 매끄러워 몸에 감기는 느낌이 있을 수 있으나, 해당 사용감이 선호와 맞지 않으실 경우, 고객님께서 원하시는 촉감/두께감(예: 더 보송한 촉감, 덜 밀착되는 사용감 등)에 맞춰 다른 소재/구성의 제품을 안내드릴 수 있으니 편하게 말씀 남겨주세요.
+
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누 리버시블 차렵이불은 겉감과 충전재(솜)가 퀼팅(박음질)으로 고정된 퀼팅 고정형 제품입니다.
+제작 공정상 봉제선/구조로 인해 일부 구간이 분리되어 보일 수 있으나, 솜을 넣고 빼는 분리형 구조는 아니며 사용 중 솜이 크게 움직이지 않도록 퀼팅으로 고정되어 있어 관리가 비교적 편한 편입니다.
+
+또한 원단 특성상 표면이 부드럽고 매끄러워 몸에 감기는 느낌이 있을 수 있으나, 해당 사용감이 선호와 맞지 않으실 경우, 고객님께서 원하시는 촉감/두께감(예: 더 보송한 촉감, 덜 밀착되는 사용감 등)에 맞춰 다른 소재/구성의 제품을 안내드릴 수 있으니 편하게 말씀 남겨주세요.
+
+감사합니다.`
+  },
+  '차렵이불 > 솜 추가 가능 여부': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누 리버시블 차렵이불은 원단과 충전재(솜)가 퀼팅으로 고정된 일체형 제품으로, 세탁 후에도 솜 뭉침이 비교적 적어 관리가 편리한 편입니다.
+다만 제품 구조상 내부에 추가 솜을 고정할 수 있는 끈/고정 장치가 별도로 마련되어 있지 않아, 임의로 충전재를 추가하실 경우 솜이 한쪽으로 쏠리거나 뭉칠 수 있어 별도의 충전재 추가는 권장드리지 않습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누 리버시블 차렵이불은 원단과 충전재(솜)가 퀼팅으로 고정된 일체형 제품으로, 세탁 후에도 솜 뭉침이 비교적 적어 관리가 편리한 편입니다.
+다만 제품 구조상 내부에 추가 솜을 고정할 수 있는 끈/고정 장치가 별도로 마련되어 있지 않아, 임의로 충전재를 추가하실 경우 솜이 한쪽으로 쏠리거나 뭉칠 수 있어 별도의 충전재 추가는 권장드리지 않습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누 리버시블 차렵이불은 원단과 충전재(솜)가 퀼팅으로 고정된 일체형 제품으로, 세탁 후에도 솜 뭉침이 비교적 적어 관리가 편리한 편입니다.
+다만 제품 구조상 내부에 추가 솜을 고정할 수 있는 끈/고정 장치가 별도로 마련되어 있지 않아, 임의로 충전재를 추가하실 경우 솜이 한쪽으로 쏠리거나 뭉칠 수 있어 별도의 충전재 추가는 권장드리지 않습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누 리버시블 차렵이불은 원단과 충전재(솜)가 퀼팅으로 고정된 일체형 제품으로, 세탁 후에도 솜 뭉침이 비교적 적어 관리가 편리한 편입니다.
+다만 제품 구조상 내부에 추가 솜을 고정할 수 있는 끈/고정 장치가 별도로 마련되어 있지 않아, 임의로 충전재를 추가하실 경우 솜이 한쪽으로 쏠리거나 뭉칠 수 있어 별도의 충전재 추가는 권장드리지 않습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`
+  },
+  '차렵이불 > 초기 세탁 여부': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누는 모든 상품을 출고 전 검수하고 있으나, 제작/포장 공정 특성상 미세한 먼지나 잔사가 소량 남아 보일 수 있습니다.
+침구는 피부에 직접 닿는 제품인 만큼, 보다 쾌적한 사용을 위해 사용 전 가볍게 세탁 후 사용을 권장드립니다.
+세탁 시에는 상품 손상 방지를 위해 상세페이지에 안내된 세탁 방법을 꼭 확인하신 후 진행 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+뚜누는 모든 상품을 출고 전 검수하고 있으나, 제작/포장 공정 특성상 미세한 먼지나 잔사가 소량 남아 보일 수 있습니다.
+침구는 피부에 직접 닿는 제품인 만큼, 보다 쾌적한 사용을 위해 사용 전 가볍게 세탁 후 사용을 권장드립니다.
+세탁 시에는 상품 손상 방지를 위해 상세페이지에 안내된 세탁 방법을 꼭 확인하신 후 진행 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누는 모든 상품을 출고 전 검수하고 있으나, 제작/포장 공정 특성상 미세한 먼지나 잔사가 소량 남아 보일 수 있습니다.
+침구는 피부에 직접 닿는 제품인 만큼, 보다 쾌적한 사용을 위해 사용 전 가볍게 세탁 후 사용을 권장드립니다.
+세탁 시에는 상품 손상 방지를 위해 상세페이지에 안내된 세탁 방법을 꼭 확인하신 후 진행 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+뚜누는 모든 상품을 출고 전 검수하고 있으나, 제작/포장 공정 특성상 미세한 먼지나 잔사가 소량 남아 보일 수 있습니다.
+침구는 피부에 직접 닿는 제품인 만큼, 보다 쾌적한 사용을 위해 사용 전 가볍게 세탁 후 사용을 권장드립니다.
+세탁 시에는 상품 손상 방지를 위해 상세페이지에 안내된 세탁 방법을 꼭 확인하신 후 진행 부탁드립니다.
+
+추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
+감사합니다.`
+  },
+  '차렵이불 > 세트 구성': {
+    채팅:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의 주신 [사계절 차렵이불 SET] 상품의 기본 구성은 [차렵이불 + 베개 커버 2장]입니다.
+기본 구성 상품을 제외한 침대패드, 매트리스 커버 등의 상품은 옵션을 별도로 추가하여 구매해 주셔야 하는 점 참고 부탁드립니다.
+
+위 안내 드린 내용에서 추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    자사몰:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+문의 주신 [사계절 차렵이불 SET] 상품의 기본 구성은 [차렵이불 + 베개 커버 2장]입니다.
+기본 구성 상품을 제외한 침대패드, 매트리스 커버 등의 상품은 옵션을 별도로 추가하여 구매해 주셔야 하는 점 참고 부탁드립니다.
+
+위 안내 드린 내용에서 추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 말풍선 모양 클릭`,
+    '29CM':`고객님, 안녕하세요. 뚜누입니다.
+
+문의 주신 [사계절 차렵이불 SET] 상품의 기본 구성은 [차렵이불 + 베개 커버 2장]입니다.
+기본 구성 상품을 제외한 침대패드, 매트리스 커버 등의 상품은 옵션을 별도로 추가하여 구매해 주셔야 하는 점 참고 부탁드립니다.
+
+위 안내 드린 내용에서 추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    무신사:`고객님, 안녕하세요. 뚜누입니다.
+
+문의 주신 [사계절 차렵이불 SET] 상품의 기본 구성은 [차렵이불 + 베개 커버 2장]입니다.
+기본 구성 상품을 제외한 침대패드, 매트리스 커버 등의 상품은 옵션을 별도로 추가하여 구매해 주셔야 하는 점 참고 부탁드립니다.
+
+위 안내 드린 내용에서 추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`
+  }
+};
+
+const REVIEW_ITEMS = [
+  {cat:'리뷰-일반', label:'정상 리뷰 답글', keys:['정상 리뷰','좋은 리뷰','리뷰 답글','긍정 리뷰']},
+  {cat:'리뷰-클레임', label:'사이즈 불일치 리뷰', keys:['사이즈 불일치','침구 사이즈','매트리스 사이즈','사이즈 리뷰']},
+];
+
+const REVIEW_SCRIPTS = {
+  '정상 리뷰 답글': {
+    자사몰:`고객님, 안녕하세요. 뚜누입니다. 💛\n정성스러운 후기 남겨주셔서 감사합니다 :)\n\n상품 이용 중 궁금하신 점이 있으시다면 언제든 편하게 고객센터로 문의 부탁드립니다.\n감사합니다. 🙇‍♀️`,
+    '29CM':`[TOUNOU] 고객님, 안녕하세요. 뚜누입니다.\n고객님께서 남겨주신 29CM 리뷰 확인 후 안내차 연락드렸습니다.\n먼저, 뚜누를 이용해 주셔서 진심으로 감사드립니다.\n\n남겨주신 소중한 의견은 향후 품질 개선에 참고할 수 있도록 하겠습니다.\n앞으로 더 좋은 상품과 서비스로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.\n감사합니다.\n\n※ 추가로 궁금하신 내용이 있으시면 언제든 뚜누 고객센터로 연락 부탁드립니다.\n- 채팅상담: 뚜누 홈페이지 → 우측 하단 말풍선 모양 클릭(바로가기 https://tounou.co.kr/)\n- 고객센터: 053-657-1799\n- 운영시간: 평일 09~18시 (12~13시 점심) / 주말, 법정공휴일 휴무.`,
+    처리범위:`리뷰 확인 후 감사 인사 댓글 등록`,
+    주의사항:`준비 중입니다.`,
+    tip:`준비 중입니다.`
+  },
+  '사이즈 불일치 리뷰': {
+    자사몰:`고객님, 안녕하세요. 뚜누입니다. 💛\n\n기대를 가지고 뚜누 [상품명]를 구매해 주셨을 텐데, 사이즈 면에서 아쉬움을 느끼신 것 같아 마음이 무겁습니다.\n뚜누 [상품명] [사이즈옵션]는 [실측사이즈] 규격으로 제작된 상품입니다.\n\n다만, 매트리스는 제조사마다 실측 규격이 상이하여 동일한 [사이즈표기]라도 브랜드에 따라 호환성에 차이가 있을 수 있는 점 양해 부탁드립니다.\n침구 사이즈 선택 시에는 상세페이지 내 [사이즈/세탁] 탭에서 실측 규격을 먼저 확인하신 후, 현재 사용하시는 매트리스의 가로·세로·높이(두께) 실측 치수와 비교하여 구매해 주시면 보다 만족스러운 사용에 도움이 됩니다.\n\n고객님께서 남겨주신 소중한 의견은 향후 사이즈 안내 개선에 참고하겠습니다.\n\n상품 이용 중 궁금하신 점이 있으시다면 언제든 편하게 고객센터로 문의 부탁드립니다.\n감사합니다. 🙇‍♀️`,
+    '29CM':`[TOUNOU] 고객님, 안녕하세요. 뚜누입니다.\n\n기대를 가지고 뚜누 [상품명]를 구매해 주셨을 텐데, 사이즈 면에서 아쉬움을 느끼신 것 같아 마음이 무겁습니다.\n뚜누 [상품명] [사이즈옵션]는 [실측사이즈] 규격으로 제작된 상품입니다.\n\n다만, 매트리스는 제조사마다 실측 규격이 상이하여 동일한 [사이즈표기]라도 브랜드에 따라 호환성에 차이가 있을 수 있는 점 양해 부탁드립니다.\n침구 사이즈 선택 시에는 상세페이지 내 [사이즈/세탁] 탭에서 실측 규격을 먼저 확인하신 후, 현재 사용하시는 매트리스의 가로·세로·높이(두께) 실측 치수와 비교하여 구매해 주시면 보다 만족스러운 사용에 도움이 됩니다.\n\n고객님께서 남겨주신 소중한 의견은 향후 사이즈 안내 개선에 참고하겠습니다.\n\n※ 추가로 궁금하신 내용이 있으시면 언제든 뚜누 고객센터로 연락 부탁드립니다.\n- 채팅상담: 뚜누 홈페이지 → 우측 하단 말풍선 모양 클릭(바로가기 https://tounou.co.kr/)\n- 고객센터: 053-657-1799\n- 운영시간: 평일 09~18시 (12~13시 점심) / 주말, 법정공휴일 휴무.`,
+    처리범위:`사이즈 불일치 클레임 리뷰 응대`,
+    주의사항:`준비 중입니다.`,
+    tip:`준비 중입니다.`
+  }
+};
+
+let selectedItem = null;
+let filteredItems = [];
+let dropIdx = -1;
+let currentType = null; // 'inquiry' | 'review'
+
+function pickType(el, type) {
+  document.querySelectorAll('.row-bot .chips .chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  currentType = type;
+  addUserBubble(type === 'review' ? '리뷰' : '문의');
+
+  const inputBox = document.getElementById('input-box');
+  inputBox.disabled = false;
+  inputBox.placeholder = '키워드를 입력해주세요...';
+  inputBox.focus();
+
+  const exampleText = type === 'review'
+    ? '예: 정상 리뷰, 사이즈 불일치'
+    : '예: 반품, 교환, 불량, 취소';
+  addBotBubble(`궁금한 항목의 키워드를 입력해주세요.<br><span style="font-size:12px;color:#999;">${exampleText}</span>`);
+}
+
+function onInput(val) {
+  const dd = document.getElementById('dropdown');
+  const q = val.trim().toLowerCase();
+  if (!q) { dd.classList.remove('show'); filteredItems = []; return; }
+
+  const src = currentType === 'review' ? REVIEW_ITEMS : ITEMS;
+  filteredItems = src.filter(it =>
+    it.keys.some(k => k.toLowerCase().includes(q)) || it.label.toLowerCase().includes(q)
+  );
+  dropIdx = -1;
+  renderDropdown();
+}
+
+function renderDropdown() {
+  const dd = document.getElementById('dropdown');
+  if (filteredItems.length === 0) {
+    dd.innerHTML = '<div class="no-result">일치하는 항목이 없습니다</div>';
+    dd.classList.add('show');
+    return;
+  }
+  let html = '';
+  let lastCat = '';
+  filteredItems.forEach((it, i) => {
+    if (it.cat !== lastCat) {
+      html += `<div class="drop-cat">${it.cat}</div>`;
+      lastCat = it.cat;
+    }
+    html += `<div class="drop-item" data-idx="${i}" onmousedown="pickItem(${i})">${it.label}</div>`;
+  });
+  dd.innerHTML = html;
+  dd.classList.add('show');
+}
+
+function updateActive() {
+  document.querySelectorAll('.drop-item').forEach((el, i) => {
+    el.classList.toggle('active', i === dropIdx);
+    if (i === dropIdx) el.scrollIntoView({block:'nearest'});
+  });
+}
+
+function onKeyDown(e) {
+  const items = document.querySelectorAll('.drop-item');
+  if (e.key === 'ArrowDown') { e.preventDefault(); dropIdx = Math.min(dropIdx+1, items.length-1); updateActive(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); dropIdx = Math.max(dropIdx-1, 0); updateActive(); }
+  else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (dropIdx >= 0) pickItem(dropIdx);
+    else if (filteredItems.length >= 1) pickItem(0);
+  }
+  else if (e.key === 'Escape') { document.getElementById('dropdown').classList.remove('show'); }
+}
+
+function sendEnter() {
+  if (dropIdx >= 0) pickItem(dropIdx);
+  else if (filteredItems.length >= 1) pickItem(0);
+}
+
+function pickItem(idx) {
+  const item = filteredItems[idx];
+  if (!item) return;
+  selectedItem = item;
+  document.getElementById('dropdown').classList.remove('show');
+  document.getElementById('input-box').value = '';
+  filteredItems = [];
+  dropIdx = -1;
+
+  addUserBubble(item.label);
+
+  const scripts = currentType === 'review' ? REVIEW_SCRIPTS : SCRIPTS;
+  const s = scripts[item.label];
+  if (s && s.guide) {
+    addGuideCard(s);
+    addResetBubble();
+    selectedItem = null;
+    return;
+  }
+  addChannelChips(item.label);
+}
+
+const REFUND_TABLE = `<div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
+<table style="border-collapse:collapse;font-size:14px;border:1px solid #e5e5e0;width:auto;">
+  <thead><tr style="background:#f5f5f0;"><th style="text-align:center;padding:9px 16px;font-weight:600;color:#444;border:1px solid #e5e5e0;">결제수단</th><th style="text-align:center;padding:9px 16px;font-weight:600;color:#444;border:1px solid #e5e5e0;">환불기간</th></tr></thead>
+  <tbody>
+    <tr><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">계좌 간편결제</td><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">2일 이내</td></tr>
+    <tr><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">무통장입금</td><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">5일 이내</td></tr>
+    <tr><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">신용카드</td><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">5일 이내</td></tr>
+    <tr><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">체크카드</td><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">7일 이내</td></tr>
+    <tr><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">간편결제 (카드)</td><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">5일 이내</td></tr>
+    <tr><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">간편결제 (머니·포인트)</td><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">즉시</td></tr>
+    <tr><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">휴대폰 (당월)</td><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">익월 청구 취소</td></tr>
+    <tr><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">휴대폰 (익월)</td><td style="padding:9px 16px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">계좌 별도 환불</td></tr>
+  </tbody>
+</table>
+</div>`;
+
+const LEADTIME_TABLE = `<div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
+<table style="border-collapse:collapse;font-size:14px;border:1px solid #e5e5e0;width:auto;">
+  <thead><tr style="background:#f5f5f0;"><th style="text-align:center;padding:9px 14px;font-weight:600;color:#444;border:1px solid #e5e5e0;">소요 기간</th><th style="text-align:center;padding:9px 14px;font-weight:600;color:#444;border:1px solid #e5e5e0;">품목</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="4" style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">1~3일</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">포스터</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">포스터+액자</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">티셔츠</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">테이블매트</td></tr>
+    <tr><td rowspan="2" style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">1~5일</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">발매트</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">주방매트 러너</td></tr>
+    <tr><td rowspan="4" style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">3~5일</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">쿠션 커버</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">미니 쿠션 커버</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">베개 커버</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">패브릭 포스터</td></tr>
+    <tr><td rowspan="2" style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">3~7일</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">규조토 발매트</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">규조토 주방매트</td></tr>
+    <tr><td rowspan="2" style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">4~7일</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">극세사 담요</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">캔버스 액자</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">7~10일</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">쉬폰 패브릭 포스터</td></tr>
+  </tbody>
+</table>
+</div>`;
+
+const SHOPPINGBAG_TABLE = `<div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
+<table style="border-collapse:collapse;font-size:14px;border:1px solid #e5e5e0;width:auto;">
+  <thead><tr style="background:#f5f5f0;"><th style="text-align:center;padding:9px 14px;font-weight:600;color:#444;border:1px solid #e5e5e0;">사이즈</th><th style="text-align:center;padding:9px 14px;font-weight:600;color:#444;border:1px solid #e5e5e0;">호환 상품</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="7" style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">S</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">파우치</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">베개 커버</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">쿠션 커버</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">미니 쿠션 커버</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">핸드타월 세트</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">테이블웨어</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">패브릭 포스터(S,M)</td></tr>
+    <tr><td rowspan="7" style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">M</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">극세사 담요</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">니트 블랭킷</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">의류</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">패브릭 포스터(L)</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">핸드타월+타월발매트 세트</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">미니 쿠션솜</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">쿠션솜(40X40cm)</td></tr>
+    <tr><td rowspan="6" style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#1a1a1a;font-weight:600;text-align:center;vertical-align:middle;background:#fafaf7;white-space:nowrap;">L</td><td style="padding:9px 14px;border:1px solid #e5e5e0;border-top:2px solid #999;color:#333;text-align:center;white-space:nowrap;">발매트</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">규조토 발매트</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">주방매트 러너</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">러그</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">PVC 주방매트</td></tr>
+    <tr><td style="padding:9px 14px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">쿠션솜(50X50cm)</td></tr>
+  </tbody>
+</table>
+</div>`;
+
+function bulletLine(line) {
+  return /^- /.test(line) ? '•  ' + line.slice(2) : line;
+}
+
+const TABLE_MARKERS = {
+  '제품별 제작 기간': LEADTIME_TABLE,
+  '사이즈별 호환 상품': SHOPPINGBAG_TABLE
+};
+
+function findTableMarker(text) {
+  for (const marker in TABLE_MARKERS) {
+    if (text.includes(marker)) return marker;
+  }
+  return null;
+}
+
+function renderRange(text) {
+  const formatLine = line => /^\d+\.\s/.test(line) ? `<b>${line}</b>` : bulletLine(line);
+  const marker = findTableMarker(text);
+  if (!marker) return text.split('\n').map(formatLine).join('\n');
+  const idx = text.indexOf(marker);
+  const before = text.substring(0, idx).trimEnd();
+  const lineEnd = text.indexOf('\n', idx);
+  const label = lineEnd === -1 ? text.substring(idx).trim() : text.substring(idx, lineEnd).trim();
+  const beforeHtml = before ? before.split('\n').map(formatLine).join('\n') : '';
+  return (beforeHtml ? beforeHtml + '\n' : '') +
+    `<span style="font-size:14px;font-weight:600;display:block;margin-top:6px;margin-bottom:4px;">${label}</span>` +
+    TABLE_MARKERS[marker];
+}
+
+function renderGuide(text) {
+  const marker = findTableMarker(text);
+  if (!marker) return text.split('\n').map(bulletLine).join('\n');
+  const idx = text.indexOf(marker);
+  const before = text.substring(0, idx).trimEnd();
+  const lineEnd = text.indexOf('\n', idx);
+  const label = lineEnd === -1 ? text.substring(idx).trim() : text.substring(idx, lineEnd).trim();
+  const beforeHtml = before ? before.split('\n').map(bulletLine).join('\n') : '';
+  return (beforeHtml ? beforeHtml + '\n' : '') +
+    `<span style="font-size:14px;font-weight:600;display:block;margin-top:6px;margin-bottom:4px;">${label}</span>` +
+    TABLE_MARKERS[marker];
+}
+
+function renderCaution(text) {
+  return text.split('\n').map(bulletLine).join('\n');
+}
+
+function renderTip(tip) {
+  const TABLE_MARKER = '결제수단별 환불기간';
+  const indentLine = line => bulletLine(line).replace(/^( +)/, m => '&nbsp;'.repeat(m.length * 2));
+  const toHtml = t => t.split('\n').map(indentLine).join('<br>');
+  if (!tip.includes(TABLE_MARKER)) return toHtml(tip);
+  const idx = tip.indexOf(TABLE_MARKER);
+  const before = tip.substring(0, idx).trimEnd();
+  const lineEnd = tip.indexOf('\n', idx);
+  const label = lineEnd === -1 ? tip.substring(idx).trim() : tip.substring(idx, lineEnd).trim();
+  const beforeHtml = before ? toHtml(before) : '';
+  return (beforeHtml ? beforeHtml + '<br>' : '') +
+    `<span style="font-size:12px;color:#888;display:block;margin-top:8px;margin-bottom:2px;">${label}</span>` +
+    REFUND_TABLE;
+}
+
+function addUserBubble(text) {
+  const chat = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'row-user';
+  row.innerHTML = `<div class="bubble-user">${text}</div>`;
+  chat.appendChild(row);
+  scrollBottom();
+}
+
+function addBotBubble(html) {
+  const chat = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'row-bot';
+  row.innerHTML = `<div class="b-av"><img src="data:image/png;base64,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" alt="봇"></div><div class="bubble-bot">${html}</div>`;
+  chat.appendChild(row);
+  scrollBottom();
+}
+
+function addChannelChips(label) {
+  const chat = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'row-bot';
+  const scripts = currentType === 'review' ? REVIEW_SCRIPTS : SCRIPTS;
+  const s = scripts[label];
+  const allChannels = [['채팅','채팅'],['자사몰','자사몰'],['29CM','29CM'],['무신사','무신사']];
+  let chipList;
+  if (s && s.channels) {
+    chipList = allChannels.filter(([, ch]) => s.channels.includes(ch));
+  } else {
+    chipList = currentType === 'review'
+      ? [['자사몰','자사몰'],['29CM','29CM']]
+      : allChannels;
+  }
+  const chipsHtml = chipList.map(([label2, ch]) => `<span class="chip" onclick="pickChannel(this,'${ch}')">${label2}</span>`).join('\n      ');
+  row.innerHTML = `<div class="b-av"><img src="data:image/png;base64,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" alt="봇"></div><div class="bubble-bot">채널을 선택해 주세요.
+    <div class="chips">
+      ${chipsHtml}
+    </div>
+  </div>`;
+  chat.appendChild(row);
+  scrollBottom();
+}
+function pickChannel(el, ch) {
+  el.closest('.chips').querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  addUserBubble(ch);
+  renderAnswer(selectedItem.label, ch);
+  selectedItem = null;
+}
+
+function renderAnswer(label, ch) {
+  const scripts = currentType === 'review' ? REVIEW_SCRIPTS : SCRIPTS;
+  const s = scripts[label];
+  const chat = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'row-bot';
+
+  if (!s || (!s[ch] && !s.guide)) {
+    row.innerHTML = `<div class="b-av"><img src="data:image/png;base64,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" alt="봇"></div><div class="bubble-bot" style="color:#999;">해당 항목은 준비 중입니다.</div>`;
+    chat.appendChild(row);
+    addResetBubble();
+    scrollBottom();
+    return;
+  }
+
+  const draft = s[ch] || '';
+  const range = s['처리범위'] || '';
+  const caut = s['주의사항'] || '';
+  const tip = s['tip'] || '';
+  const uid = Date.now();
+
+  let html = `<div class="b-av"><img src="data:image/png;base64,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" alt="봇"></div><div class="ans-card">`;
+  html += `<div class="draft-box">
+    <div class="draft-lbl">고객 안내 초안 — ${ch}</div>
+    <div class="draft-txt" id="draft-${uid}">${draft}</div>
+    <button class="copy-btn" id="copy-${uid}" onclick="copyDraft('${uid}')">📋 복사</button>
+  </div>`;
+  if (range) html += `<div class="range-wrap"><div class="range-box"><div class="range-lbl">📋 ${s.rangeLabel || '응대 담당자 처리 범위'}</div><div class="range-txt">${renderRange(range)}</div></div></div>`;
+  if (caut && caut !== '준비 중입니다.') html += `<div class="caution-wrap"><div class="caution-box"><div class="caution-lbl">⚠️ 주의사항</div><div class="caution-txt">${renderCaution(caut)}</div></div></div>`;
+  if (tip && tip !== '준비 중입니다.') html += `<div class="tip-wrap"><div class="tip-box"><div class="tip-lbl">💡 PLUS TIP</div><div class="tip-txt">${renderTip(tip)}</div></div></div>`;
+  html += `<button class="reset-btn" onclick="resetAll()">↺ 처음으로 돌아가기</button>`;
+  html += `</div>`;
+
+  row.innerHTML = html;
+  chat.appendChild(row);
+  scrollBottom();
+}
+
+function addGuideCard(s) {
+  const chat = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'row-bot';
+  let inner = `<div class="guide-wrap"><div class="guide-box">
+      <div class="guide-lbl">📋 응대 가이드</div>
+      <div class="guide-txt">${renderGuide(s.guide)}</div>
+    </div></div>`;
+  if (s['주의사항'] && s['주의사항'] !== '준비 중입니다.') {
+    inner += `<div class="caution-wrap"><div class="caution-box"><div class="caution-lbl">⚠️ 주의사항</div><div class="caution-txt">${renderCaution(s['주의사항'])}</div></div></div>`;
+  }
+  if (s['tip'] && s['tip'] !== '준비 중입니다.') {
+    inner += `<div class="tip-wrap"><div class="tip-box"><div class="tip-lbl">💡 PLUS TIP</div><div class="tip-txt">${renderTip(s['tip'])}</div></div></div>`;
+  }
+  row.innerHTML = `<div class="b-av"><img src="data:image/png;base64,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" alt="봇"></div><div class="ans-card">${inner}</div>`;
+  chat.appendChild(row);
+  scrollBottom();
+}
+
+function addResetBubble() {
+  const chat = document.getElementById('chat');
+  const row = document.createElement('div');
+  row.className = 'row-bot';
+  row.innerHTML = `<div class="b-av"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAOO0lEQVR4AezdBZD0WBEH8D3cvXB3K9xdDiscDnd3d3cKh8IdCofDKeDwwt0KPQ443A53h/9v72Z3dva9mSSTmcl+NVvdk6TfS79+r/Osu5M90sb6b1AtsFbIoNSxsbFWyFohA2uBgYmz7iFrhQysBQYmzrqHrBUysBYYmDjrHrJWyMBaYGDiLKaHDKySe0mctUIGpq1VKuQ4aYvbBh8SvHRw1XCZCEAWMpEtl8uHVSnkZKnql4IvCz4x+LHg04Krgqen4I8GyUKmL+f85MGlw6oU8sjU9CzBcbhvLi4WXDZcNAXeJzgOZ87Fo4JLh1Up5EKFmu4X2r2Cy4Z7pEBl57ADLrjjakkXq1LIDyr1u17opwguC06agg4IlqAmYylvb7RVKeSVlRocLfQ7BJcFt09BRw+W4NUl4qJpq1LIQanYd4IluHOIRw0uGtS9pvwfpfD3BJcOhFp6oSnwf8EXBUtgyLpuKaFn2jXC7/TBErwgxP8Elw6rUoiKvjw/fwmW4G4FYt+ku1QY/jN0suWwfFilQn6f6r4uWAKbtPOUEnqinSl8rhwswZtC/FVwJbBKhajw8/xU8K4Veh9kvaNW9+f3UUBXHjWhuvJre99Xc8MngiW4RYgnDPYNxwzDWwdLQJ5PlxKWRVu1QtSz1kuOlcRbBvuGG4fhiYMleG6JuEzaEBTyllT458ESPCXE3watyvpAvGoPgDnt9SlrpbBKhRiObpPam9iPl2MJbBTlK6V1oeFlyCrdq6xXJOFWwRMEVwKrUMjlU1MrmZ/laHnJdHHsnK8aDJE3iBCsCHqs3mK1F9LyYJkKuXaq9cXgh4MqfowchwpkM9cwyX8uQtpE5rB4WIZCzptqfDL49uAFgnsNLhyB3xX8eHCRe6Ow31hobO9RUsKDgp6wS+Q4TGgu1aWS9QvBJwXNNzn0D4vqIZ4kimgrPFMK7+GLU9X7B28WvE7wSj0hXnjirQxl/TW8mwKjp4fsU7nh3MHeYREKUenPRNLzB5vAocn0hCC/+olyvGzwTkFuVSuwd+T8gz0hXnjirQxlWXmZvLlvm/pAOK8+G5muFewV+lbI3SPdm4O1pWWSNuG/+X1bUIOwKz0853bsDHs5XSoo0/zwsJR6xuDlguY7+56cVsGq7K1J7dXE05dC9otgNnHPyfHIwWmgEoY03kFDxqyKT+PVdxpZrKyY/8lIMdPKUFcbTUOzNpiWt1FaXwp5dEp7QHAafC+JVwteP/iN4NDh6xGQYix5Dau5rIJ5pZegiD4UIo5JFElV2iQwjxh3eQpzuafg3ZHW0t3ck9MqaIOa0bJ602TCvArhU3jhJNOx63/nnEvWbvwPOd+r8KcIbnVmjqx5Eg1ZVm77J29nmEchp06pTCCWgjndBX8LxfBUc9Umec+B+cLD9feK5NriwKSdKtgJ5lGIp+H4lVL/Efo1g+8M7mtgorfctTor1Y1hsvND2FUh5g0TdEkgS1rOpQ+VEvcR2gdSjxsFa8PX1ZPGapxDO+iikFOmCBurHIpgT6HbFhNbEBn4TKbGZMbIPhAvy1m8W4hSzKqnPKaYcjjxmTmIoMmhOXRRyOPCXrfMYRe8L5QnB7uCeF+VtAv+c5h8JehpNFf1gXhx0+LNmmCpKo43xXQCFgY8SzezADy0lDCN1lYhZw+zWlf83RFphqyctgJWYPPNwbnL8vEiOdp05bAQwFuQtf2TgD1P+/k6lKSu2qO2ghQZ2aqXtFWIzZ/KlGRnevhlKWEKjYnl2UlniLQIsHTM5VJBmXw1LLnPSslthzPOrEfkvhLgdb9SQo3WRiHe6bAWL/EyDLRdWZwujAwbos9rSk6WpQEZRN+LOjlNy1KFDtnZl26zDztJKaFEa6OQm4dBLTDZWKr7JksjOFtycVqZYHM6KDB0kc181lQwqy1tUMrPPa3tSmm7aG0UUgvJMe4zjexiXiFYpZn8O2+eKnz7JOshZGzzFpWV5SEVIWpttyt7U4UwS9ee5peEa9PeYVgQ5m+4ym2DhjNEujcEyZzDTNBLXlrJxTfEzVBJ3iY3VQiL5/Zd22eEmGV02869seG1tSuMEwZ+zl9jjmsq5muSUZvksAtqG+kdGacpxBhqT6DrPnbHXdsX/BlWGduU+pm3lSxp6zmGmaINmk7KQpvMP6WaPD5E1m5L7erep6QQ70xwdR4cBhqQRbdms2pjHrl3+K3sdeOU3RUE8ZG96f21NtGGVwkTm1F7Hx7T0+Z6B0wqxF7A8o3xzPp8R+bCxUcKtBKJFfR2pYQ9QrPBE0XTRFxxZ7PyaVuxBxx17F5b+ccVwlTOvWqZtpVhyomJnGljSpatJPOGIWuLsMdO7MH42puIrU24gpvkNWKwEvBMbuYfKYRJRFxr06fAzT/JT9MQGka9ZJ8JAtI8OV6bJiRv3cybWmboWkbTOrCT/bSFTNpc+Ko5e2OkECaD47ZgImttzS1tErlvJ2mT16zEhkrzl5BTT47VnXlsMm/X63nK8JA0LbdN2+BpnmId3lSIUEmTjYQ2yJjYNP+m9qdkZq6o7XStTlh/p9zeKGneMs7aqJTDM7Vpm8Pv2Ngwl1xQD+GSHBHbHHXNpvkFwE3Ly7ReSzcev7GW2II+bxmz6jAuCh/8+HXT8wMo5IpNc0/k46adIFUvazaw0Q2/Hp1UjodV6G3I85Yxqw7jstR87uN5Suf7Uwi7TSlxFq3pagwfMbuONTxHLeEI+rmOOM5zmLeMNiOC1VMXWU9DITXv3yyGbRYBs3bzfPQ1OXjepM+SZ1Y6HvOUMasO4+W3aZvx+05AIV2HA2vzcWbTzr+1nVg8Y1XlMZzkOaL3sYcZ8epaxqw6jFdMWePXTc8Po5CmEd+TTPk0Jmm165p9Zzy/6HfLRcZKsbJeKXPtvYzxfPOcz1OGYPCmZbdpm3Geh1IIg9c4sem5oWTyaavd+95awgRdV79JaGJlvVLWdSwOiyp0LaNpHfjQ2a2qAkxJOIhCOFZqJuMp924mXXzzd/YPm41P+s3OOcwcn49Y3w42ga5vi9HBgRTC48dp1KSwyTzeqJ2k1a43d6K1xIHTn9FCPna7Ftm3sjJdHUIhKOKH2qwi3AOv6qch8r6xJDfMPphsAjiMIk0EYsXtYvVg+2LW2TSdKIgyGPNm7RfkHUfmBDFU47TauUh4bxuxEtfyDI1uGCGzYxPZfMSzkat2jJk21/abIVSjHiKdvcgq5McuWmBjB354enWsZrNK8uCAp9QLnk0FE9PcNK98P8zPJYPmqBw2tnrI5kV+fK9WPO1Tc950+08hbew8XJjT7EopehBg2c2w2VQYH7RpqhCvagi5FXJkSNwqY7yHjIgslQ/MhTAdjc1WzwtW2xhZRt4z+ZuCIYvgQ1YKZXgbiqxN68XNW1umazuuXW2p7tr2wWHsgzc5bENJIaNUX86x+vKBGAZI2uTEH6WPHymkzW7auxX2G4aENpUeL3PHeU8X5go9WGAbGZuytTOvRaeYsLUdB5e2FJnioS/ynqaQyRsI6C3bSbprm0Rd0HlTpAgOf6E2X2t60wLzGTq8ry7KhGxtijLE1zaDYpe1XSN+bRSCoa91/sZJAUWBd1mDM0kIJPNU8hQWWC+UZEK9aUrg1WwzgeeWTfDk12Ke2QmnvYO5yWD8p61ChN3XVkn7hbEhrs3QlVs2wVDx2pxxk54zRxHjAi7sjnVvTqqQ5wI88DKe4y1oj0nest2cQYa2BRiq1FndS/daFPyxlFCjtVUIPiK97e6dT6K4XQ0r7Gcyrem1BrMzFgWjwazgyKnS8yAeeFE43iwHFN5Ursl86sgQSimTaa6/mZ9WvSP5dy170WYhT+Edk8kTl8Mu0IWZATTArsR9hODBENNcMx2Zg3xLpfHcMWqXro0mhLQ2weNtTPUEEtz1voTqZKI2Z9bqJYrH3FhLr9K7KgRDnzjywo3zEloKvyoJunYO+wSIoRLh7gMCtQpZJPhPPbX0qfR5FPKvcLY6mfYVaCsnfoQuE33YDwrMFe+PRFzBORThF6F6W7j1UJX7NmEehWDgoyyC25gCXJfQplJ4ZZclcYnfKmjmRWal2pxBJkZCsdHsU6474bwKUSijpE8tTbN98aL5CBnTwR7qLRt6hWWtnuFcfUvogWSx9eJoKb0xrQ+FKIwbmEAEc11Ck6GJ0JLZbtgStJRvCDSGQu/jWxYbdslek0t8s7d4a++r1+4r0vtSCOaUYliaNqfIJxRHvK7gCh9z4UNAHwJySdtnkY3DqGYOGcnKh2EY60UZmPapEPysulTKeOt6GrISc/6IuRVdYhlt6Js2NEzj1yXNUGqT6MH4bhgwnfjPCTWrbbJsATOPh8k79lvEeU/6Vgh5vp8fSvFh+9rmMVl2gFe8LCW9zct7ycRhbhIJb+fvHfg+EC88NSLTN+u1b0R6MJp6+tTJw8OxpCftqMi8F4tQCJns5pmjWXKZQtDaoGGNjckKztKaZaAPxAtPEf+zhqOSvHqRV/zssdSxlGcu2qIUMhKKy9Z3THySg39lRN9rRxZuG2Hf6rVaXJj8i1YIwS2H/VtVQ4Jvgtg8oe8FJCuZDak+SbWQXjHeEMtQyKg8YzZztLd8LSWtyrqYvEf8FnUkE9nY48hKZrIvqrwdfJepkFHBnjKTqxfpmev57bk159rhjph3PJqcyUAWMpGNaZ2sHVl2u20VChmX1J7FTpjj39NoQ8bUwl7Et81D6b83C1TrA/HCE2/+bWUp02c0yEAWMo3L2Pv5NIarVsikbCZ+ES78KXbzlqPeEb9hMvaBeOGJNzOOspQZ9sOAoSlkGK2yQinWCllh45eKXiuk1CorpK0VssLGLxW9VkipVVZIWytkhY1fKnqtkFKrrJD2fwAAAP//g/VstAAAAAZJREFUAwBls3rnljzKsQAAAABJRU5ErkJggg==" alt="봇"></div><button class="reset-btn" style="margin-left:11px;margin-top:2px;" onclick="resetAll()">↺ 처음으로 돌아가기</button>`;
+  chat.appendChild(row);
+  scrollBottom();
+}
+
+function copyDraft(uid) {
+  const el = document.getElementById(`draft-${uid}`);
+  const btn = document.getElementById(`copy-${uid}`);
+  navigator.clipboard.writeText(el.innerText).then(() => {
+    btn.textContent = '✓ 복사됨';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 복사'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function resetAll() {
+  selectedItem = null; filteredItems = []; dropIdx = -1; currentType = null;
+  const inputBox = document.getElementById('input-box');
+  inputBox.value = '';
+  inputBox.disabled = true;
+  inputBox.placeholder = '문의/리뷰를 먼저 선택해주세요';
+  document.getElementById('dropdown').classList.remove('show');
+  document.getElementById('chat').innerHTML = `
+    <div class="row-bot">
+      <div class="b-av"><img src="data:image/png;base64,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" alt="봇"></div>
+      <div class="bubble-bot">안녕하세요. 뚜누 CS 가이드 봇입니다!<br>안내드릴 유형을 선택해 주세요.
+        <div class="chips">
+          <span class="chip" onclick="pickType(this,'inquiry')">문의</span>
+          <span class="chip" onclick="pickType(this,'review')">리뷰</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function scrollBottom() {
+  const chat = document.getElementById('chat');
+  chat.scrollTop = chat.scrollHeight;
+}
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('input-box').contains(e.target) && !document.getElementById('dropdown').contains(e.target)) {
+    document.getElementById('dropdown').classList.remove('show');
+  }
+});
+</script>
+</body>
+</html>
