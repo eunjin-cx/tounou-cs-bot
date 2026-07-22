@@ -2030,7 +2030,7 @@ function toggleAcc(el) {
   }
   requestAnimationFrame(() => {
     if (willOpen) {
-      body.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      body.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
