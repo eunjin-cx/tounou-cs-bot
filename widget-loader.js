@@ -34,9 +34,12 @@
   btnImg.style.cssText = 'width:30px;height:30px;object-fit:contain;';
   btn.appendChild(btnImg);
 
-  var closeMark = document.createElement('span');
-  closeMark.textContent = '\u2715';
-  closeMark.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;line-height:1;color:#1a1a1a;display:none;pointer-events:none;';
+  var closeMark = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  closeMark.setAttribute('viewBox', '0 0 24 24');
+  closeMark.setAttribute('width', '26');
+  closeMark.setAttribute('height', '26');
+  closeMark.style.cssText = 'display:none;opacity:0.55;';
+  closeMark.innerHTML = '<line x1="5" y1="5" x2="19" y2="19" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>';
   btn.appendChild(closeMark);
 
   btn.onmouseenter = function () { btn.style.transform = 'scale(1.08)'; };
@@ -69,7 +72,7 @@
   btn.addEventListener('click', function () {
     isOpen = !isOpen;
     container.style.display = isOpen ? 'block' : 'none';
-    btnImg.style.opacity = isOpen ? '0.35' : '1';
+    btnImg.style.display = isOpen ? 'none' : 'block';
     closeMark.style.display = isOpen ? 'block' : 'none';
   });
 
