@@ -26,12 +26,18 @@
     'padding:0'
   ].join(';');
 
+  btn.style.cssText += ';position:fixed;';
+
   var btnImg = document.createElement('img');
   btnImg.src = LOGO_URI;
   btnImg.alt = '뚜누 CS 가이드';
   btnImg.style.cssText = 'width:30px;height:30px;object-fit:contain;';
-  var btnCloseIcon = document.createTextNode('');
   btn.appendChild(btnImg);
+
+  var closeMark = document.createElement('span');
+  closeMark.textContent = '\u2715';
+  closeMark.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;line-height:1;color:#1a1a1a;display:none;pointer-events:none;';
+  btn.appendChild(closeMark);
 
   btn.onmouseenter = function () { btn.style.transform = 'scale(1.08)'; };
   btn.onmouseleave = function () { btn.style.transform = 'scale(1)'; };
@@ -64,6 +70,7 @@
     isOpen = !isOpen;
     container.style.display = isOpen ? 'block' : 'none';
     btnImg.style.opacity = isOpen ? '0.35' : '1';
+    closeMark.style.display = isOpen ? 'block' : 'none';
   });
 
   // 4. 모바일 대응 (화면 작을 때 전체화면에 가깝게)
