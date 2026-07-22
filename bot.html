@@ -1775,7 +1775,11 @@ const SHOPPINGBAG_TABLE = `<div style="background:#ffffff;border-radius:10px;pad
 </div>`;
 
 function bulletLine(line) {
-  return /^- /.test(line) ? '<span style="line-height:1;">•</span>\u2002' + line.slice(2) : line;
+  const sub = line.match(/^\s*· (.*)$/);
+  if (sub) return `<div style="padding-left:14px;margin-bottom:4px;">· ${sub[1]}</div>`;
+  if (/^- /.test(line)) return `<div style="margin-bottom:10px;"><span style="line-height:1;">•</span>\u2002${line.slice(2)}</div>`;
+  if (line.trim() === '') return '';
+  return `<div style="margin-bottom:8px;">${line}</div>`;
 }
 
 const TABLE_MARKERS = {
@@ -1791,48 +1795,47 @@ function findTableMarker(text) {
 }
 
 function renderRange(text) {
-  const formatLine = line => /^\d+\.\s/.test(line) ? `<b>${line}</b>` : bulletLine(line);
+  const formatLine = line => /^\d+\.\s/.test(line) ? `<div style="margin-bottom:8px;"><b>${line}</b></div>` : bulletLine(line);
   const marker = findTableMarker(text);
-  if (!marker) return text.split('\n').map(formatLine).join('\n');
+  if (!marker) return text.split('\n').map(formatLine).join('');
   const idx = text.indexOf(marker);
   const before = text.substring(0, idx).trimEnd();
   const lineEnd = text.indexOf('\n', idx);
   const label = lineEnd === -1 ? text.substring(idx).trim() : text.substring(idx, lineEnd).trim();
-  const beforeHtml = before ? before.split('\n').map(formatLine).join('\n') : '';
-  return (beforeHtml ? beforeHtml + '\n' : '') +
+  const beforeHtml = before ? before.split('\n').map(formatLine).join('') : '';
+  return beforeHtml +
     `<span style="font-size:14px;font-weight:600;display:block;margin-top:6px;margin-bottom:4px;">${label}</span>` +
     TABLE_MARKERS[marker];
 }
 
 function renderGuide(text) {
   const marker = findTableMarker(text);
-  if (!marker) return text.split('\n').map(bulletLine).join('\n');
+  if (!marker) return text.split('\n').map(bulletLine).join('');
   const idx = text.indexOf(marker);
   const before = text.substring(0, idx).trimEnd();
   const lineEnd = text.indexOf('\n', idx);
   const label = lineEnd === -1 ? text.substring(idx).trim() : text.substring(idx, lineEnd).trim();
-  const beforeHtml = before ? before.split('\n').map(bulletLine).join('\n') : '';
-  return (beforeHtml ? beforeHtml + '\n' : '') +
+  const beforeHtml = before ? before.split('\n').map(bulletLine).join('') : '';
+  return beforeHtml +
     `<span style="font-size:14px;font-weight:600;display:block;margin-top:6px;margin-bottom:4px;">${label}</span>` +
     TABLE_MARKERS[marker];
 }
 
 function renderCaution(text) {
-  return text.split('\n').map(bulletLine).join('\n');
+  return text.split('\n').map(bulletLine).join('');
 }
 
 function renderTip(tip) {
   const TABLE_MARKER = '결제수단별 환불기간';
-  const indentLine = line => bulletLine(line).replace(/^( +)/, m => '&nbsp;'.repeat(m.length * 2));
-  const toHtml = t => t.split('\n').map(indentLine).join('<br>');
+  const toHtml = t => t.split('\n').map(bulletLine).join('');
   if (!tip.includes(TABLE_MARKER)) return toHtml(tip);
   const idx = tip.indexOf(TABLE_MARKER);
   const before = tip.substring(0, idx).trimEnd();
   const lineEnd = tip.indexOf('\n', idx);
   const label = lineEnd === -1 ? tip.substring(idx).trim() : tip.substring(idx, lineEnd).trim();
   const beforeHtml = before ? toHtml(before) : '';
-  return (beforeHtml ? beforeHtml + '<br>' : '') +
-    `<span style="font-size:12px;color:#888;display:block;margin-top:8px;margin-bottom:2px;">${label}</span>` +
+  return beforeHtml +
+    `<span style="font-size:12px;color:#888;display:block;margin-top:8px;margin-bottom:6px;">${label}</span>` +
     REFUND_TABLE;
 }
 
@@ -2022,7 +2025,7 @@ function toggleAcc(el) {
   body.classList.toggle('open');
   if (arrow) arrow.classList.toggle('open');
   requestAnimationFrame(() => {
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 }
 
