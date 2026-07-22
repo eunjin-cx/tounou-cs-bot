@@ -35,7 +35,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
 .chip{background:#fff;border:1.5px solid #ddd;border-radius:8px;padding:7px 14px;font-size:13px;color:#333;cursor:pointer;transition:all .12s;font-weight:500;}
 .chip:hover{border-color:#1a1a1a;}
-.chip.sel{background:#1a1a1a;border-color:#1a1a1a;color:#ffe066;font-weight:700;}
+.chip.sel{background:#FFF8DC;border-color:#FFE066;color:#1a1a1a;font-weight:700;}
 
 /* 답변 카드 */
 .ans-wrap{display:block;max-width:100%;}
@@ -1775,11 +1775,7 @@ const SHOPPINGBAG_TABLE = `<div style="background:#ffffff;border-radius:10px;pad
 </div>`;
 
 function bulletLine(line) {
-  const sub = line.match(/^\s*· (.*)$/);
-  if (sub) return `<div style="padding-left:14px;margin-bottom:5px;">· ${sub[1]}</div>`;
-  if (/^- /.test(line)) return `<div style="margin-bottom:14px;"><span style="line-height:1;">•</span>\u2002${line.slice(2)}</div>`;
-  if (line.trim() === '') return '';
-  return `<div style="margin-bottom:10px;">${line}</div>`;
+  return /^- /.test(line) ? '<span style="line-height:1;">•</span>\u2002' + line.slice(2) : line;
 }
 
 const TABLE_MARKERS = {
@@ -1795,47 +1791,48 @@ function findTableMarker(text) {
 }
 
 function renderRange(text) {
-  const formatLine = line => /^\d+\.\s/.test(line) ? `<div style="margin-bottom:8px;"><b>${line}</b></div>` : bulletLine(line);
+  const formatLine = line => /^\d+\.\s/.test(line) ? `<b>${line}</b>` : bulletLine(line);
   const marker = findTableMarker(text);
-  if (!marker) return text.split('\n').map(formatLine).join('');
+  if (!marker) return text.split('\n').map(formatLine).join('\n');
   const idx = text.indexOf(marker);
   const before = text.substring(0, idx).trimEnd();
   const lineEnd = text.indexOf('\n', idx);
   const label = lineEnd === -1 ? text.substring(idx).trim() : text.substring(idx, lineEnd).trim();
-  const beforeHtml = before ? before.split('\n').map(formatLine).join('') : '';
-  return beforeHtml +
+  const beforeHtml = before ? before.split('\n').map(formatLine).join('\n') : '';
+  return (beforeHtml ? beforeHtml + '\n' : '') +
     `<span style="font-size:14px;font-weight:600;display:block;margin-top:6px;margin-bottom:4px;">${label}</span>` +
     TABLE_MARKERS[marker];
 }
 
 function renderGuide(text) {
   const marker = findTableMarker(text);
-  if (!marker) return text.split('\n').map(bulletLine).join('');
+  if (!marker) return text.split('\n').map(bulletLine).join('\n');
   const idx = text.indexOf(marker);
   const before = text.substring(0, idx).trimEnd();
   const lineEnd = text.indexOf('\n', idx);
   const label = lineEnd === -1 ? text.substring(idx).trim() : text.substring(idx, lineEnd).trim();
-  const beforeHtml = before ? before.split('\n').map(bulletLine).join('') : '';
-  return beforeHtml +
+  const beforeHtml = before ? before.split('\n').map(bulletLine).join('\n') : '';
+  return (beforeHtml ? beforeHtml + '\n' : '') +
     `<span style="font-size:14px;font-weight:600;display:block;margin-top:6px;margin-bottom:4px;">${label}</span>` +
     TABLE_MARKERS[marker];
 }
 
 function renderCaution(text) {
-  return text.split('\n').map(bulletLine).join('');
+  return text.split('\n').map(bulletLine).join('\n');
 }
 
 function renderTip(tip) {
   const TABLE_MARKER = '결제수단별 환불기간';
-  const toHtml = t => t.split('\n').map(bulletLine).join('');
+  const indentLine = line => bulletLine(line).replace(/^( +)/, m => '&nbsp;'.repeat(m.length * 2));
+  const toHtml = t => t.split('\n').map(indentLine).join('<br>');
   if (!tip.includes(TABLE_MARKER)) return toHtml(tip);
   const idx = tip.indexOf(TABLE_MARKER);
   const before = tip.substring(0, idx).trimEnd();
   const lineEnd = tip.indexOf('\n', idx);
   const label = lineEnd === -1 ? tip.substring(idx).trim() : tip.substring(idx, lineEnd).trim();
   const beforeHtml = before ? toHtml(before) : '';
-  return beforeHtml +
-    `<span style="font-size:12px;color:#888;display:block;margin-top:8px;margin-bottom:6px;">${label}</span>` +
+  return (beforeHtml ? beforeHtml + '<br>' : '') +
+    `<span style="font-size:12px;color:#888;display:block;margin-top:8px;margin-bottom:2px;">${label}</span>` +
     REFUND_TABLE;
 }
 
@@ -2022,10 +2019,15 @@ function resetAll() {
 function toggleAcc(el) {
   const body = el.nextElementSibling;
   const arrow = el.querySelector('.acc-arrow');
+  const willOpen = !body.classList.contains('open');
   body.classList.toggle('open');
   if (arrow) arrow.classList.toggle('open');
   requestAnimationFrame(() => {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (willOpen) {
+      body.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   });
 }
 
