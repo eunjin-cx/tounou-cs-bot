@@ -1776,10 +1776,10 @@ const SHOPPINGBAG_TABLE = `<div style="background:#ffffff;border-radius:10px;pad
 
 function bulletLine(line) {
   const sub = line.match(/^\s*· (.*)$/);
-  if (sub) return `<div style="padding-left:14px;margin-bottom:4px;">· ${sub[1]}</div>`;
-  if (/^- /.test(line)) return `<div style="margin-bottom:10px;"><span style="line-height:1;">•</span>\u2002${line.slice(2)}</div>`;
+  if (sub) return `<div style="padding-left:14px;margin-bottom:5px;">· ${sub[1]}</div>`;
+  if (/^- /.test(line)) return `<div style="margin-bottom:14px;"><span style="line-height:1;">•</span>\u2002${line.slice(2)}</div>`;
   if (line.trim() === '') return '';
-  return `<div style="margin-bottom:8px;">${line}</div>`;
+  return `<div style="margin-bottom:10px;">${line}</div>`;
 }
 
 const TABLE_MARKERS = {
