@@ -372,15 +372,21 @@ const SCRIPTS = {
 이후 반품 처리는 클레임 담당자가 진행
 ※ 회수 상품 검수 후 고객에게 직접 추가 안내가 필요한 건은 후단 안내까지 진행`,
     주의사항:`- 반품 신청 가능 기간 : 상품 수령일로부터 7일 이내 (초도 불량의 경우 1개월)
+
 - 회수 상품 검수 시 사용 흔적이 확인될 경우 반품 제한/반송될 수 있음
+
 - 반품 배송비 공제 기준
   · 초도 배송비 결제 건 3,000원 차감
   · 무료배송 적용 건 6,000원 차감
   · 부분 반품 시 잔여 상품 금액 기준으로 무료배송 충족 여부 확인 필요
+
 - 부분 반품 시 잔여 금액 기준으로 쿠폰 유지/취소 여부 및 사용 적립금 유지/취소 여부 확인 필요
+
 - 네이버페이 주문 건은 수량 부분 반품 불가 → 전체 반품 접수 후 상품 1개 금액+배송비 계좌 입금 안내 필요`,
     tip:`- 택배 봉투 미보유 시 별도 박스·봉투 등 대체 포장재 사용 가능 → 회수 배송 중 상품에 훼손 없도록 별도 포장 요청, 포장재 외부에 [뚜누 CJ 회수] 기재 요청
+
 - 환불 금액은 결제수단에 따라 처리 기간 상이
+
 결제수단별 환불기간 (영업일 기준 / 자사몰 주문 건 해당)
 계좌 간편결제 / 2일 이내
 무통장입금 / 5일 이내
@@ -487,10 +493,14 @@ const SCRIPTS = {
 이후 교환 처리는 클레임 담당자가 진행
 ※ 회수 상품 검수 후 고객에게 직접 추가 안내가 필요한 건은 후단 안내까지 진행`,
     주의사항:`- 교환 신청 가능 기간 : 상품 수령일로부터 7일 이내 (초도 불량의 경우 1개월)
+
 - 회수 상품 검수 시 사용 흔적이 확인될 경우 교환 제한/반송될 수 있음
+
 - 상품 차액 발생 시 왕복 배송비에서 +/- 후 금액 안내 필요
+
 - 부분 교환 시 잔여 금액 기준으로 쿠폰 유지/취소 여부 및 사용 적립금 유지/취소 여부 확인 필요`,
     tip:`- 택배 봉투 미보유 시 별도 박스·봉투 등 대체 포장재 사용 가능 → 회수 배송 중 상품에 훼손 없도록 별도 포장 요청, 포장재 외부에 [뚜누 CJ 회수] 기재 요청
+
 - 교환 상품 출고 일정은 아래 구분으로 안내
   1. 당일 출고 상품 : 회수 확인 후 당일 또는 익일 출고
   2. POD 상품 : 회수 확인 후 제작 기간 감안하여 출고 예정일 별도 안내`
@@ -1097,7 +1107,9 @@ const SCRIPTS = {
 추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
 감사합니다.`,
     처리범위:`- 실측 사이즈 회신 올 경우, 상품 사이즈표와 비교하여 적합한 사이즈 추천 안내
+
 - 거실 소파 위, 복도 등 여백이 많고 넓은 공간의 경우 500X700mm~A1 사이즈 선호도가 가장 높음(참고용)
+
 - 하나의 사이즈로 단정하지 않고 선택 기준에 따라 옵션을 나눠서 안내 필요
   ex) 여백 여유 있게: 500X700mm / 여백 없이 꽉 채움: A1`,
     주의사항:`- 사이즈 선호는 개인차가 있을 수 있어, 안내드린 내용은 참고용으로만 확인하도록 안내 필요`
@@ -1188,7 +1200,10 @@ const SCRIPTS = {
   '쇼핑백 사이즈 추천': {
     guide:`- 하단 표 기준으로 각 상품별 호환되는 쇼핑백 사이즈 안내
 
-사이즈별 호환 상품`,
+사이즈별 호환 상품 (S/M/L)
+S : 파우치, 베개 커버, 쿠션 커버, 미니 쿠션 커버, 핸드타월 세트, 테이블웨어, 패브릭 포스터(S,M)
+M : 극세사 담요, 니트 블랭킷, 의류, 패브릭 포스터(L), 핸드타월+타월발매트 세트, 미니 쿠션솜, 쿠션솜(40X40cm)
+L : 발매트, 규조토 발매트, 주방매트 러너, 러그, PVC 주방매트, 쿠션솜(50X50cm)`,
     주의사항:`- 위 표에 없는 상품이거나, 여러 상품 합포장 시 호환되는 쇼핑백 등 추가 확인이 필요한 건은 실물 상품과 쇼핑백 사이즈를 직접 확인 후 안내 필요`,
     tip:`- 소프트 규조토 발매트는 상품을 접지 않고 그대로 넣을 경우 쇼핑백 L사이즈와 호환
 - 유연한 재질 특성상, 상품을 반으로 접어 수납할 경우 M사이즈 쇼핑백 사용도 가능`
@@ -1916,6 +1931,7 @@ function addDraftOnly(label, ch) {
     </div>
   </div></div></div>`;
   chat.appendChild(row);
+  autoOpenIfSingle(row);
   scrollBottom();
 }
 
@@ -1956,7 +1972,7 @@ function renderAnswer(label, ch) {
 
   row.innerHTML = html;
   chat.appendChild(row);
-  equalizeWrapWidths(row);
+  if (!autoOpenIfSingle(row)) equalizeWrapWidths(row);
   scrollBottom();
 }
 
@@ -1976,7 +1992,7 @@ function addGuideCard(s) {
   }
   row.innerHTML = `<div class="ans-card">${inner}</div>`;
   chat.appendChild(row);
-  equalizeWrapWidths(row);
+  if (!autoOpenIfSingle(row)) equalizeWrapWidths(row);
   scrollBottom();
 }
 
@@ -2035,6 +2051,19 @@ function toggleAcc(el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   });
+}
+
+function autoOpenIfSingle(row) {
+  const wraps = row.querySelectorAll('.range-wrap, .caution-wrap, .tip-wrap, .guide-wrap, .draft-wrap');
+  if (wraps.length !== 1) return false;
+  const wrap = wraps[0];
+  const body = wrap.querySelector('.acc-body');
+  const arrow = wrap.querySelector('.acc-arrow');
+  if (body) body.classList.add('open');
+  if (arrow) arrow.classList.add('open');
+  wrap.style.width = '370px';
+  wrap.dataset.closedWidth = '370';
+  return true;
 }
 
 function equalizeWrapWidths(container) {
