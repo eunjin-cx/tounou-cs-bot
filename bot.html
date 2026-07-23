@@ -2057,10 +2057,12 @@ function autoOpenIfSingle(row) {
   const wrap = wraps[0];
   const body = wrap.querySelector('.acc-body');
   const arrow = wrap.querySelector('.acc-arrow');
+  wrap.style.width = '';
+  const naturalWidth = wrap.offsetWidth;
+  wrap.dataset.closedWidth = naturalWidth;
   if (body) body.classList.add('open');
   if (arrow) arrow.classList.add('open');
   wrap.style.width = '370px';
-  wrap.dataset.closedWidth = '370';
   return true;
 }
 
