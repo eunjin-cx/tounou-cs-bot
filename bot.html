@@ -1991,11 +1991,37 @@ function addResetBubble() {
 function copyDraft(uid) {
   const el = document.getElementById(`draft-${uid}`);
   const btn = document.getElementById(`copy-${uid}`);
-  navigator.clipboard.writeText(el.innerText).then(() => {
+  const text = el.innerText;
+
+  function showCopied() {
     btn.textContent = '✓ 복사됨';
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent = '📋 복사'; btn.classList.remove('copied'); }, 2000);
-  });
+  }
+
+  function fallbackCopy() {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showCopied();
+    } catch (e) {
+      btn.textContent = '복사 실패, 직접 선택해주세요';
+      setTimeout(() => { btn.textContent = '📋 복사'; }, 2500);
+    }
+    document.body.removeChild(ta);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(showCopied).catch(fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
 }
 
 function resetAll() {
