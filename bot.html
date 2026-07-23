@@ -29,7 +29,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 
 /* 유저 말풍선 */
 .row-user{display:flex;justify-content:flex-end;}
-.bubble-user{background:#FFDD57;border-radius:16px 4px 16px 16px;padding:9px 13px;font-size:14px;color:#1a1a1a;font-weight:500;max-width:85%;}
+.bubble-user{background:#FEE500;border-radius:16px 4px 16px 16px;padding:9px 13px;font-size:14px;color:#1a1a1a;font-weight:500;max-width:85%;}
 
 /* 채널 칩 */
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
@@ -79,7 +79,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .acc-arrow.open{transform:rotate(180deg);}
 .acc-body{display:none;margin-top:9px;}
 .acc-body.open{display:block;}
-.range-wrap,.caution-wrap,.tip-wrap,.guide-wrap,.draft-wrap{min-width:0;}
+.range-wrap,.caution-wrap,.tip-wrap,.guide-wrap,.draft-wrap{min-width:180px;}
 .range-box,.caution-box,.tip-box,.guide-box,.draft-box{overflow-wrap:break-word;min-width:0;}
 
 .reset-btn{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:#fff;border:1.5px solid #e0e0e0;border-radius:16px;padding:8px 15px;font-size:13px;color:#666;cursor:pointer;font-family:inherit;transition:all .12s;}
@@ -2050,7 +2050,7 @@ function addDraftOnly(label, ch) {
   </div></div></div>`;
   chat.appendChild(row);
   autoOpenIfSingle(row);
-  scrollBottom();
+  row.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderAnswer(label, ch) {
@@ -2090,8 +2090,12 @@ function renderAnswer(label, ch) {
 
   row.innerHTML = html;
   chat.appendChild(row);
-  if (!autoOpenIfSingle(row)) equalizeWrapWidths(row);
-  scrollBottom();
+  if (autoOpenIfSingle(row)) {
+    row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    equalizeWrapWidths(row);
+    scrollBottom();
+  }
 }
 
 function addGuideCard(s) {
@@ -2123,8 +2127,12 @@ function addGuideCard(s) {
   }
   row.innerHTML = `<div class="ans-card">${inner}</div>`;
   chat.appendChild(row);
-  if (!autoOpenIfSingle(row)) equalizeWrapWidths(row);
-  scrollBottom();
+  if (autoOpenIfSingle(row)) {
+    row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    equalizeWrapWidths(row);
+    scrollBottom();
+  }
 }
 
 function addResetBubble() {
@@ -2210,10 +2218,18 @@ function autoOpenIfSingle(row) {
   const wraps = row.querySelectorAll('.range-wrap, .caution-wrap, .tip-wrap, .guide-wrap, .draft-wrap');
   if (wraps.length !== 1) return false;
   const wrap = wraps[0];
+  const lbl = wrap.querySelector('.guide-lbl, .draft-lbl, .range-lbl, .caution-lbl, .tip-lbl');
   const body = wrap.querySelector('.acc-body');
   const arrow = wrap.querySelector('.acc-arrow');
-  wrap.style.width = '';
-  const naturalWidth = wrap.offsetWidth;
+  let naturalWidth = 200;
+  try {
+    if (lbl) {
+      const prevWS = lbl.style.whiteSpace;
+      lbl.style.whiteSpace = 'nowrap';
+      naturalWidth = Math.ceil(lbl.getBoundingClientRect().width) + 28;
+      lbl.style.whiteSpace = prevWS;
+    }
+  } catch (e) { /* keep fallback width */ }
   wrap.dataset.closedWidth = naturalWidth;
   if (body) body.classList.add('open');
   if (arrow) arrow.classList.add('open');
