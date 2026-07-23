@@ -64,6 +64,7 @@
   ].join(';');
 
   var iframe = document.createElement('iframe');
+  iframe.setAttribute('allow', 'clipboard-write');
   iframe.src = BOT_URL;
   iframe.style.cssText = 'width:100%;height:100%;border:none;';
   container.appendChild(iframe);
