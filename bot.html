@@ -1690,14 +1690,12 @@ function onKeyDown(e) {
   else if (e.key === 'Enter') {
     e.preventDefault();
     if (dropIdx >= 0) pickItem(dropIdx);
-    else if (filteredItems.length >= 1) pickItem(0);
   }
   else if (e.key === 'Escape') { document.getElementById('dropdown').classList.remove('show'); }
 }
 
 function sendEnter() {
   if (dropIdx >= 0) pickItem(dropIdx);
-  else if (filteredItems.length >= 1) pickItem(0);
 }
 
 function pickItem(idx) {
