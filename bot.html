@@ -114,11 +114,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
   <div class="chat" id="chat">
     <div class="row-bot">
       
-      <div class="bubble-bot">안녕하세요. 뚜누 CS 가이드 봇입니다!<br>안내드릴 유형을 선택해 주세요.
-        <div class="chips">
-          <span class="chip" onclick="pickType(this,'inquiry')">문의</span>
-          <span class="chip" onclick="pickType(this,'review')">리뷰</span>
-        </div>
+      <div class="bubble-bot">안녕하세요. 뚜누 CS 가이드 봇입니다!<br>궁금한 항목의 키워드를 입력하신 후 항목을 선택해주세요.<br><span style="font-size:12px;color:#999;">예: 반품, 교환, 상품 카테고리</span>
       </div>
     </div>
   </div>
@@ -126,7 +122,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
   <div class="input-area">
     <div class="dropdown" id="dropdown"></div>
     <div class="input-row">
-      <input class="input-box" id="input-box" placeholder="문의/리뷰를 먼저 선택해주세요" autocomplete="off" disabled
+      <input class="input-box" id="input-box" placeholder="키워드를 입력해주세요..." autocomplete="off"
         oninput="onInput(this.value)"
         onkeydown="onKeyDown(event)"
       />
@@ -375,14 +371,18 @@ const SCRIPTS = {
 
 - 회수 상품 검수 시 사용 흔적이 확인될 경우 반품 제한/반송될 수 있음
 
-- 반품 배송비 공제 기준
+- <b>반품 배송비 공제 기준</b>
   · 초도 배송비 결제 건 3,000원 차감
   · 무료배송 적용 건 6,000원 차감
   · 부분 반품 시 잔여 상품 금액 기준으로 무료배송 충족 여부 확인 필요
 
 - 부분 반품 시 잔여 금액 기준으로 쿠폰 유지/취소 여부 및 사용 적립금 유지/취소 여부 확인 필요
 
-- 네이버페이 주문 건은 수량 부분 반품 불가 → 전체 반품 접수 후 상품 1개 금액+배송비 계좌 입금 안내 필요`,
+- <b>네이버페이 주문 건</b>
+  · 초도 배송비까지 환불이 진행되므로, 반품 배송비는 6,000원으로 고정
+  · 고객이 반품 신청 전 담당자가 먼저 접수를 진행하는 경우, '배송비 계좌 입금' or '환불금 차감' 중 희망하는 처리 방향 고객 의사 확인 필요
+  · 환불금 차감으로 진행 시, 추후 반품 완료 처리 전 고객이 직접 차감으로 재설정 필요 → 상품 회수 후 추가 연락 예정임을 안내
+  · 네이버페이 주문 건은 수량 부분 반품 불가 → 전체 반품 접수 후 상품 1개 금액+배송비 계좌 입금 안내 필요`,
     tip:`- 택배 봉투 미보유 시 별도 박스·봉투 등 대체 포장재 사용 가능 → 회수 배송 중 상품에 훼손 없도록 별도 포장 요청, 포장재 외부에 [뚜누 CJ 회수] 기재 요청
 
 - 환불 금액은 결제수단에 따라 처리 기간 상이
@@ -1624,32 +1624,16 @@ const REVIEW_SCRIPTS = {
 let selectedItem = null;
 let filteredItems = [];
 let dropIdx = -1;
-let currentType = null; // 'inquiry' | 'review'
-
-function pickType(el, type) {
-  document.querySelectorAll('.row-bot .chips .chip').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-  currentType = type;
-  addUserBubble(type === 'review' ? '리뷰' : '문의');
-
-  const inputBox = document.getElementById('input-box');
-  inputBox.disabled = false;
-  inputBox.placeholder = '키워드를 입력해주세요...';
-  inputBox.focus();
-
-  const exampleText = type === 'review'
-    ? '예: 정상 리뷰, 사이즈 불일치'
-    : '예: 반품, 교환, 불량, 취소';
-  addBotBubble(`궁금한 항목의 키워드를 입력해주세요.<br><span style="font-size:12px;color:#999;">${exampleText}</span>`);
-}
+let currentType = null; // 'inquiry' | 'review' -- set per-item when picked from the merged list
 
 function onInput(val) {
   const dd = document.getElementById('dropdown');
   const q = val.trim().toLowerCase();
   if (!q) { dd.classList.remove('show'); filteredItems = []; return; }
 
-  const src = currentType === 'review' ? REVIEW_ITEMS : ITEMS;
-  filteredItems = src.filter(it =>
+  const combined = ITEMS.map(it => Object.assign({}, it, { _type: 'inquiry' }))
+    .concat(REVIEW_ITEMS.map(it => Object.assign({}, it, { _type: 'review' })));
+  filteredItems = combined.filter(it =>
     it.keys.some(k => k.toLowerCase().includes(q)) || it.label.toLowerCase().includes(q)
   );
   dropIdx = -1;
@@ -1702,6 +1686,7 @@ function pickItem(idx) {
   const item = filteredItems[idx];
   if (!item) return;
   selectedItem = item;
+  currentType = item._type || 'inquiry';
   document.getElementById('dropdown').classList.remove('show');
   document.getElementById('input-box').value = '';
   filteredItems = [];
@@ -2017,17 +2002,13 @@ function resetAll() {
   selectedItem = null; filteredItems = []; dropIdx = -1; currentType = null;
   const inputBox = document.getElementById('input-box');
   inputBox.value = '';
-  inputBox.disabled = true;
-  inputBox.placeholder = '문의/리뷰를 먼저 선택해주세요';
+  inputBox.disabled = false;
+  inputBox.placeholder = '키워드를 입력해주세요...';
   document.getElementById('dropdown').classList.remove('show');
   document.getElementById('chat').innerHTML = `
     <div class="row-bot">
       
-      <div class="bubble-bot">안녕하세요. 뚜누 CS 가이드 봇입니다!<br>안내드릴 유형을 선택해 주세요.
-        <div class="chips">
-          <span class="chip" onclick="pickType(this,'inquiry')">문의</span>
-          <span class="chip" onclick="pickType(this,'review')">리뷰</span>
-        </div>
+      <div class="bubble-bot">안녕하세요. 뚜누 CS 가이드 봇입니다!<br>궁금한 항목의 키워드를 입력하신 후 항목을 선택해주세요.<br><span style="font-size:12px;color:#999;">예: 반품, 교환, 상품 카테고리</span>
       </div>
     </div>`;
 }
