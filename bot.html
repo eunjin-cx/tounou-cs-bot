@@ -3008,8 +3008,8 @@ function onKeyDown(e) {
 
   if (ddShowing) {
     const items = document.querySelectorAll('.drop-item');
-    if (e.key === 'ArrowDown') { e.preventDefault(); dropIdx = Math.min(dropIdx+1, items.length-1); updateActive(); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); dropIdx = Math.max(dropIdx-1, 0); updateActive(); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); dropIdx = dropIdx >= items.length-1 ? 0 : dropIdx+1; updateActive(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); dropIdx = dropIdx <= 0 ? items.length-1 : dropIdx-1; updateActive(); }
     else if (e.key === 'Enter') {
       e.preventDefault();
       if (dropIdx >= 0) pickItem(dropIdx);
@@ -3507,6 +3507,30 @@ document.addEventListener('keydown', e => {
     setSearchMode(searchMode === 'inquiry' ? 'review' : 'inquiry');
   }
 });
+
+// JS fallback for scroll chaining: some in-app webviews don't honor
+// overscroll-behavior, so a swipe past the chat's scroll edge can still
+// bubble up and move the outer page (making the whole fixed widget,
+// header included, appear to jump). Manually block the scroll once
+// the chat is already at its top/bottom edge and the gesture would
+// push further in that direction.
+(function () {
+  const chatEl = document.getElementById('chat');
+  if (!chatEl) return;
+  let startY = 0;
+  chatEl.addEventListener('touchstart', e => {
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  chatEl.addEventListener('touchmove', e => {
+    const y = e.touches[0].clientY;
+    const goingDown = y > startY; // finger moving down => content scrolls up (revealing top)
+    const atTop = chatEl.scrollTop <= 0;
+    const atBottom = chatEl.scrollTop + chatEl.clientHeight >= chatEl.scrollHeight - 1;
+    if ((atTop && goingDown) || (atBottom && !goingDown)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+})();
 
 </script>
 </body>
