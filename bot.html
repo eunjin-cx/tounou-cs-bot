@@ -224,6 +224,8 @@ const ITEMS = [
   {cat:'기타', label:'무료배송 미적용', keys:['무료배송']},
   {cat:'기타', label:'주문 내역 미확인', keys:['주문 내역']},
   {cat:'기타', label:'아이디/로그인 문의', keys:['아이디','로그인']},
+  {cat:'기타', label:'주문 확인 (구매자 외 타인 > 수령자)', keys:['수령자','타인','구매자 외']},
+  {cat:'기타', label:'주문 확인 (구매자 외 타인 > 제 3자)', keys:['제3자','제 3자','타인','구매자 외']},
   {cat:'적립금', label:'적립금 사용 불가', keys:['적립금 사용']},
   {cat:'적립금', label:'리뷰 적립금 지급 시기', keys:['리뷰 적립금']},
   {cat:'적립금', label:'적립금 사용 기준', keys:['적립금 기준']},
@@ -1263,6 +1265,36 @@ PVC 주방매트는 원단 소재가 아닌 생활 방수 기능이 있는 PVC �
 감사합니다.`
   }
 ,
+  '주문 확인 (구매자 외 타인 > 수령자)': {
+    draftOnly:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+고객님께서 남겨주신 정보로 확인해 본 결과, 고객님께서는 해당 주문 건의 수령자로 등록되어 있는 것으로 확인되었습니다.
+개인정보 보호를 위해 주문자 본인 외 타인에게는 주문 건에 대한 추가 안내가 어려운 점 양해 부탁드립니다.
+
+주문 건의 구매자 측으로 고객님께 별도 연락 드릴 수 있도록 요청드렸으며,
+별도로 수신하실 연락을 통해 확인해 주시면 감사하겠습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    주의사항:`- 수령자 인입 상황 설명 후, 본인 확인을 위해 구매자 측으로 OB 진행
+- 개인정보보호법상 구매자 본인 외에는 주문 정보 제공이 어려우므로, 수령자에게는 구매자 측으로 직접 연락하여 확인하도록 안내`
+  }
+,
+  '주문 확인 (구매자 외 타인 > 제 3자)': {
+    draftOnly:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
+
+현재 고객님께서 남겨주신 정보로는 조회되는 주문 내역이 없는 것으로 확인됩니다.
+개인정보 보호를 위해 주문자 본인 외 타인에게는 주문 건에 대한 안내가 어려워,
+구매자 고객님 본인께서 문의해 주셔야 하는 점 양해 부탁드립니다.
+
+다만 구매자 고객님의 직접 문의가 어려우신 상황이라면, [주문번호/구매자명/구매자 연락처]를 남겨주시면
+구매자 측에 연락드려 본인 확인 및 안내 동의 여부를 확인한 후 진행 도와드리겠습니다.
+
+감사합니다.`,
+    주의사항:`- 구매자 정보(주문번호/구매자명/구매자 연락처) 회신 시, 본인 확인을 위해 구매자 측으로 OB 진행
+- 구매자 동의 하에 인입 고객에게 주문 건 안내 가능 (구매자 미동의 시 안내 불가)`
+  }
+,
   '적립금 사용 불가': {
     draftOnly:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 메이 입니다. 🐰
 
@@ -1440,19 +1472,45 @@ let currentType = null; // 'inquiry' | 'review' -- set per-item when picked from
 let activeChips = null; // currently active (unresolved-focus) channel chip list, for keyboard nav
 let chipIdx = -1;
 
+const WELCOME_HTML = `
+    <div class="row-bot">
+
+      <div class="bubble-bot">안녕하세요. 뚜누 CS 가이드 봇입니다!<br>궁금한 항목의 키워드를 입력해 주세요.<br><span style="font-size:12px;color:#999;">예: 반품, 교환, 상품 카테고리</span>
+      </div>
+    </div>`;
+
+// per-mode chat history, so switching 문의/리뷰 doesn't mix conversations
+const modeChatHTML = { inquiry: null, review: null };
+
 let searchMode = 'inquiry';
 
 function setSearchMode(mode) {
+  if (mode === searchMode) return;
+
+  const chatEl = document.getElementById('chat');
+  modeChatHTML[searchMode] = chatEl.innerHTML; // save the mode we're leaving
+
   searchMode = mode;
   document.getElementById('mode-btn-inquiry').classList.toggle('active', mode === 'inquiry');
   document.getElementById('mode-btn-review').classList.toggle('active', mode === 'review');
   document.querySelector('.header').classList.toggle('review-mode', mode === 'review');
   document.querySelector('.app').classList.toggle('review-mode', mode === 'review');
+
+  chatEl.innerHTML = modeChatHTML[mode] !== null ? modeChatHTML[mode] : WELCOME_HTML;
+
+  // switching modes cancels any in-progress item/channel selection, but keeps each mode's own chat history
+  selectedItem = null;
+  currentType = null;
+  activeChips = null;
+  chipIdx = -1;
+
   const inputBox = document.getElementById('input-box');
   inputBox.value = '';
+  inputBox.disabled = false;
   inputBox.placeholder = mode === 'review' ? '리뷰 키워드를 입력해주세요...' : '키워드를 입력해주세요...';
   document.getElementById('dropdown').classList.remove('show');
   filteredItems = [];
+  dropIdx = -1;
 }
 
 function onInput(val) {
