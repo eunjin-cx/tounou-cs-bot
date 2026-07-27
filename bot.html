@@ -18,9 +18,8 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .header.review-mode .h-title{color:#1a1a1a;}
 .header.review-mode .h-logo{filter:invert(1);}
 .h-left{display:flex;align-items:center;gap:8px;min-width:0;}
-.h-left{display:flex;align-items:center;gap:8px;min-width:0;}
 .h-logo{height:20px;width:auto;display:block;flex-shrink:0;}
-.h-title{font-size:15px;font-weight:600;color:#fff;letter-spacing:0.01em;line-height:1;}
+.h-title{font-size:15px;font-weight:600;color:#fff;letter-spacing:0.01em;line-height:20px;}
 .mode-toggle{display:flex;background:rgba(255,255,255,.15);border-radius:12px;padding:2px;flex-shrink:0;}
 .header.review-mode .mode-toggle{background:rgba(0,0,0,.12);}
 .mode-btn{border:none;background:transparent;font-size:11px;font-weight:600;padding:4px 10px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,.6);font-family:inherit;transition:all .12s;}
@@ -1786,7 +1785,7 @@ function addDraftOnly(label, ch) {
   const draft = s[ch];
   const uid = Date.now();
   row.innerHTML = `<div class="ans-card"><div class="draft-wrap"><div class="draft-box">
-    <div class="draft-lbl" onclick="toggleAcc(this)">✅ 고객 안내 초안 — ${ch}<span class="acc-arrow">▾</span></div>
+    <div class="draft-lbl" onclick="toggleAcc(this)">✅ 고객 안내 초안<span class="acc-arrow">▾</span></div>
     <div class="acc-body">
       <div class="draft-txt" id="draft-${uid}">${draft}</div>
       <button class="copy-btn" id="copy-${uid}" onclick="copyDraft('${uid}')">📋 복사</button>
@@ -1820,7 +1819,7 @@ function renderAnswer(label, ch) {
 
   let html = `<div class="ans-card">`;
   html += `<div class="draft-wrap"><div class="draft-box">
-    <div class="draft-lbl" onclick="toggleAcc(this)">✅ 고객 안내 초안 — ${ch}<span class="acc-arrow">▾</span></div>
+    <div class="draft-lbl" onclick="toggleAcc(this)">✅ 고객 안내 초안<span class="acc-arrow">▾</span></div>
     <div class="acc-body">
       <div class="draft-txt" id="draft-${uid}">${draft}</div>
       <button class="copy-btn" id="copy-${uid}" onclick="copyDraft('${uid}')">📋 복사</button>
