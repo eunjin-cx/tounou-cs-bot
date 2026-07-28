@@ -64,7 +64,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .draft-wrap{display:table;position:relative;padding:5px 0 0 5px;margin-bottom:10px;}
 .draft-wrap::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-radius:14px;background:#D9D9D9;}
 .draft-box{position:relative;background:#F5F5F5;border-radius:11px;padding:11px 13px;}
-.draft-lbl{font-size:13px;font-weight:600;color:#333333;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;user-select:none;}
+.draft-lbl{font-size:13px;font-weight:600;color:#333333;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;user-select:none;white-space:nowrap;}
 .draft-txt{font-size:14px;color:#333;line-height:1.65;white-space:pre-wrap;}
 .copy-btn{display:flex;align-items:center;gap:4px;margin-top:10px;background:#ffffff;border:1px solid #dcdcdc;border-radius:6px;padding:7px 13px;font-size:13px;color:#555;cursor:pointer;font-family:inherit;transition:all .1s;}
 .copy-btn:hover{background:#efefef;}
@@ -95,7 +95,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .guide-txt{font-size:14px;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;}
 
 /* 아코디언 토글 */
-.range-lbl,.caution-lbl,.tip-lbl,.guide-lbl{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;user-select:none;}
+.range-lbl,.caution-lbl,.tip-lbl,.guide-lbl{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;user-select:none;white-space:nowrap;}
 .acc-arrow{font-size:15px;margin-left:8px;transition:transform .15s;flex-shrink:0;}
 .acc-arrow.open{transform:rotate(180deg);}
 .acc-body{display:none;margin-top:9px;}
@@ -1504,14 +1504,14 @@ const REVIEW_ITEMS = [
   {cat:'베개 커버', label:'베개 커버 > 소재/촉감', keys:['베개 커버 소재','베개 커버 촉감','재질']},
   {cat:'극세사 담요', label:'극세사 담요 > 태슬 마감', keys:['태슬']},
   {cat:'쉬폰 패브릭 포스터', label:'쉬폰 패브릭 포스터 > 비침/두께감', keys:['비침','두께감']},
-  {cat:'PVC 주방매트', label:'PVC 주방매트 > 사이즈', keys:['사이즈','크기']},
-  {cat:'극세사 발매트', label:'극세사 발매트 > 사이즈', keys:['사이즈','크기']},
-  {cat:'극세사 주방매트', label:'극세사 주방매트 > 사이즈', keys:['사이즈','크기']},
-  {cat:'규조토 발매트', label:'규조토 발매트 > 사이즈', keys:['사이즈','크기']},
-  {cat:'규조토 주방매트', label:'규조토 주방매트 > 사이즈', keys:['사이즈','크기']},
+  {cat:'PVC 주방매트', label:'PVC 주방매트 > 사이즈', keys:['사이즈','크기','PVC 사이즈','PVC 주방매트 사이즈']},
+  {cat:'극세사 발매트', label:'극세사 발매트 > 사이즈', keys:['사이즈','크기','발매트 사이즈','극세사 사이즈']},
+  {cat:'극세사 주방매트', label:'극세사 주방매트 > 사이즈', keys:['사이즈','크기','주방매트 사이즈','러너 사이즈','극세사 사이즈']},
+  {cat:'규조토 발매트', label:'규조토 발매트 > 사이즈', keys:['사이즈','크기','규조토 사이즈','규조토 발매트 사이즈']},
+  {cat:'규조토 주방매트', label:'규조토 주방매트 > 사이즈', keys:['사이즈','크기','규조토 사이즈','규조토 주방매트 사이즈']},
   {cat:'냉감 이불', label:'냉감 이불 > 냉감 기능', keys:['냉감','냉감 기능']},
-  {cat:'쉬폰 패브릭 포스터', label:'쉬폰 패브릭 포스터 > 사이즈', keys:['사이즈','크기']},
-  {cat:'패브릭 포스터', label:'패브릭 포스터 > 사이즈', keys:['사이즈','크기']},
+  {cat:'쉬폰 패브릭 포스터', label:'쉬폰 패브릭 포스터 > 사이즈', keys:['사이즈','크기','쉬폰 사이즈']},
+  {cat:'패브릭 포스터', label:'패브릭 포스터 > 사이즈', keys:['사이즈','크기','패브릭 포스터 사이즈']},
 ];
 
 const REVIEW_SCRIPTS = {
@@ -3349,8 +3349,8 @@ function onKeyDown(e) {
 
   if (ddShowing) {
     const items = document.querySelectorAll('.drop-item');
-    if (e.key === 'ArrowDown') { e.preventDefault(); dropIdx = dropIdx >= items.length-1 ? 0 : dropIdx+1; updateActive(); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); dropIdx = dropIdx <= 0 ? items.length-1 : dropIdx-1; updateActive(); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); dropIdx = dropIdx === -1 ? 0 : (dropIdx >= items.length-1 ? 0 : dropIdx+1); updateActive(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); dropIdx = dropIdx === -1 ? 0 : (dropIdx <= 0 ? items.length-1 : dropIdx-1); updateActive(); }
     else if (e.key === 'Enter') {
       e.preventDefault();
       if (dropIdx >= 0) pickItem(dropIdx);
@@ -3871,6 +3871,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Tab') {
     e.preventDefault();
     setSearchMode(searchMode === 'inquiry' ? 'review' : 'inquiry');
+    document.getElementById('input-box').focus();
   }
 });
 
