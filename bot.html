@@ -2975,7 +2975,7 @@ PVC 주방매트는 제조/포장 과정 및 소재 특성상 수령 직후 합�
 뚜누 소프트 규조토 주방매트는 [110×50cm] 단일 사이즈로 제작되고 있으며,
 주방에서 가장 일반적으로 활용 가능한 사이즈로 기획된 상품입니다.
 
-발매트처럼 사용하시는 공간에 따라 체감이 달라질 수 있는 상품은 배치하실 공간의 실측 치수와
+주방매트처럼 사용하시는 공간에 따라 체감이 달라질 수 있는 상품은 배치하실 공간의 실측 치수와
 상품의 상세 사이즈를 미리 비교해 주시면 보다 만족스러운 선택에 도움이 되실 것 같습니다.☺️
 
 고객님께서 남겨주신 소중한 의견은 추후 다양한 사이즈 및 상품 기획 시 참고하겠습니다:)
@@ -3008,7 +3008,7 @@ PVC 주방매트는 제조/포장 과정 및 소재 특성상 수령 직후 합�
 뚜누 소프트 규조토 주방매트는 [110×50cm] 단일 사이즈로 제작되고 있으며,
 주방에서 가장 일반적으로 활용 가능한 사이즈로 기획된 상품입니다.
 
-발매트처럼 사용하시는 공간에 따라 체감이 달라질 수 있는 상품은 배치하실 공간의 실측 치수와
+주방매트처럼 사용하시는 공간에 따라 체감이 달라질 수 있는 상품은 배치하실 공간의 실측 치수와
 상품의 상세 사이즈를 미리 비교해 주시면 보다 만족스러운 선택에 도움이 되실 것 같습니다.:)
 
 고객님께서 남겨주신 소중한 의견은 추후 다양한 사이즈 및 상품 기획 시 참고하겠습니다:)
@@ -3839,8 +3839,14 @@ function equalizeWrapWidths(container) {
   const wraps = container.querySelectorAll('.range-wrap, .caution-wrap, .tip-wrap, .guide-wrap, .draft-wrap');
   if (!wraps.length) return;
   wraps.forEach(w => { w.style.width = ''; });
+  const lbls = [];
+  wraps.forEach(w => {
+    const lbl = w.querySelector('.guide-lbl, .draft-lbl, .range-lbl, .caution-lbl, .tip-lbl');
+    if (lbl) { lbls.push([lbl, lbl.style.whiteSpace]); lbl.style.whiteSpace = 'nowrap'; }
+  });
   let max = 0;
   wraps.forEach(w => { max = Math.max(max, w.offsetWidth); });
+  lbls.forEach(([lbl, prevWS]) => { lbl.style.whiteSpace = prevWS; });
   wraps.forEach(w => {
     w.style.width = max + 'px';
     w.dataset.closedWidth = max;
