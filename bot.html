@@ -122,7 +122,8 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .drop-cat{padding:6px 14px;font-size:11px;font-weight:700;color:#bbb;letter-spacing:.06em;background:#fafafa;}
 .drop-item{padding:11px 14px;font-size:14px;color:#333;cursor:pointer;border-bottom:1px solid #f5f5f5;transition:background .1s;}
 .drop-item:last-child{border-bottom:none;}
-.drop-item:hover,.drop-item.active{background:#ffe066;}
+.dropdown:not(.kbd-nav) .drop-item:hover{background:#ffe066;}
+.drop-item.active{background:#ffe066;}
 .no-result{padding:14px 16px;font-size:14px;color:#aaa;text-align:center;}
 .input-row{display:flex;gap:8px;align-items:center;}
 .input-box{flex:1;background:#f5f5f5;border:none;border-radius:20px;padding:10px 14px;font-size:14px;color:#222;font-family:inherit;outline:none;}
@@ -3516,6 +3517,7 @@ function renderDropdown() {
 }
 
 function updateActive() {
+  document.getElementById('dropdown').classList.add('kbd-nav');
   document.querySelectorAll('.drop-item').forEach((el, i) => {
     el.classList.toggle('active', i === dropIdx);
     if (i === dropIdx) el.scrollIntoView({block:'nearest'});
@@ -4135,6 +4137,10 @@ function scrollBottom() {
   const chat = document.getElementById('chat');
   chat.scrollTop = chat.scrollHeight;
 }
+
+document.getElementById('dropdown').addEventListener('mousemove', () => {
+  document.getElementById('dropdown').classList.remove('kbd-nav');
+});
 
 document.addEventListener('click', e => {
   if (!document.getElementById('input-box').contains(e.target) && !document.getElementById('dropdown').contains(e.target)) {
