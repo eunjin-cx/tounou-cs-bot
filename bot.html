@@ -54,7 +54,10 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .inline-note-trigger:hover{color:#083258;}
 .inline-note-trigger:hover{text-decoration-color:#1a1a1a;}
 .inline-note-body{display:none;background:#fff;border:1.5px dashed #ccc;border-radius:8px;padding:10px 12px;margin:6px 0;font-size:13px;color:#444;line-height:1.6;}
-.inline-note-body img{max-width:100%;border-radius:8px;display:block;}
+.inline-note-body img{max-width:100%;border-radius:8px;display:block;cursor:zoom-in;}
+.img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:24px;cursor:zoom-out;}
+.img-lightbox.show{display:flex;}
+.img-lightbox img{max-width:100%;max-height:100%;border-radius:8px;object-fit:contain;}
 .chip:hover{border-color:#1a1a1a;}
 .chip.sel{background:#FFF8DC;border-color:#FFE066;color:#1a1a1a;font-weight:700;}
 .chip.kbd-active{border-color:#1a1a1a;box-shadow:0 0 0 1.5px #1a1a1a;}
@@ -165,6 +168,10 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
       <button class="send-btn" onclick="sendEnter()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="6 11 12 5 18 11"></polyline></svg></button>
     </div>
   </div>
+</div>
+
+<div id="img-lightbox" class="img-lightbox" onclick="closeLightbox()">
+  <img id="img-lightbox-img" src="" alt="">
 </div>
 
 <script>
@@ -1185,7 +1192,7 @@ PVC 주방매트는 원단 소재가 아닌 생활 방수 기능이 있는 PVC �
 감사합니다.
 <div class="no-copy">
 <span class="inline-note-trigger" onclick="toggleNote('note-img-gyujoto-wash')">📷 세탁방법 첨부 이미지 ▾</span>
-<div id="note-img-gyujoto-wash" class="inline-note-body"><a href="images/규조토-세탁법.png" target="_blank"><img src="images/규조토-세탁법.png" alt="규조토 세탁법 안내 이미지"></a><div style="font-size:12px;color:#888;margin-top:4px;">↗ 눌러서 원본 크기로 보기 (새 탭)</div></div>
+<div id="note-img-gyujoto-wash" class="inline-note-body"><img src="images/규조토-세탁법.png" alt="규조토 세탁법 안내 이미지" onclick="openLightbox('images/규조토-세탁법.png')"><div style="font-size:12px;color:#888;margin-top:4px;">눌러서 크게 보기</div></div>
 </div>`
   }
 ,
@@ -4035,6 +4042,16 @@ function toggleNote(id) {
   const el = document.getElementById(id);
   if (!el) return;
   el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+}
+
+function openLightbox(src) {
+  const box = document.getElementById('img-lightbox');
+  const img = document.getElementById('img-lightbox-img');
+  img.src = src;
+  box.classList.add('show');
+}
+function closeLightbox() {
+  document.getElementById('img-lightbox').classList.remove('show');
 }
 
 function toggleAcc(el) {
