@@ -54,10 +54,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .inline-note-trigger:hover{color:#083258;}
 .inline-note-trigger:hover{text-decoration-color:#1a1a1a;}
 .inline-note-body{display:none;background:#fff;border:1.5px dashed #ccc;border-radius:8px;padding:10px 12px;margin:6px 0;font-size:13px;color:#444;line-height:1.6;}
-.inline-note-body img{max-width:100%;border-radius:8px;display:block;cursor:zoom-in;}
-.img-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:24px;cursor:zoom-out;}
-.img-lightbox.show{display:flex;}
-.img-lightbox img{max-width:100%;max-height:100%;border-radius:8px;object-fit:contain;}
+.inline-note-body img{max-width:100%;border-radius:8px;display:block;}
 .chip:hover{border-color:#1a1a1a;}
 .chip.sel{background:#FFF8DC;border-color:#FFE066;color:#1a1a1a;font-weight:700;}
 .chip.kbd-active{border-color:#1a1a1a;box-shadow:0 0 0 1.5px #1a1a1a;}
@@ -168,10 +165,6 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
       <button class="send-btn" onclick="sendEnter()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="6 11 12 5 18 11"></polyline></svg></button>
     </div>
   </div>
-</div>
-
-<div id="img-lightbox" class="img-lightbox" onclick="closeLightbox()">
-  <img id="img-lightbox-img" src="" alt="">
 </div>
 
 <script>
@@ -723,7 +716,11 @@ OO 작가는 현재 저희 뚜누와의 계약이 종료되어,
 거치하실 공간의 실측 사이즈를 남겨주시면, 확인 후 권장 사이즈를 추천해 드리겠습니다.
 
 추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
-감사합니다.`,
+감사합니다.
+<div class="no-copy">
+<span class="inline-note-trigger" onclick="toggleNote('note-img-poster-size')">📷 첨부 이미지 ▾</span>
+<div id="note-img-poster-size" class="inline-note-body"><a href="images/포스터-사이즈표.png" target="_blank"><img src="images/포스터-사이즈표.png" alt="포스터 사이즈표 안내 이미지"></a><div style="font-size:12px;color:#888;margin-top:4px;">이미지 눌러서 크게 보기 (새 탭)</div></div>
+</div>`,
     guide:`- 실측 사이즈 회신 올 경우, 상품 사이즈표와 비교하여 적합한 사이즈 추천 안내
 
 - 거실 소파 위, 복도 등 여백이 많고 넓은 공간의 경우 500X700mm~A1 사이즈 선호도가 가장 높음(참고용)
@@ -862,10 +859,15 @@ L : 발매트, 규조토 발매트, 주방매트 러너, 러그, PVC 주방매�
 
 뚜누는 모든 상품을 출고 전 검수하고 있으나, 제작/포장 공정 특성상 미세한 먼지나 잔사가 소량 남아 보일 수 있습니다.
 침구는 피부에 직접 닿는 제품인 만큼, 보다 쾌적한 사용을 위해 사용 전 가볍게 세탁 후 사용을 권장드립니다.
-세탁 시에는 상품 손상 방지를 위해 상세페이지에 안내된 세탁 방법을 꼭 확인하신 후 진행 부탁드립니다.
+세탁 시에는 함께 첨부드리는 상세 세탁법을 따라 진행해 주세요.
+※ 해당 내용은 상품 상세페이지 [사이즈/세탁] 탭에서 확인 가능하십니다.
 
 추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
-감사합니다.`
+감사합니다.
+<div class="no-copy">
+<span class="inline-note-trigger" onclick="toggleNote('note-img-charyeobi-wash')">📷 첨부 이미지 ▾</span>
+<div id="note-img-charyeobi-wash" class="inline-note-body"><a href="images/차렵이불-세탁법.png" target="_blank"><img src="images/차렵이불-세탁법.png" alt="차렵이불 세탁법 안내 이미지"></a><div style="font-size:12px;color:#888;margin-top:4px;">이미지 눌러서 크게 보기 (새 탭)</div></div>
+</div>`
   },
   '차렵이불 > 세트 구성': {
     draftOnly:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 조이 입니다. 😻
@@ -1175,7 +1177,11 @@ PVC 주방매트는 원단 소재가 아닌 생활 방수 기능이 있는 PVC �
 - 세탁 방식: 단독 세탁(가급적이면 세탁 망을 사용하여 세탁하시는 것을 권장드립니다.)
 ※ 건조기 사용은 불가하며 세탁 후에는 비틀어 짜지 말고 그늘에서 1~2일 자연 건조해 주세요.
 
-상세페이지 [사이즈/세탁] 탭에 안내된 세탁법 이미지도 함께 첨부드리니 참고 부탁드립니다. 추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요. 감사합니다.`
+상세페이지 [사이즈/세탁] 탭에 안내된 세탁법 이미지도 함께 첨부드리니 참고 부탁드립니다. 추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요. 감사합니다.
+<div class="no-copy">
+<span class="inline-note-trigger" onclick="toggleNote('note-img-gyujoto-wash-2')">📷 첨부 이미지 ▾</span>
+<div id="note-img-gyujoto-wash-2" class="inline-note-body"><a href="images/규조토-세탁법.png" target="_blank"><img src="images/규조토-세탁법.png" alt="규조토 세탁법 안내 이미지"></a><div style="font-size:12px;color:#888;margin-top:4px;">이미지 눌러서 크게 보기 (새 탭)</div></div>
+</div>`
   }
 ,
   '규조토 > 초기 세탁 여부': {
@@ -1191,8 +1197,8 @@ PVC 주방매트는 원단 소재가 아닌 생활 방수 기능이 있는 PVC �
 추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
 감사합니다.
 <div class="no-copy">
-<span class="inline-note-trigger" onclick="toggleNote('note-img-gyujoto-wash')">📷 세탁방법 첨부 이미지 ▾</span>
-<div id="note-img-gyujoto-wash" class="inline-note-body"><img src="images/규조토-세탁법.png" alt="규조토 세탁법 안내 이미지" onclick="openLightbox('images/규조토-세탁법.png')"><div style="font-size:12px;color:#888;margin-top:4px;">눌러서 크게 보기</div></div>
+<span class="inline-note-trigger" onclick="toggleNote('note-img-gyujoto-wash')">📷 첨부 이미지 ▾</span>
+<div id="note-img-gyujoto-wash" class="inline-note-body"><a href="images/규조토-세탁법.png" target="_blank"><img src="images/규조토-세탁법.png" alt="규조토 세탁법 안내 이미지"></a><div style="font-size:12px;color:#888;margin-top:4px;">이미지 눌러서 크게 보기 (새 탭)</div></div>
 </div>`
   }
 ,
@@ -2740,7 +2746,11 @@ PVC 주방매트는 제조/포장 과정 및 소재 특성상 수령 직후 합�
 사진의 설명과 같이 실을 당겨 태슬을 풀어서 사용해 주시기 바랍니다.
 
 앞으로도 다양한 상품과 좋은 서비스로 고객님을 찾아뵐 수 있도록 최선을 다하겠습니다.
-감사합니다.🙇‍♀️`,
+감사합니다.🙇‍♀️
+<div class="no-copy">
+<span class="inline-note-trigger" onclick="toggleNote('note-img-blanket-tassel-1')">📷 첨부 이미지 ▾</span>
+<div id="note-img-blanket-tassel-1" class="inline-note-body"><a href="images/극세사담요-태슬.png" target="_blank"><img src="images/극세사담요-태슬.png" alt="극세사 담요 태슬 조치 방법 안내 이미지"></a><div style="font-size:12px;color:#888;margin-top:4px;">이미지 눌러서 크게 보기 (새 탭)</div></div>
+</div>`,
     '29CM':`[TOUNOU] 고객님, 안녕하세요. 뚜누입니다.
 
 고객님께서 남겨주신 29CM 리뷰 확인 후 안내차 연락드렸습니다.
@@ -2760,7 +2770,11 @@ PVC 주방매트는 제조/포장 과정 및 소재 특성상 수령 직후 합�
 ※ 추가로 궁금하신 내용이 있으시면 언제든 뚜누 고객센터로 연락 부탁드립니다.
 ■ 채팅상담 : 뚜누 홈페이지 → 우측 하단 헤드셋 모양 클릭(바로가기 https://tounou.co.kr/)
 ■ 고객센터 : 053-657-1799
-■ 운영시간 : 평일 : 09~18시 (12~13시 점심) / 주말, 법정공휴일 휴무`
+■ 운영시간 : 평일 : 09~18시 (12~13시 점심) / 주말, 법정공휴일 휴무
+<div class="no-copy">
+<span class="inline-note-trigger" onclick="toggleNote('note-img-blanket-tassel-2')">📷 첨부 이미지 ▾</span>
+<div id="note-img-blanket-tassel-2" class="inline-note-body"><a href="images/극세사담요-태슬.png" target="_blank"><img src="images/극세사담요-태슬.png" alt="극세사 담요 태슬 조치 방법 안내 이미지"></a><div style="font-size:12px;color:#888;margin-top:4px;">이미지 눌러서 크게 보기 (새 탭)</div></div>
+</div>`
   },
   '쉬폰 패브릭 포스터 > 비침/두께감': {
     '자사몰':`고객님, 안녕하세요. 뚜누입니다. 💛
@@ -4044,15 +4058,6 @@ function toggleNote(id) {
   el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
 }
 
-function openLightbox(src) {
-  const box = document.getElementById('img-lightbox');
-  const img = document.getElementById('img-lightbox-img');
-  img.src = src;
-  box.classList.add('show');
-}
-function closeLightbox() {
-  document.getElementById('img-lightbox').classList.remove('show');
-}
 
 function toggleAcc(el) {
   const body = el.nextElementSibling;
