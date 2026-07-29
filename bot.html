@@ -4148,6 +4148,15 @@ document.addEventListener('click', e => {
   }
 });
 
+// 위젯 안 아무 곳을 클릭해도 이 iframe이 키보드 포커스를 갖도록 강제
+// (포커스 불가능한 배경/카드 영역 클릭 시 일부 인앱 웹뷰에서 포커스가
+// 넘어오지 않아 Ctrl+C가 안 먹히는 문제 방지)
+document.body.setAttribute('tabindex', '-1');
+document.body.style.outline = 'none';
+document.addEventListener('click', () => {
+  document.body.focus({ preventScroll: true });
+});
+
 // Tab switches 문의/리뷰. Since this listens on the iframe's own document,
 // it only fires while focus is inside this widget — typing in the page
 // behind it (e.g. the actual chat input) never triggers this.
