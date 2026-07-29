@@ -31,6 +31,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .app.review-mode .send-btn{background:#FFDD57;color:#1a1a1a;}
 .app.review-mode .send-btn:hover{background:#ffe066;}
 .app.review-mode .draft-box{background:#fff;}
+.app.review-mode .draft-box-secondary{background:#F2EFEA;}
 .h-sub{font-size:12px;color:#888;margin-top:2px;}
 
 /* 채팅 영역 */
@@ -49,12 +50,18 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 /* 채널 칩 */
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
 .chip{background:#fff;border:1.5px solid #ddd;border-radius:8px;padding:7px 14px;font-size:13px;color:#333;cursor:pointer;transition:all .12s;font-weight:500;}
-.inline-note-trigger{color:#1a1a1a;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#999;cursor:pointer;font-weight:600;}
+.inline-note-trigger{color:#0C447C;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#7BA7D1;cursor:pointer;font-weight:600;}
+.inline-note-trigger:hover{color:#083258;}
 .inline-note-trigger:hover{text-decoration-color:#1a1a1a;}
 .inline-note-body{display:none;background:#fff;border:1.5px dashed #ccc;border-radius:8px;padding:10px 12px;margin:6px 0;font-size:13px;color:#444;line-height:1.6;}
 .chip:hover{border-color:#1a1a1a;}
 .chip.sel{background:#FFF8DC;border-color:#FFE066;color:#1a1a1a;font-weight:700;}
 .chip.kbd-active{border-color:#1a1a1a;box-shadow:0 0 0 1.5px #1a1a1a;}
+.guide-box.kbd-active-card,.range-box.kbd-active-card{border:1px solid #185FA5;transform:scale(1.02);box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.caution-box.kbd-active-card{border:1px solid #A32D2D;transform:scale(1.02);box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.tip-box.kbd-active-card{border:1px solid #854F0B;transform:scale(1.02);box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.draft-box.kbd-active-card{border:1px solid #5F5E5A;transform:scale(1.02);box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.guide-box.kbd-active-card.kbd-active-card-suppressed,.range-box.kbd-active-card.kbd-active-card-suppressed,.caution-box.kbd-active-card.kbd-active-card-suppressed,.tip-box.kbd-active-card.kbd-active-card-suppressed,.draft-box.kbd-active-card.kbd-active-card-suppressed{border:none;transform:none;box-shadow:none;}
 .app.review-mode .chip.sel{background:#FFF6D6;border-color:#FCEBA6;color:#6b5900;}
 .app.review-mode .chip.kbd-active{border-color:#FCEBA6;box-shadow:0 0 0 1.5px #FCEBA6;}
 
@@ -64,6 +71,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .draft-wrap{display:table;position:relative;padding:5px 0 0 5px;margin-bottom:10px;}
 .draft-wrap::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-radius:14px;background:#D9D9D9;}
 .draft-box{position:relative;background:#F5F5F5;border-radius:11px;padding:11px 13px;}
+.draft-box-secondary{background:#F2EFEA;}
 .draft-lbl{font-size:13px;font-weight:600;color:#333333;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;user-select:none;white-space:nowrap;}
 .draft-txt{font-size:14px;color:#333;line-height:1.65;white-space:pre-wrap;}
 .copy-btn{display:flex;align-items:center;gap:4px;margin-top:10px;background:#ffffff;border:1px solid #dcdcdc;border-radius:6px;padding:7px 13px;font-size:13px;color:#555;cursor:pointer;font-family:inherit;transition:all .1s;}
@@ -174,6 +182,7 @@ const ITEMS = [
   {cat:'출고/배송', label:'배송지 변경', keys:['배송지','수령지','주소']},
   {cat:'출고/배송', label:'누락 오인지 [분리 출고] > 출고 전', keys:['분리 출고']},
   {cat:'출고/배송', label:'누락 오인지 [분리 출고] > 출고 후', keys:['분리 출고']},
+  {cat:'출고/배송', label:'누락 오인지 > 정상 출고', keys:['누락 오인지','정상 출고']},
   {cat:'상품-공통', label:'재입고 > 품절/단종', keys:['품절']},
   {cat:'상품-공통', label:'재입고 > 품절/단종 (테크류)', keys:['테크류']},
   {cat:'상품-공통', label:'재입고 > 품절 오류', keys:['품절 오류']},
@@ -224,6 +233,7 @@ const ITEMS = [
   {cat:'쿠폰/프로모션', label:'프로모션 > 쿠폰 적용 제한', keys:['프로모션 쿠폰']},
   {cat:'쿠폰/프로모션', label:'카카오톡 채널_친구 추가 쿠폰', keys:['카카오톡 쿠폰']},
   {cat:'기타', label:'주문 제작', keys:['주문 제작']},
+  {cat:'기타', label:'안내 채널 전환', keys:['안내 채널 전환']},
   {cat:'기타', label:'작가 입점 문의', keys:['입점']},
   {cat:'기타', label:'브랜드 협업 문의', keys:['협업']},
   {cat:'기타', label:'EMS 해외 주문', keys:['EMS','해외 배송']},
@@ -254,7 +264,7 @@ const SCRIPTS = {
 감사합니다.`,
     주의사항:`- 반드시 실출고 여부 및 출고 중지 여부 선확인 후 안내 필요
 - 분리 출고 여부 확인 후 센터 내에서 출고 중지 가능 건은 송장 선회수 필요
-- 이미 출고된 경우 → [취소 불가 안내 (출고 후)] 가이드로 전환`,
+- 이미 출고된 경우 → <span class="inline-note-trigger" onclick="jumpToItem('취소 불가 안내 (출고 후)')">취소 불가 안내 (출고 후) ↗</span> 가이드로 전환`,
     tip:`- 당일 뚜누 출고 건: 센터 내에서 상품 실물 확인 및 회수 시 취소 처리 가능
 - 당일 3PL 출고 건: 출고 중지 가능 여부 별도 확인 필요
 - 환불 금액은 결제수단에 따라 처리 기간 상이
@@ -403,9 +413,11 @@ const SCRIPTS = {
   },
   '불량 여부 확인': {
     guide:`- 불량 부분에 대해 사진 또는 영상 확인 필수 → 고객에게 확인용 자료 첨부를 요청합니다.
+
 - 상품 사용 여부를 확인하고, 세탁 이후 발생한 문제일 경우에는 세탁 방법(단독 세탁 여부 / 물 온도 / 세탁 코스 / 건조 방법)을 확인합니다.
+
 - 초도 불량 여부 특정이 어려운 경우에는 상품 회수 및 검수가 필요할 수 있습니다.`,
-    주의사항:`- 디자인 불량 오인지 건 → [불량 오인지] 가이드로 전환
+    주의사항:`- 디자인 불량 오인지 건 → <span class="inline-note-trigger" onclick="jumpToItem('디자인 불량 오인지')">디자인 불량 오인지 ↗</span> 가이드로 전환
 - 상품 특성(극세사 발매트, PVC 주방매트 등) 불량 오인지 건 → 각 상품별 가이드로 전환`,
     tip:`- 노션 페이지에 별도 취합 중인 유형의 경우, 조치 결과에 상관없이 추가 기재 필요 → CS 인입 추이 대시보드 이슈 트래커에 반영`
   },
@@ -509,6 +521,56 @@ const SCRIPTS = {
     주의사항:`- 고객이 상품 누락으로 오인지하는 경우가 많으므로, 분리 출고 사실과 잔여 상품의 배송 현황을 명확히 구분하여 안내 필요`
   }
 ,
+  '누락 오인지 > 정상 출고': {
+    draftOnly:{
+      '논슬립 스티커':`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 조이 입니다. 😻
+
+남겨주신 문의 사항은 담당 부서에 전달하여 고객님 상품의 출고 과정을 확인해 보았으며,
+주문 내역에 맞춰 아래 상품 전체가 누락 없이 정상 출고된 것으로 확인되었습니다.
+
+1. 상품명
+2. 논슬립 미끄럼 방지 스티커(4p)
+
+[논슬립 미끄럼 방지 스티커(4p)]가 함께 주문해 주신 상품에 비해 소형 사이즈이다 보니, 수령 여부를 한번에 확인하시기 어려운 경우가 간혹 있습니다.
+번거로우시겠지만, 수령하신 상품 사이와 택배 봉투/박스 전체를 다시 한번 확인 부탁드리며,
+혹시라도 외부 택배 봉투/박스에 훼손 혹은 찢김 흔적이 있다면 해당 부분 사진과 함께 말씀 남겨주시면 감사하겠습니다.
+
+현재 정상 출고가 확인됨에 따라 별도 재출고는 어려운 점 양해 부탁드리며,
+고객님의 상품 출고 영상 확인을 희망하실 경우 말씀 남겨주시면 추가 안내 드리겠습니다.
+
+감사합니다.`,
+      '기타 상품':`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 조이 입니다. 😻
+
+남겨주신 문의 사항은 담당 부서에 전달하여 고객님 상품의 출고 과정을 확인해 보았으며,
+주문 내역에 맞춰 아래 상품 전체가 누락 없이 정상 출고된 것으로 확인되었습니다.
+
+1. 상품명
+2. 상품명
+
+수령하신 상품 사이와 택배 봉투/박스 전체를 다시 한번 확인 부탁드리며,
+혹시라도 외부 택배 봉투/박스에 훼손 혹은 찢김 흔적이 있다면 해당 부분 사진과 함께 말씀 남겨주시면 감사하겠습니다.
+
+현재 정상 출고가 확인됨에 따라 별도 재출고는 어려운 점 양해 부탁드리며,
+고객님의 상품 출고 영상 확인을 희망하실 경우 말씀 남겨주시면 추가 안내 드리겠습니다.
+
+감사합니다.`,
+      '2차 안내':`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 조이 입니다. 😻
+
+고객님께서 요청해 주신 [주문 번호 : - ] 건의 출고 영상을 안내드립니다.
+
+고객님 주문 건의 상품 포장/출고 영상과 배송 전산 내역을 함께 첨부드리며,
+전산 내역의 [배송 POS 일자]와 영상 하단의 일자를 함께 확인 부탁드리겠습니다.
+※ 운송장 바코드 스캔 후 전산 연동(배송 POS 등록)까지는 10초~20초 가량 소요되는 점 참고 부탁드립니다.
+
+안내드린 영상을 통해 정상 출고가 재차 확인됨에 따라, 별도 재출고는 어려운 점 양해 부탁드리겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`
+    },
+    guide:`- 배송 중 이탈 여부 확인을 위해, ITS/위탁사진을 통해 택배 봉투/박스 훼손 여부 선확인
+- 2차 안내 첨부 자료 : 배송 전산 캡쳐 이미지 + 출고 영상(촬영 시간 포함)`
+  }
+,
   '재입고 > 품절/단종': {
     draftOnly:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 조이 입니다. 😻
 
@@ -521,7 +583,7 @@ const SCRIPTS = {
 추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
 감사합니다.`,
     주의사항:`- 실제 단종 상품이 맞는지 확인 후 안내 필요 (POD 전환 상품, 시즌 상품 등)`,
-    tip:`- 단순 미진열 상품으로, 별도 주문 제작 가능한 상품의 경우 [주문 제작] 가이드로 전환`
+    tip:`- 단순 미진열 상품으로, 별도 주문 제작 가능한 상품의 경우 <span class="inline-note-trigger" onclick="jumpToItem('주문 제작')">주문 제작 ↗</span> 가이드로 전환`
   }
 ,
   '재입고 > 품절/단종 (테크류)': {
@@ -615,7 +677,7 @@ const SCRIPTS = {
 구매 의사 회신 주시면 주문하실 수 있도록 결제창(링크) 안내드리겠습니다.
 감사합니다.`,
     주의사항:`- 주문 제작 가능 여부 선확인 후 안내 필요
-- 작가 계약 종료로 인한 미진열일 경우 주문 제작 불가 → [미진열 상품 구매 > 작가 계약 종료] 가이드로 전환`
+- 작가 계약 종료로 인한 미진열일 경우 주문 제작 불가 → <span class="inline-note-trigger" onclick="jumpToItem('미진열 상품 구매 > 작가 계약 종료')">미진열 상품 구매 > 작가 계약 종료 ↗</span> 가이드로 전환`
   }
 ,
   '미진열 상품 구매 > 작가 계약 종료': {
@@ -810,16 +872,78 @@ L : 발매트, 규조토 발매트, 주방매트 러너, 러그, PVC 주방매�
       <b>[매크로명]</b>
       1. 주문 제작 (최초_가능) *가격 추가 확인 필요 시*
       2. 주문 제작 (가격 및 유의사항)
-      3. 주문 제작 (<span class="inline-note-trigger" onclick="toggleNote('note-personal-checkout')">개인 결제창 ⓘ</span>)
+      3. 주문 제작 (<span class="inline-note-trigger" onclick="toggleNote('note-personal-checkout')">개인 결제창 ▾</span>)
 <div id="note-personal-checkout" class="inline-note-body"><b>개인결제창 생성 방법</b><br>1. 기본 [개인결제창] 템플릿 상품 복사<br>2. 진열상태/판매상태 : 한국어 쇼핑몰(한국어) 기본 ✅<br>3. 상품명 : OOO 작가, OOOOO 상품 OOOO 옵션 기재<br>4. 소비자가/공급가/판매가 수정 ※환율 자동계산 클릭<br>5. 브랜드 : 해당 작가명<br>6. 상품수정 후 링크 안내</div>
-
 - 가격은 <a href="https://docs.google.com/spreadsheets/d/1LTHVO2Bm5qps9Y6-U9wG51vUHg4u8afFQGiaD6x1k-k/edit?gid=0#gid=0" target="_blank">[주문 제작 금액 LIST]</a> 시트 참조 → 해당 시트에 없는 규격은 별도 확인 필요
 
 - 규격이 상이한 사이즈(ex. 정방형 포스터 → 세로형 포스터)로 제작 시, 기존 디자인에서 잘림 등 변형이 있을 수 있어 사전 안내 필요
   + 담당자를 통해 제작 선시안 확인 후 고객에게 안내
 
-- 29CM/무신사 게시판을 통해 주문 제작 가능 여부가 인입되는 경우, 패널티 방지를 위해 채팅 상담으로 인입 유도가 필요하며, 이때 아래와 같이 연락처 기재를 요청
-<div style="background:#fff;border:1.5px solid #e8e8e8;border-radius:10px;padding:12px 14px;margin-top:8px;font-size:14px;line-height:1.65;">고객님, 안녕하세요. 뚜누입니다.<br><br>고객님께서 문의 주신 사항은 별도 안내가 필요하여,<br>연락처를 남겨주시면 추가 안내 드리도록 하겠습니다.<br><br>추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.<br>감사합니다.</div>`
+- 29CM/무신사 게시판을 통해 주문 제작 가능 여부가 인입되는 경우, 패널티 방지를 위해 채팅 상담으로 인입 유도가 필요
+  → <span class="inline-note-trigger" onclick="jumpToItem('안내 채널 전환')">안내 채널 전환 ↗</span> 가이드로 전환`
+  }
+,
+  '안내 채널 전환': {
+    draftOnly:{
+      '1차 답변':`고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 문의 주신 사항은 별도 안내가 필요하여,
+연락처를 남겨주시면 추가 안내 드리도록 하겠습니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`,
+      '2차 SMS':`<span class="inline-note-trigger" onclick="toggleNote('note-sms-1')">1. 채팅 인입 안내 ▾</span>
+<div id="note-sms-1" class="inline-note-body">
+<div id="draft-sms1">[TOUNOU] 고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 29CM 게시판에 남겨주신 문의 확인 후 안내차 연락드렸습니다.
+
+문의 주신 [OO] 상품은 저희 뚜누 자사몰에서 주문 제작으로 진행 가능하여,
+번거로우시겠지만 아래 채팅 상담으로 제작 원하시는 상품명 및 사이즈를 남겨주시면 확인 후 안내 도와드리겠습니다.
+
+◆ 채팅상담 : 뚜누 홈페이지 → 우측 하단 헤드셋 모양 클릭(바로가기 https://tounou.co.kr/ )
+
+감사합니다.
+
+※ 추가로 궁금하신 내용이 있으시면 언제든 뚜누 고객센터로 연락 부탁드립니다.
+■ 고객센터 : 053-657-1799
+■ 운영시간 : 평일 : 09~18시 (12~13시 점심) / 주말, 법정공휴일 휴무</div>
+<button class="copy-btn" id="copy-sms1" onclick="copyDraft('sms1')">📋 복사</button>
+</div>
+<span class="inline-note-trigger" onclick="toggleNote('note-sms-2')">2. 자사몰 상품 링크 안내 (액자, 쿠션솜 단품) ▾</span>
+<div id="note-sms-2" class="inline-note-body">
+<div id="draft-sms2">[TOUNOU] 고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 29CM 게시판에 남겨주신 문의 확인 후 안내차 연락드렸습니다.
+
+현재 29CM에서는 OO 단품 구매가 어려워, OO 단품을 별도로 주문하실 수 있는 뚜누 자사몰 링크를 안내드립니다.
+아래 링크에 접속하신 후, 구매하신 OO 사이즈에 맞춰 옵션을 선택하시어 주문 부탁드립니다.
+
+* OO 단품 구매 링크
+[링크 첨부]
+
+추가로 궁금하신 내용이 있으시면 언제든 뚜누 고객센터로 연락 부탁드립니다.
+감사합니다.
+
+■ 채팅상담 : 뚜누 홈페이지 → 우측 하단 헤드셋 모양 클릭(바로가기 https://tounou.co.kr/)
+■ 고객센터 : 053-657-1799
+■ 운영시간 : 평일 : 09~18시 (12~13시 점심) / 주말, 법정공휴일 휴무</div>
+<button class="copy-btn" id="copy-sms2" onclick="copyDraft('sms2')">📋 복사</button>
+</div>`,
+      '2차 답변':`<b style="color:#E24B4A;">※ 별도 안내 문자 발송 완료 후 게시판 답변 등록</b>
+
+고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 문의 주신 사항은 별도 안내가 필요하여,
+남겨주신 연락처로 추가 안내 드린 것으로 확인됩니다.
+
+추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
+감사합니다.`
+    },
+    guide:`- <b>전체 처리 흐름</b>
+<b>1차 연락처 회신 요청 → 회신 확인 후 SMS 안내 → 2차 문자 안내 완료 답변</b>
+
+- 문의가 인입된 타 플랫폼(29CM/무신사)이 아닌, 자사몰 상품 판매 링크 안내/채팅 인입 유도가 필요한 건에는 패널티 방지를 위해 해당 프로세스로 진행`
   }
 ,
   '작가 입점 문의': {
@@ -3233,6 +3357,8 @@ let filteredItems = [];
 let dropIdx = -1;
 let currentType = null; // 'inquiry' | 'review' -- set per-item when picked from the merged list
 let activeChips = null; // currently active (unresolved-focus) channel chip list, for keyboard nav
+let activeCards = null; // currently active set of answer card wraps (draft/guide/caution/tip), for keyboard nav
+let cardIdx = -1;
 let chipIdx = -1;
 
 function getWelcomeHTML(mode) {
@@ -3269,6 +3395,8 @@ function setSearchMode(mode) {
   currentType = null;
   activeChips = null;
   chipIdx = -1;
+  activeCards = null;
+  cardIdx = -1;
 
   const inputBox = document.getElementById('input-box');
   inputBox.value = '';
@@ -3365,6 +3493,19 @@ function onKeyDown(e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); chipIdx = Math.min(chipIdx+1, chips.length-1); updateChipActive(); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); chipIdx = Math.max(chipIdx-1, 0); updateChipActive(); }
     else if (e.key === 'Enter') { e.preventDefault(); if (chipIdx >= 0) chips[chipIdx].click(); }
+    return;
+  }
+
+  if (activeCards && activeCards.length >= 2) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); cardIdx = cardIdx >= activeCards.length-1 ? 0 : cardIdx+1; updateCardActive(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); cardIdx = cardIdx <= 0 ? activeCards.length-1 : cardIdx-1; updateCardActive(); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (cardIdx >= 0) {
+        const lbl = activeCards[cardIdx].querySelector('.guide-lbl, .draft-lbl, .range-lbl, .caution-lbl, .tip-lbl');
+        if (lbl) lbl.click();
+      }
+    }
   }
 }
 
@@ -3375,16 +3516,33 @@ function sendEnter() {
 function pickItem(idx) {
   const item = filteredItems[idx];
   if (!item) return;
-  selectedItem = item;
-  currentType = item._type || 'inquiry';
   document.getElementById('dropdown').classList.remove('show');
-  document.getElementById('input-box').value = '';
   filteredItems = [];
   dropIdx = -1;
+  selectItemObj(item, item._type || 'inquiry');
+}
+
+function jumpToItem(label, mode) {
+  const targetMode = mode || searchMode;
+  const source = targetMode === 'review' ? REVIEW_ITEMS : ITEMS;
+  const item = source.find(it => it.label === label);
+  if (!item) return;
+  document.getElementById('dropdown').classList.remove('show');
+  filteredItems = [];
+  dropIdx = -1;
+  selectItemObj(item, targetMode);
+}
+
+function selectItemObj(item, type) {
+  selectedItem = item;
+  currentType = type;
+  document.getElementById('input-box').value = '';
 
   addUserBubble(item.label);
   activeChips = null;
   chipIdx = -1;
+  activeCards = null;
+  cardIdx = -1;
 
   const scripts = currentType === 'review' ? REVIEW_SCRIPTS : SCRIPTS;
   const s = scripts[item.label];
@@ -3578,6 +3736,20 @@ function updateChipActive() {
     el.classList.toggle('kbd-active', i === chipIdx);
   });
 }
+function activateCards(row) {
+  const wraps = row.querySelectorAll('.range-wrap, .caution-wrap, .tip-wrap, .guide-wrap, .draft-wrap');
+  if (wraps.length < 2) { activeCards = null; cardIdx = -1; return; }
+  activeCards = wraps;
+  cardIdx = 0;
+  updateCardActive();
+}
+function updateCardActive() {
+  if (!activeCards) return;
+  activeCards.forEach((wrap, i) => {
+    const box = wrap.querySelector('.guide-box, .draft-box, .range-box, .caution-box, .tip-box');
+    if (box) box.classList.toggle('kbd-active-card', i === cardIdx);
+  });
+}
 function pickChannel(el, ch) {
   const chipsEl = el.closest('.chips');
   chipsEl.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
@@ -3593,6 +3765,8 @@ function pickChannel(el, ch) {
     chipsEl.dataset.answered = 'true';
   }
   selectedItem = null;
+  activeChips = null;
+  chipIdx = -1;
 }
 
 function addDraftOnly(label, ch) {
@@ -3607,17 +3781,37 @@ function addDraftOnly(label, ch) {
     scrollBottom();
     return;
   }
-  const draft = s[ch];
+  const draftData = s[ch];
   const uid = Date.now();
-  row.innerHTML = `<div class="ans-card"><div class="draft-wrap"><div class="draft-box">
-    <div class="draft-lbl" onclick="toggleAcc(this)">✅ 고객 안내 초안<span class="acc-arrow">▾</span></div>
-    <div class="acc-body">
-      <div class="draft-txt" id="draft-${uid}">${draft}</div>
-      <button class="copy-btn" id="copy-${uid}" onclick="copyDraft('${uid}')">📋 복사</button>
-    </div>
-  </div></div></div>`;
+  let draftHtml = '';
+  if (draftData && typeof draftData === 'object') {
+    let i = 0;
+    for (const variantLabel in draftData) {
+      const vUid = `${uid}_${i}`;
+      const isSecondary = ['2차 안내','2차 SMS'].includes(variantLabel);
+      const icon = isSecondary ? '☑️' : '✅';
+      const boxClass = isSecondary ? 'draft-box draft-box-secondary' : 'draft-box';
+      draftHtml += `<div class="draft-wrap"><div class="${boxClass}">
+        <div class="draft-lbl" onclick="toggleAcc(this)">${icon} 초안_${variantLabel}<span class="acc-arrow">▾</span></div>
+        <div class="acc-body">
+          <div class="draft-txt" id="draft-${vUid}">${draftData[variantLabel]}</div>
+          <button class="copy-btn" id="copy-${vUid}" onclick="copyDraft('${vUid}')">📋 복사</button>
+        </div>
+      </div></div>`;
+      i++;
+    }
+  } else {
+    draftHtml = `<div class="draft-wrap"><div class="draft-box">
+      <div class="draft-lbl" onclick="toggleAcc(this)">✅ 고객 안내 초안<span class="acc-arrow">▾</span></div>
+      <div class="acc-body">
+        <div class="draft-txt" id="draft-${uid}">${draftData}</div>
+        <button class="copy-btn" id="copy-${uid}" onclick="copyDraft('${uid}')">📋 복사</button>
+      </div>
+    </div></div>`;
+  }
+  row.innerHTML = `<div class="ans-card">${draftHtml}</div>`;
   chat.appendChild(row);
-  autoOpenIfSingle(row);
+  if (!autoOpenIfSingle(row)) { equalizeWrapWidths(row); activateCards(row); }
   row.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3648,8 +3842,11 @@ function renderAnswer(label, ch) {
     let i = 0;
     for (const variantLabel in draftData) {
       const vUid = `${uid}_${i}`;
-      draftHtml += `<div class="draft-wrap"><div class="draft-box">
-        <div class="draft-lbl" onclick="toggleAcc(this)">✅ 초안_${variantLabel}<span class="acc-arrow">▾</span></div>
+      const isSecondary = ['2차 안내','2차 SMS'].includes(variantLabel);
+      const icon = isSecondary ? '☑️' : '✅';
+      const boxClass = isSecondary ? 'draft-box draft-box-secondary' : 'draft-box';
+      draftHtml += `<div class="draft-wrap"><div class="${boxClass}">
+        <div class="draft-lbl" onclick="toggleAcc(this)">${icon} 초안_${variantLabel}<span class="acc-arrow">▾</span></div>
         <div class="acc-body">
           <div class="draft-txt" id="draft-${vUid}">${draftData[variantLabel]}</div>
           <button class="copy-btn" id="copy-${vUid}" onclick="copyDraft('${vUid}')">📋 복사</button>
@@ -3681,6 +3878,7 @@ function renderAnswer(label, ch) {
     row.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
     equalizeWrapWidths(row);
+    activateCards(row);
     scrollBottom();
   }
 }
@@ -3691,14 +3889,36 @@ function addGuideCard(s) {
   row.className = 'row-bot';
   let inner = '';
   if (s.draftOnly) {
-    const uid = Date.now();
-    inner += `<div class="draft-wrap"><div class="draft-box">
-      <div class="draft-lbl" onclick="toggleAcc(this)">✅ 고객 안내 초안<span class="acc-arrow">▾</span></div>
-      <div class="acc-body">
-        <div class="draft-txt" id="draft-${uid}">${s.draftOnly}</div>
-        <button class="copy-btn" id="copy-${uid}" onclick="copyDraft('${uid}')">📋 복사</button>
-      </div>
-    </div></div>`;
+    if (typeof s.draftOnly === 'object') {
+      let i = 0;
+      const baseUid = Date.now();
+      for (const variantLabel in s.draftOnly) {
+        const vUid = `${baseUid}_${i}`;
+        const isSecondary = ['2차 안내','2차 SMS'].includes(variantLabel);
+        const icon = isSecondary ? '☑️' : '✅';
+        const boxClass = isSecondary ? 'draft-box draft-box-secondary' : 'draft-box';
+        const variantContent = s.draftOnly[variantLabel];
+        const hasNestedCopy = variantContent.includes('inline-note-body');
+        const copyBtnHtml = hasNestedCopy ? '' : `<button class="copy-btn" id="copy-${vUid}" onclick="copyDraft('${vUid}')">📋 복사</button>`;
+        inner += `<div class="draft-wrap"><div class="${boxClass}">
+          <div class="draft-lbl" onclick="toggleAcc(this)">${icon} 초안_${variantLabel}<span class="acc-arrow">▾</span></div>
+          <div class="acc-body">
+            <div class="draft-txt" id="draft-${vUid}">${variantContent}</div>
+            ${copyBtnHtml}
+          </div>
+        </div></div>`;
+        i++;
+      }
+    } else {
+      const uid = Date.now();
+      inner += `<div class="draft-wrap"><div class="draft-box">
+        <div class="draft-lbl" onclick="toggleAcc(this)">✅ 고객 안내 초안<span class="acc-arrow">▾</span></div>
+        <div class="acc-body">
+          <div class="draft-txt" id="draft-${uid}">${s.draftOnly}</div>
+          <button class="copy-btn" id="copy-${uid}" onclick="copyDraft('${uid}')">📋 복사</button>
+        </div>
+      </div></div>`;
+    }
   }
   if (s.templateOnly) {
     const uid = Date.now() + 1;
@@ -3728,6 +3948,7 @@ function addGuideCard(s) {
     row.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
     equalizeWrapWidths(row);
+    activateCards(row);
     scrollBottom();
   }
 }
@@ -3779,6 +4000,7 @@ function copyDraft(uid) {
 function resetAll() {
   selectedItem = null; filteredItems = []; dropIdx = -1; currentType = null;
   activeChips = null; chipIdx = -1;
+  activeCards = null; cardIdx = -1;
   const inputBox = document.getElementById('input-box');
   inputBox.value = '';
   inputBox.disabled = false;
@@ -3797,9 +4019,11 @@ function toggleAcc(el) {
   const body = el.nextElementSibling;
   const arrow = el.querySelector('.acc-arrow');
   const wrap = el.closest('.range-wrap, .caution-wrap, .tip-wrap, .guide-wrap, .draft-wrap');
+  const box = el.closest('.range-box, .caution-box, .tip-box, .guide-box, .draft-box');
   const willOpen = !body.classList.contains('open');
   body.classList.toggle('open');
   if (arrow) arrow.classList.toggle('open');
+  if (box) box.classList.toggle('kbd-active-card-suppressed', willOpen);
   if (wrap) {
     wrap.style.width = willOpen ? '370px' : (wrap.dataset.closedWidth ? wrap.dataset.closedWidth + 'px' : '');
   }
