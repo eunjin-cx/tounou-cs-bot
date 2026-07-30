@@ -4151,10 +4151,16 @@ document.addEventListener('click', e => {
 // 위젯 안 아무 곳을 클릭해도 이 iframe이 키보드 포커스를 갖도록 강제
 // (포커스 불가능한 배경/카드 영역 클릭 시 일부 인앱 웹뷰에서 포커스가
 // 넘어오지 않아 Ctrl+C가 안 먹히는 문제 방지)
-document.body.setAttribute('tabindex', '-1');
-document.body.style.outline = 'none';
+// 입력창 등 실제로 포커스를 받은 요소가 있으면 절대 건드리지 않고,
+// 클릭 후에도 포커스가 body/html에 남아있는 경우(=배경 클릭)에만 body를 포커스시킴
 document.addEventListener('click', () => {
-  document.body.focus({ preventScroll: true });
+  setTimeout(() => {
+    if (document.activeElement === document.body || document.activeElement === document.documentElement) {
+      document.body.setAttribute('tabindex', '-1');
+      document.body.style.outline = 'none';
+      document.body.focus({ preventScroll: true });
+    }
+  }, 0);
 });
 
 // Tab switches 문의/리뷰. Since this listens on the iframe's own document,
