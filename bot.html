@@ -4708,10 +4708,11 @@ document.addEventListener('click', () => {
   }, 0);
 });
 
-// '/' : 카테고리 드로어 열기/닫기 단축키 (검색창에 포커스 있을 때는 그냥 '/' 문자 입력, 그 외에는 드로어 토글).
+// '/' : 카테고리 드로어 열기/닫기 단축키. 검색창에 포커스가 있어도 항상 드로어를 토글함
+// (검색어로 '/'를 칠 일이 없어서, 입력 방해보다 단축키로 쓰는 게 더 편함).
 // 드로어가 열려있을 때는 방향키로 행 이동, Enter로 선택, Esc로 닫기 (검색 드롭다운과 동일한 방식)
 document.addEventListener('keydown', e => {
-  const isDrawerCombo = e.key === '/' && document.activeElement && document.activeElement.id !== 'input-box';
+  const isDrawerCombo = e.key === '/';
   if (isDrawerCombo) {
     e.preventDefault();
     toggleDrawer();
