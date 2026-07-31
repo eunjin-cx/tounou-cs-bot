@@ -70,16 +70,25 @@
   container.appendChild(iframe);
 
   // 3. 토글 동작 (버튼 이미지는 유지, 열림 시 X 아이콘으로 살짝 표시)
-  btn.addEventListener('click', function () {
-    isOpen = !isOpen;
-    container.style.display = isOpen ? 'block' : 'none';
-    btnImg.style.display = isOpen ? 'none' : 'block';
-    closeMark.style.display = isOpen ? 'block' : 'none';
+  function openWidget() {
+    isOpen = true;
+    container.style.display = 'block';
+    btnImg.style.display = 'none';
+    closeMark.style.display = 'block';
     // 열릴 때 iframe(뚜누 CS 가이드 화면)으로 포커스를 바로 넘겨줘서,
     // 대화창을 따로 클릭하지 않아도 단축키(/, 방향키, Esc 등)가 즉시 동작하도록 함
-    if (isOpen) {
-      setTimeout(function () { iframe.focus(); }, 0);
-    }
+    setTimeout(function () { iframe.focus(); }, 0);
+  }
+
+  function closeWidget() {
+    isOpen = false;
+    container.style.display = 'none';
+    btnImg.style.display = 'block';
+    closeMark.style.display = 'none';
+  }
+
+  btn.addEventListener('click', function () {
+    if (isOpen) closeWidget(); else openWidget();
   });
 
   // 4. 모바일 대응 (화면 작을 때 전체화면에 가깝게)
@@ -97,19 +106,18 @@
   adjustForMobile();
   window.addEventListener('resize', adjustForMobile);
 
-  // 6. Esc로 위젯 닫기
-  //   - 포커스가 위젯 바깥(부모 페이지)에 있을 때는 아래 keydown 리스너가 직접 처리
+  // 6. 단축키: Alt+C(맥은 Option+C)로 위젯 열기, Esc로 닫기
+  //   - 여기 리스너는 포커스가 위젯 바깥(부모 페이지)에 있을 때 동작
   //   - 포커스가 iframe(bot.html) 안에 있을 때는 키 이벤트가 부모로 안 올라오므로,
-  //     bot.html이 postMessage로 닫기 요청을 보내고 여기서 받아서 처리
-  function closeWidget() {
-    isOpen = false;
-    container.style.display = 'none';
-    btnImg.style.display = 'block';
-    closeMark.style.display = 'none';
-  }
-
+  //     bot.html이 postMessage로 닫기 요청을 보내고 아래에서 받아서 처리
+  //     (Alt+C는 위젯이 닫혀있을 때만 의미가 있고, 닫혀있으면 포커스가 항상 부모 페이지에 있어서 별도 postMessage 불필요)
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && isOpen) closeWidget();
+    if (e.key === 'Escape' && isOpen) {
+      closeWidget();
+    } else if (e.altKey && e.key.toLowerCase() === 'c' && !isOpen) {
+      e.preventDefault();
+      openWidget();
+    }
   });
 
   window.addEventListener('message', function (e) {
