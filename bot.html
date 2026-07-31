@@ -33,7 +33,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 .cat-drawer::-webkit-scrollbar{width:0;height:0;display:none;}
 .cat-drawer.open{right:0;}
 .cat-drawer-top{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #eee;min-height:20px;}
-.cat-drawer-back{font-size:12.5px;color:#555;cursor:pointer;}
+.cat-drawer-back{font-size:12.5px;color:#333;font-weight:600;cursor:pointer;}
 .cat-drawer-close{font-size:14px;color:#999;cursor:pointer;padding:2px 4px;}
 .cat-drawer-row{padding:11px 14px;font-size:13px;color:#333;border-bottom:1px solid #f4f4f4;cursor:pointer;}
 .cat-drawer-row:hover{background:#FFF6D6;}
@@ -186,6 +186,12 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none;}
 
 <script>
 const ITEMS = [
+  {cat:'출고/배송', label:'출고 일정', keys:['출고 일정']},
+  {cat:'출고/배송', label:'출고 일정 > 운송장 번호', keys:['운송장']},
+  {cat:'출고/배송', label:'배송지 변경', keys:['배송지','수령지','주소']},
+  {cat:'출고/배송', label:'누락 오인지 [분리 출고] > 출고 전', keys:['분리 출고']},
+  {cat:'출고/배송', label:'누락 오인지 [분리 출고] > 출고 후', keys:['분리 출고']},
+  {cat:'출고/배송', label:'누락 오인지 > 정상 출고', keys:['정상 출고']},
   {cat:'클레임', label:'출고 전 취소', keys:['취소']},
   {cat:'클레임', label:'취소 불가 안내 (출고 후)', keys:['취소 불가']},
   {cat:'클레임', label:'반품_고객 사유(변심)', keys:['반품','변심']},
@@ -195,12 +201,6 @@ const ITEMS = [
   {cat:'클레임', label:'반품/교환 불가', keys:['반품 불가']},
   {cat:'클레임', label:'불량 여부 확인', keys:['불량']},
   {cat:'클레임', label:'배송 완료 미수령', keys:['미수령']},
-  {cat:'출고/배송', label:'출고 일정', keys:['출고 일정']},
-  {cat:'출고/배송', label:'출고 일정 > 운송장 번호', keys:['운송장']},
-  {cat:'출고/배송', label:'배송지 변경', keys:['배송지','수령지','주소']},
-  {cat:'출고/배송', label:'누락 오인지 [분리 출고] > 출고 전', keys:['분리 출고']},
-  {cat:'출고/배송', label:'누락 오인지 [분리 출고] > 출고 후', keys:['분리 출고']},
-  {cat:'출고/배송', label:'누락 오인지 > 정상 출고', keys:['정상 출고']},
   {cat:'상품-공통', label:'재입고 > 품절/단종', keys:['품절']},
   {cat:'상품-공통', label:'재입고 > 품절/단종 (테크류)', keys:['테크류']},
   {cat:'상품-공통', label:'재입고 > 품절 오류', keys:['품절 오류']},
@@ -214,44 +214,48 @@ const ITEMS = [
   {cat:'상품-사이즈', label:'사이즈 오인지 [쇼핑백 옵션]', keys:['쇼핑백']},
   {cat:'상품-사이즈', label:'쇼핑백 사이즈 추천', keys:['쇼핑백 사이즈']},
   {cat:'상품-사이즈', label:'매트류 규격 외 사이즈 문의', keys:['규격 외','다른 사이즈']},
-  {cat:'상품-침구', label:'차렵이불 > 두께 복원', keys:['두께']},
-  {cat:'상품-침구', label:'차렵이불 차이점 (리버시블-알러지케어)', keys:['차이점']},
-  {cat:'상품-침구', label:'차렵이불 > 리버시블 온스', keys:['온스']},
-  {cat:'상품-침구', label:'차렵이불 > 알러지케어 여부', keys:['알러지케어']},
-  {cat:'상품-침구', label:'차렵이불 > 촉감/재질', keys:['촉감']},
-  {cat:'상품-침구', label:'차렵이불 > 솜 분리(탈착) 가능 여부', keys:['솜 분리']},
-  {cat:'상품-침구', label:'차렵이불 > 솜 추가 가능 여부', keys:['솜 추가']},
-  {cat:'상품-침구', label:'차렵이불 > 초기 세탁 여부', keys:['초기 세탁']},
-  {cat:'상품-침구', label:'차렵이불 > 세트 구성', keys:['세트 구성']},
-  {cat:'상품-발매트/러그', label:'규조토 > 세탁 방법', keys:['세탁']},
-  {cat:'상품-발매트/러그', label:'규조토 > 초기 세탁 여부', keys:['초기 세탁']},
-  {cat:'상품-발매트/러그', label:'규조토 > 고무 냄새', keys:['냄새']},
-  {cat:'상품-발매트/러그', label:'규조토 > 소재 (극세사 차이점)', keys:['소재']},
-  {cat:'상품-발매트/러그', label:'규조토 > 검정 이물질', keys:['검정 이물질']},
-  {cat:'상품-발매트/러그', label:'규조토 > 미끄럼 방지', keys:['미끄럼 방지','논슬립']},
-  {cat:'상품-발매트/러그', label:'극세사 > 스크래치', keys:['스크래치']},
-  {cat:'상품-발매트/러그', label:'극세사 > 미끄럼 방지', keys:['미끄럼 방지','논슬립']},
-  {cat:'상품-발매트/러그', label:'극세사 > 리뉴얼 여부', keys:['리뉴얼']},
-  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 접힘 자국', keys:['접힘','주름','자국']},
-  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 접힘 자국 2차 인입', keys:['접힘 2차']},
-  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 냄새', keys:['pvc 냄새']},
-  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 이염', keys:['이염','얼룩']},
-  {cat:'상품-발매트/러그', label:'PVC 주방매트 > 세탁기 사용 가능 여부', keys:['세탁기']},
-  {cat:'상품-발매트/러그', label:'러그 > 소재', keys:['소재']},
-  {cat:'상품-발매트/러그', label:'러그 > 접힘 자국', keys:['접힘','주름','자국']},
-  {cat:'상품-포스터/액자', label:'포스터 > 액자 내 포스터 교체 방법', keys:['포스터 교체','액자 교체']},
-  {cat:'상품-포스터/액자', label:'포스터 > 액자 단품 구매', keys:['액자 단품']},
-  {cat:'상품-포스터/액자', label:'포스터 > 지관통 개방 방법', keys:['지관통']},
-  {cat:'상품-포스터/액자', label:'포스터 > 액자 아크릴판 제거', keys:['아크릴판','아크릴']},
-  {cat:'상품-포스터/액자', label:'포스터 > 사이즈 추천', keys:['사이즈','사이즈 추천']},
+  {cat:'매트류/러그', label:'규조토 > 세탁 방법', keys:['세탁']},
+  {cat:'매트류/러그', label:'규조토 > 초기 세탁 여부', keys:['초기 세탁']},
+  {cat:'매트류/러그', label:'규조토 > 고무 냄새', keys:['냄새']},
+  {cat:'매트류/러그', label:'규조토 > 소재 (극세사 차이점)', keys:['소재']},
+  {cat:'매트류/러그', label:'규조토 > 검정 이물질', keys:['검정 이물질']},
+  {cat:'매트류/러그', label:'규조토 > 미끄럼 방지', keys:['미끄럼 방지','논슬립']},
+  {cat:'매트류/러그', label:'극세사 > 스크래치', keys:['스크래치']},
+  {cat:'매트류/러그', label:'극세사 > 미끄럼 방지', keys:['미끄럼 방지','논슬립']},
+  {cat:'매트류/러그', label:'극세사 > 리뉴얼 여부', keys:['리뉴얼']},
+  {cat:'매트류/러그', label:'PVC 주방매트 > 접힘 자국', keys:['접힘','주름','자국']},
+  {cat:'매트류/러그', label:'PVC 주방매트 > 접힘 자국 2차 인입', keys:['접힘 2차']},
+  {cat:'매트류/러그', label:'PVC 주방매트 > 냄새', keys:['pvc 냄새']},
+  {cat:'매트류/러그', label:'PVC 주방매트 > 이염', keys:['이염','얼룩']},
+  {cat:'매트류/러그', label:'PVC 주방매트 > 세탁기 사용 가능 여부', keys:['세탁기']},
+  {cat:'매트류/러그', label:'러그 > 소재', keys:['소재']},
+  {cat:'매트류/러그', label:'러그 > 접힘 자국', keys:['접힘','주름','자국']},
+  {cat:'매트류/러그', label:'규조토 > 리뉴얼 (두께)', keys:['리뉴얼']},
+  {cat:'포스터/액자', label:'포스터 > 액자 내 포스터 교체 방법', keys:['포스터 교체','액자 교체']},
+  {cat:'포스터/액자', label:'포스터 > 액자 단품 구매', keys:['액자 단품']},
+  {cat:'포스터/액자', label:'포스터 > 지관통 개방 방법', keys:['지관통']},
+  {cat:'포스터/액자', label:'포스터 > 액자 아크릴판 제거', keys:['아크릴판','아크릴']},
+  {cat:'포스터/액자', label:'포스터 > 사이즈 추천', keys:['사이즈','사이즈 추천']},
   {cat:'쿠션 커버', label:'쿠션 커버 > 사이즈 오차', keys:['쿠션 커버 사이즈']},
   {cat:'쿠션 커버', label:'쿠션 커버 > 사이즈 추천', keys:['쿠션 커버 추천']},
   {cat:'쿠션 커버', label:'쿠션 커버 > 세트 오인지', keys:['쿠션 커버 세트']},
+  {cat:'침구', label:'차렵이불 > 두께 복원', keys:['두께']},
+  {cat:'침구', label:'차렵이불 차이점 (리버시블-알러지케어)', keys:['차이점']},
+  {cat:'침구', label:'차렵이불 > 리버시블 온스', keys:['온스']},
+  {cat:'침구', label:'차렵이불 > 알러지케어 여부', keys:['알러지케어']},
+  {cat:'침구', label:'차렵이불 > 촉감/재질', keys:['촉감']},
+  {cat:'침구', label:'차렵이불 > 솜 분리(탈착) 가능 여부', keys:['솜 분리']},
+  {cat:'침구', label:'차렵이불 > 솜 추가 가능 여부', keys:['솜 추가']},
+  {cat:'침구', label:'차렵이불 > 초기 세탁 여부', keys:['초기 세탁']},
+  {cat:'침구', label:'차렵이불 > 세트 구성', keys:['세트 구성']},
   {cat:'쿠폰/프로모션', label:'쿠폰 적용 불가', keys:['쿠폰']},
   {cat:'쿠폰/프로모션', label:'쿠폰 적용 불가 > 2차 문의(조건 미노출)', keys:['쿠폰 조건']},
-  {cat:'적립금', label:'프로모션 > 적립금 사용 제한', keys:['프로모션 적립금']},
   {cat:'쿠폰/프로모션', label:'프로모션 > 쿠폰 적용 제한', keys:['프로모션 쿠폰']},
   {cat:'쿠폰/프로모션', label:'카카오톡 채널_친구 추가 쿠폰', keys:['카카오톡 쿠폰']},
+  {cat:'적립금', label:'프로모션 > 적립금 사용 제한', keys:['프로모션 적립금']},
+  {cat:'적립금', label:'적립금 사용 불가', keys:['적립금 사용']},
+  {cat:'적립금', label:'리뷰 적립금 지급 시기', keys:['리뷰 적립금']},
+  {cat:'적립금', label:'적립금 사용 기준', keys:['적립금 기준']},
   {cat:'기타', label:'주문 제작', keys:['주문 제작']},
   {cat:'기타', label:'안내 채널 전환', keys:['채널','전환','게시판','29CM','무신사']},
   {cat:'기타', label:'작가 입점 문의', keys:['입점']},
@@ -263,10 +267,6 @@ const ITEMS = [
   {cat:'기타', label:'주문 확인 (구매자 외 타인 > 수령자)', keys:['수령자','타인','구매자 외']},
   {cat:'기타', label:'주문 확인 (구매자 외 타인 > 제 3자)', keys:['제3자','제 3자','타인','구매자 외']},
   {cat:'기타', label:'채팅 답변 확인 SMS', keys:['SMS','문자','답변 확인','채팅 답변']},
-  {cat:'적립금', label:'적립금 사용 불가', keys:['적립금 사용']},
-  {cat:'적립금', label:'리뷰 적립금 지급 시기', keys:['리뷰 적립금']},
-  {cat:'적립금', label:'적립금 사용 기준', keys:['적립금 기준']},
-  {cat:'상품-발매트/러그', label:'규조토 > 리뉴얼 (두께)', keys:['리뉴얼']},
   {cat:'템플릿', label:'템플릿 > 게시판_자사몰', keys:['자사몰','템플릿','양식']},
   {cat:'템플릿', label:'템플릿 > 게시판_29CM', keys:['29CM','템플릿','양식']},
   {cat:'템플릿', label:'템플릿 > 뚜누 응대 전문가', keys:['응대 전문가','템플릿','양식','클로드']},
@@ -1706,8 +1706,6 @@ PVC 주방매트는 원단 소재가 아닌 생활 방수 기능이 있는 PVC �
 };
 
 const REVIEW_ITEMS = [
-  {cat:'템플릿', label:'템플릿 > 리뷰 대응', keys:['리뷰 대응','템플릿','양식','29CM','자사몰']},
-  {cat:'템플릿', label:'템플릿 > 뚜누 응대 전문가', keys:['응대 전문가','템플릿','양식','클로드']},
   {cat:'공통', label:'공통 > 색감', keys:['색감','색상']},
   {cat:'공통', label:'공통 > 가격', keys:['가격','금액']},
   {cat:'공통', label:'공통 > 배송', keys:['배송','제작 기간']},
@@ -1717,33 +1715,36 @@ const REVIEW_ITEMS = [
   {cat:'극세사 발매트', label:'극세사 발매트 > 들뜸', keys:['들뜸','극세사 들뜸','발매트 들뜸']},
   {cat:'극세사 발매트', label:'극세사 발매트 > 테두리 마감', keys:['테두리 마감','봉제','극세사 테두리 마감','발매트 테두리 마감']},
   {cat:'극세사 발매트', label:'극세사 발매트 > 규조토 흡수력 비교', keys:['규조토 비교','흡수력 비교']},
+  {cat:'극세사 발매트', label:'극세사 발매트 > 사이즈', keys:['사이즈','크기','발매트 사이즈','극세사 사이즈']},
   {cat:'극세사 주방매트', label:'극세사 주방매트 > 발자국', keys:['발자국','자국','결자국','극세사 발자국','주방매트 발자국']},
   {cat:'극세사 주방매트', label:'극세사 주방매트 > 미끄럼 방지', keys:['미끄럼 방지','고정력','극세사 미끄럼 방지','주방매트 미끄럼 방지']},
   {cat:'극세사 주방매트', label:'극세사 주방매트 > 들뜸', keys:['들뜸','극세사 들뜸','주방매트 들뜸']},
   {cat:'극세사 주방매트', label:'극세사 주방매트 > 테두리 마감', keys:['테두리 마감','봉제','극세사 테두리 마감','주방매트 테두리 마감']},
+  {cat:'극세사 주방매트', label:'극세사 주방매트 > 사이즈', keys:['사이즈','크기','주방매트 사이즈','러너 사이즈','극세사 사이즈']},
   {cat:'규조토 발매트', label:'규조토 발매트 > 쿠션감/두께감', keys:['쿠션감','두께감','규조토 두께감','발매트 두께감']},
   {cat:'규조토 발매트', label:'규조토 발매트 > 하드 규조토 비교', keys:['하드 규조토','규조토 비교']},
   {cat:'규조토 발매트', label:'규조토 발매트 > 먼지 흡착', keys:['먼지 흡착','먼지','규조토 먼지 흡착','발매트 먼지 흡착']},
+  {cat:'규조토 발매트', label:'규조토 발매트 > 사이즈', keys:['사이즈','크기','규조토 사이즈','발매트 사이즈']},
   {cat:'규조토 주방매트', label:'규조토 주방매트 > 쿠션감/두께감', keys:['쿠션감','두께감','규조토 두께감','주방매트 두께감']},
   {cat:'규조토 주방매트', label:'규조토 주방매트 > 하드 규조토 비교', keys:['하드 규조토','하드 규조토 비교']},
   {cat:'규조토 주방매트', label:'규조토 주방매트 > 먼지 흡착', keys:['먼지 흡착','먼지','규조토 먼지 흡착','주방매트 먼지 흡착']},
+  {cat:'규조토 주방매트', label:'규조토 주방매트 > 사이즈', keys:['사이즈','크기','규조토 사이즈','주방매트 사이즈']},
   {cat:'PVC 주방매트', label:'PVC 주방매트 > 이염', keys:['이염','얼룩','PVC 이염','주방매트 이염']},
   {cat:'PVC 주방매트', label:'PVC 주방매트 > 주름', keys:['주름','접힘','자국','PVC 주름','주방매트 주름']},
   {cat:'PVC 주방매트', label:'PVC 주방매트 > 냄새', keys:['냄새','PVC 냄새','주방매트 냄새']},
-  {cat:'리버시블 차렵이불', label:'리버시블 차렵이불 > 겉감 분리/사용감', keys:['겉감 분리','사용감']},
-  {cat:'리버시블 차렵이불', label:'리버시블 차렵이불 > 두께', keys:['두께','차렵이불 두께']},
+  {cat:'PVC 주방매트', label:'PVC 주방매트 > 사이즈', keys:['사이즈','크기','PVC 사이즈','PVC 주방매트 사이즈','주방매트 사이즈']},
+  {cat:'타월 발매트', label:'타월 발매트 > 미끄럼 방지', keys:['미끄럼 방지','논슬립','타월 미끄럼 방지','타월 발매트 미끄럼 방지']},
   {cat:'쿠션 커버', label:'쿠션 커버 > 소재/촉감', keys:['쿠션 커버 소재','쿠션 커버 촉감','재질','쿠션 소재','쿠션 재질']},
   {cat:'베개 커버', label:'베개 커버 > 소재/촉감', keys:['베개 커버 소재','베개 커버 촉감','재질','베개 소재','베개 재질']},
-  {cat:'극세사 담요', label:'극세사 담요 > 태슬 마감', keys:['태슬','담요 태슬']},
-  {cat:'쉬폰 패브릭 포스터', label:'쉬폰 패브릭 포스터 > 비침/두께감', keys:['비침','두께감','쉬폰 비침','쉬폰 두께감']},
-  {cat:'PVC 주방매트', label:'PVC 주방매트 > 사이즈', keys:['사이즈','크기','PVC 사이즈','PVC 주방매트 사이즈','주방매트 사이즈']},
-  {cat:'극세사 발매트', label:'극세사 발매트 > 사이즈', keys:['사이즈','크기','발매트 사이즈','극세사 사이즈']},
-  {cat:'극세사 주방매트', label:'극세사 주방매트 > 사이즈', keys:['사이즈','크기','주방매트 사이즈','러너 사이즈','극세사 사이즈']},
-  {cat:'규조토 발매트', label:'규조토 발매트 > 사이즈', keys:['사이즈','크기','규조토 사이즈','발매트 사이즈']},
-  {cat:'규조토 주방매트', label:'규조토 주방매트 > 사이즈', keys:['사이즈','크기','규조토 사이즈','주방매트 사이즈']},
+  {cat:'리버시블 차렵이불', label:'리버시블 차렵이불 > 겉감 분리/사용감', keys:['겉감 분리','사용감']},
+  {cat:'리버시블 차렵이불', label:'리버시블 차렵이불 > 두께', keys:['두께','차렵이불 두께']},
   {cat:'냉감 이불', label:'냉감 이불 > 냉감 기능', keys:['냉감','냉감 기능','이불 냉감']},
-  {cat:'쉬폰 패브릭 포스터', label:'쉬폰 패브릭 포스터 > 사이즈', keys:['사이즈','크기','쉬폰 사이즈','쉬폰 패브릭 사이즈']},
+  {cat:'극세사 담요', label:'극세사 담요 > 태슬 마감', keys:['태슬','담요 태슬']},
   {cat:'패브릭 포스터', label:'패브릭 포스터 > 사이즈', keys:['사이즈','크기','패브릭 포스터 사이즈','패브릭 사이즈']},
+  {cat:'쉬폰 패브릭 포스터', label:'쉬폰 패브릭 포스터 > 비침/두께감', keys:['비침','두께감','쉬폰 비침','쉬폰 두께감']},
+  {cat:'쉬폰 패브릭 포스터', label:'쉬폰 패브릭 포스터 > 사이즈', keys:['사이즈','크기','쉬폰 사이즈','쉬폰 패브릭 사이즈']},
+  {cat:'템플릿', label:'템플릿 > 리뷰 대응', keys:['리뷰 대응','템플릿','양식','29CM','자사몰']},
+  {cat:'템플릿', label:'템플릿 > 뚜누 응대 전문가', keys:['응대 전문가','템플릿','양식','클로드']},
 ];
 
 const REVIEW_SCRIPTS = {
@@ -3151,6 +3152,48 @@ PVC 주방매트는 제조/포장 과정 및 소재 특성상 수령 직후 합�
     }
   }
 ,
+  '타월 발매트 > 미끄럼 방지': {
+    '자사몰':`고객님, 안녕하세요. 뚜누입니다. 💛
+소중한 후기 남겨주셔서 감사합니다!
+
+뚜누 타월 발매트 상품의 OOO(긍정 언급 내용)이 마음에 드셨다니 정말 뿌듯하고 기쁜 마음입니다:)
+다만 미끄럼 방지 면에서 다소 아쉬움을 느끼셨던 것 같아요.
+
+타월 발매트 상품은 면 소재 특성상 가볍고 산뜻한 사용감이 장점이지만,
+일반 규조토, PVC, 극세사 매트류에 비해 두께감이 얇고 사용 환경에 따라 밀림 현상이 발생할 수 있습니다.
+
+더욱 안정적인 사용을 희망하실 경우, 추가 옵션으로 판매 중인 [논슬립 미끄럼 방지 패드]와 함께 사용해 보시길 추천드립니다 :)
+
+고객님께서 남겨주신 의견은 향후 상품 품질 개선에 참고하겠습니다.
+감사합니다.🙇‍♀️
+
+※ 해당 답변 게시글에 댓글·답글로 남겨주신 추가 문의는 시스템상 확인이 어렵습니다.
+추가 문의사항이 있으실 경우 아래 방법을 이용해 주세요.
+
+📌 게시판 새 문의 작성
+📌 채팅상담 : 뚜누 메인화면 → 우측 하단 헤드셋 모양 클릭`,
+    '29CM':`[TOUNOU] 고객님, 안녕하세요. 뚜누입니다.
+
+고객님께서 남겨주신 29CM 리뷰 확인 후 안내차 연락드렸습니다.
+
+먼저, 뚜누를 이용해 주셔서 진심으로 감사드립니다.
+뚜누 타월 발매트 상품의 OOO(긍정 언급 내용)이 마음에 드셨다니 정말 뿌듯하고 기쁜 마음입니다:)
+다만 미끄럼 방지 면에서 다소 아쉬움을 느끼셨던 것 같아요.
+
+타월 발매트 상품은 면 소재 특성상 가볍고 산뜻한 사용감이 장점이지만,
+일반 규조토, PVC, 극세사 매트류에 비해 두께감이 얇고 사용 환경에 따라 밀림 현상이 발생할 수 있습니다.
+
+더욱 안정적인 사용을 희망하실 경우, 추가 옵션으로 판매 중인 [논슬립 미끄럼 방지 패드]와 함께 사용해 보시길 추천드립니다 :)
+
+고객님께서 남겨주신 의견은 향후 상품 품질 개선에 참고하겠습니다.
+감사합니다.
+
+※ 추가로 궁금하신 내용이 있으시면 언제든 뚜누 고객센터로 연락 부탁드립니다.
+■ 채팅상담 : 뚜누 홈페이지 → 우측 하단 헤드셋 모양 클릭(바로가기 https://tounou.co.kr/)
+■ 고객센터 : 053-657-1799
+■ 운영시간 : 평일 : 09~18시 (12~13시 점심) / 주말, 법정공휴일 휴무`
+  }
+,
   '극세사 발매트 > 사이즈': {
     '자사몰':{
       '사이즈 미스':`고객님, 안녕하세요. 뚜누입니다. 💛
@@ -3785,17 +3828,32 @@ function setSearchMode(mode) {
   dropIdx = -1;
 
   drawerCat = null;
+  drawerSubcat = null;
   if (drawerOpen) renderDrawer();
 }
 
 // ===== 카테고리 드로어 (햄버거 버튼) =====
+// 리뷰탭 전용: 세부 카테고리가 너무 많아 상위 그룹으로 한 번 더 묶어서 보여줌.
+// drill:true인 그룹은 [상위그룹 > 세부카테고리 목록 > 실제 항목] 3단계,
+// drill 없는 그룹은 [상위그룹 > 실제 항목(세부카테고리 병합)] 2단계.
+const REVIEW_DRAWER_GROUPS = {
+  '공통': { subcats: ['공통'] },
+  '매트류': { subcats: ['극세사 발매트','극세사 주방매트','규조토 발매트','규조토 주방매트','PVC 주방매트','타월 발매트'], drill: true },
+  '침구': { subcats: ['리버시블 차렵이불','냉감 이불'] },
+  '패브릭': { subcats: ['쿠션 커버','베개 커버','패브릭 포스터','쉬폰 패브릭 포스터'] },
+  '극세사 담요': { subcats: ['극세사 담요'] },
+  '템플릿': { subcats: ['템플릿'] }
+};
+
 let drawerOpen = false;
 let drawerCat = null;
+let drawerSubcat = null;
 
 function toggleDrawer() {
   drawerOpen = !drawerOpen;
   if (drawerOpen) {
     drawerCat = null;
+    drawerSubcat = null;
     renderDrawer();
   }
   document.getElementById('cat-drawer').classList.toggle('open', drawerOpen);
@@ -3808,11 +3866,23 @@ function closeDrawer() {
 
 function openCategory(cat) {
   drawerCat = cat;
+  drawerSubcat = null;
+  renderDrawer();
+}
+
+function openSubcat(subcat) {
+  drawerSubcat = subcat;
   renderDrawer();
 }
 
 function backToCategories() {
   drawerCat = null;
+  drawerSubcat = null;
+  renderDrawer();
+}
+
+function backToSubcats() {
+  drawerSubcat = null;
   renderDrawer();
 }
 
@@ -3827,6 +3897,52 @@ function renderDrawer() {
   const el = document.getElementById('cat-drawer');
   const source = searchMode === 'review' ? REVIEW_ITEMS : ITEMS;
 
+  if (searchMode === 'review') {
+    if (!drawerCat) {
+      // 1단계: 상위 그룹 목록
+      const groupNames = Object.keys(REVIEW_DRAWER_GROUPS);
+      el.innerHTML = `<div class="cat-drawer-top"><span></span><span class="cat-drawer-close" onclick="closeDrawer()">✕</span></div>` +
+        groupNames.map(g => `<div class="cat-drawer-row" data-cat="${g}">${g}</div>`).join('');
+      el.querySelectorAll('.cat-drawer-row').forEach(row => {
+        row.onclick = () => openCategory(row.dataset.cat);
+      });
+      return;
+    }
+    const group = REVIEW_DRAWER_GROUPS[drawerCat];
+    if (group.drill && !drawerSubcat) {
+      // 2단계: 세부 카테고리 목록
+      el.innerHTML = `<div class="cat-drawer-top"><span class="cat-drawer-back" onclick="backToCategories()">‹ ${drawerCat}</span><span class="cat-drawer-close" onclick="closeDrawer()">✕</span></div>` +
+        group.subcats.map(sc => `<div class="cat-drawer-row" data-subcat="${sc}">${sc}</div>`).join('');
+      el.querySelectorAll('.cat-drawer-row').forEach(row => {
+        row.onclick = () => openSubcat(row.dataset.subcat);
+      });
+      return;
+    }
+    // 3단계(drill) 또는 2단계(non-drill 병합): 실제 항목 목록
+    const targetCats = group.drill ? [drawerSubcat] : group.subcats;
+    const items = source.filter(it => targetCats.includes(it.cat));
+    const backLabel = group.drill ? drawerSubcat : drawerCat;
+    const backFn = group.drill ? 'backToSubcats' : 'backToCategories';
+    // 표시되는 항목이 전부 같은 세부카테고리 하나뿐이면(=드릴다운이거나, 병합 대상 세부카테고리가 1개뿐인 그룹) 라벨 앞의 "카테고리 > " 부분은 중복이라 제거
+    const stripPrefix = group.drill || group.subcats.length === 1;
+    el.innerHTML = `<div class="cat-drawer-top"><span class="cat-drawer-back" onclick="${backFn}()">‹ ${backLabel}</span><span class="cat-drawer-close" onclick="closeDrawer()">✕</span></div>` +
+      items.map((it, i) => {
+        const displayLabel = stripPrefix ? (it.label.split('> ')[1] || it.label) : it.label;
+        return `<div class="cat-drawer-row" data-idx="${i}">${displayLabel}</div>`;
+      }).join('');
+    el.querySelectorAll('.cat-drawer-row').forEach(row => {
+      row.onclick = () => pickDrawerItem(items[row.dataset.idx].label);
+    });
+    return;
+  }
+
+  // 문의탭: 특정 카테고리("매트류/러그")는 라벨 접두사(규조토/극세사/PVC 주방매트/러그) 기준 3단계 드릴다운,
+  // 나머지는 기존 2단계 유지. 일부 카테고리는 항목 표시 시 중복되는 카테고리 접두사만 제거.
+  const INQUIRY_DRILL_GROUPS = {
+    '매트류/러그': ['규조토', '극세사', 'PVC 주방매트', '러그']
+  };
+  const INQUIRY_STRIP_PREFIX_CATS = ['포스터/액자', '쿠션 커버', '침구', '템플릿'];
+
   if (!drawerCat) {
     const cats = [];
     source.forEach(it => { if (!cats.includes(it.cat)) cats.push(it.cat); });
@@ -3835,14 +3951,39 @@ function renderDrawer() {
     el.querySelectorAll('.cat-drawer-row').forEach(row => {
       row.onclick = () => openCategory(row.dataset.cat);
     });
-  } else {
-    const items = source.filter(it => it.cat === drawerCat);
-    el.innerHTML = `<div class="cat-drawer-top"><span class="cat-drawer-back" onclick="backToCategories()">‹ ${drawerCat}</span><span class="cat-drawer-close" onclick="closeDrawer()">✕</span></div>` +
-      items.map((it, i) => `<div class="cat-drawer-row" data-idx="${i}">${it.label}</div>`).join('');
-    el.querySelectorAll('.cat-drawer-row').forEach(row => {
-      row.onclick = () => pickDrawerItem(items[row.dataset.idx].label);
-    });
+    return;
   }
+
+  const drillPrefixes = INQUIRY_DRILL_GROUPS[drawerCat];
+  if (drillPrefixes && !drawerSubcat) {
+    el.innerHTML = `<div class="cat-drawer-top"><span class="cat-drawer-back" onclick="backToCategories()">‹ ${drawerCat}</span><span class="cat-drawer-close" onclick="closeDrawer()">✕</span></div>` +
+      drillPrefixes.map(p => `<div class="cat-drawer-row" data-subcat="${p}">${p}</div>`).join('');
+    el.querySelectorAll('.cat-drawer-row').forEach(row => {
+      row.onclick = () => openSubcat(row.dataset.subcat);
+    });
+    return;
+  }
+
+  let items, backLabel, backFn, stripPrefix;
+  if (drillPrefixes && drawerSubcat) {
+    items = source.filter(it => it.cat === drawerCat && it.label.startsWith(drawerSubcat + ' > '));
+    backLabel = drawerSubcat;
+    backFn = 'backToSubcats';
+    stripPrefix = true;
+  } else {
+    items = source.filter(it => it.cat === drawerCat);
+    backLabel = drawerCat;
+    backFn = 'backToCategories';
+    stripPrefix = INQUIRY_STRIP_PREFIX_CATS.includes(drawerCat);
+  }
+  el.innerHTML = `<div class="cat-drawer-top"><span class="cat-drawer-back" onclick="${backFn}()">‹ ${backLabel}</span><span class="cat-drawer-close" onclick="closeDrawer()">✕</span></div>` +
+    items.map((it, i) => {
+      const displayLabel = stripPrefix ? (it.label.split('> ')[1] || it.label) : it.label;
+      return `<div class="cat-drawer-row" data-idx="${i}">${displayLabel}</div>`;
+    }).join('');
+  el.querySelectorAll('.cat-drawer-row').forEach(row => {
+    row.onclick = () => pickDrawerItem(items[row.dataset.idx].label);
+  });
 }
 
 function onInput(val) {
