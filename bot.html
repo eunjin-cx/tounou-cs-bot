@@ -4621,6 +4621,8 @@ function toggleNote(id) {
 }
 
 
+let lastOpenedBody = null; // 가장 최근에 사용자가 연 카드 (여러 항목의 카드가 동시에 열려있어도 Ctrl+C는 이걸 기준으로 복사)
+
 function toggleAcc(el) {
   const body = el.nextElementSibling;
   const arrow = el.querySelector('.acc-arrow');
@@ -4628,6 +4630,7 @@ function toggleAcc(el) {
   const box = el.closest('.range-box, .caution-box, .tip-box, .guide-box, .draft-box');
   const willOpen = !body.classList.contains('open');
   body.classList.toggle('open');
+  if (willOpen) lastOpenedBody = body;
   if (arrow) arrow.classList.toggle('open');
   if (box) box.classList.toggle('kbd-active-card-suppressed', willOpen);
   if (wrap) {
@@ -4659,7 +4662,7 @@ function autoOpenIfSingle(row) {
     }
   } catch (e) { /* keep fallback width */ }
   wrap.dataset.closedWidth = naturalWidth;
-  if (body) body.classList.add('open');
+  if (body) { body.classList.add('open'); lastOpenedBody = body; }
   if (arrow) arrow.classList.add('open');
   wrap.style.width = '370px';
   return true;
@@ -4773,14 +4776,26 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Ctrl+C / Cmd+C: if the user hasn't selected any text themselves, and exactly
-// one answer card is currently open, trigger that card's own copy button —
-// same result as clicking "복사" by hand.
+// Ctrl+C / Cmd+C: 사용자가 직접 텍스트를 선택한 상태가 아니면, 가장 최근에 사용자가 연 카드를
+// 기준으로 그 카드의 복사 버튼을 대신 눌러줌. 이전에 열어뒀던 다른 항목의 카드가 화면에 남아있어도
+// (하나씩 안 닫고 계속 진행하는 경우가 많아서) 항상 "방금 연 것"만 복사되도록 하는 방식.
+// lastOpenedBody가 이미 닫혔거나 없으면(예: 새로고침 직후), 안전하게 기존 규칙으로 폴백:
+// 화면에 열린 카드가 정확히 1개일 때만 그걸 복사.
 document.addEventListener('keydown', e => {
   const isCopyCombo = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c';
   if (!isCopyCombo) return;
   const selection = window.getSelection ? window.getSelection().toString() : '';
   if (selection) return; // respect a real text selection, let native copy happen
+
+  if (lastOpenedBody && document.body.contains(lastOpenedBody) && lastOpenedBody.classList.contains('open')) {
+    const btn = lastOpenedBody.querySelector('.copy-btn');
+    if (btn) {
+      e.preventDefault();
+      btn.click();
+      return;
+    }
+  }
+
   const openBodies = document.querySelectorAll('.acc-body.open');
   const btns = [];
   openBodies.forEach(body => {
