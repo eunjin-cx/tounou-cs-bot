@@ -75,6 +75,11 @@
     container.style.display = isOpen ? 'block' : 'none';
     btnImg.style.display = isOpen ? 'none' : 'block';
     closeMark.style.display = isOpen ? 'block' : 'none';
+    // 열릴 때 iframe(뚜누 CS 가이드 화면)으로 포커스를 바로 넘겨줘서,
+    // 대화창을 따로 클릭하지 않아도 단축키(/, 방향키, Esc 등)가 즉시 동작하도록 함
+    if (isOpen) {
+      setTimeout(function () { iframe.focus(); }, 0);
+    }
   });
 
   // 4. 모바일 대응 (화면 작을 때 전체화면에 가깝게)
