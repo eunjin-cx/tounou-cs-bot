@@ -92,7 +92,26 @@
   adjustForMobile();
   window.addEventListener('resize', adjustForMobile);
 
-  // 5. DOM에 삽입
+  // 6. Esc로 위젯 닫기
+  //   - 포커스가 위젯 바깥(부모 페이지)에 있을 때는 아래 keydown 리스너가 직접 처리
+  //   - 포커스가 iframe(bot.html) 안에 있을 때는 키 이벤트가 부모로 안 올라오므로,
+  //     bot.html이 postMessage로 닫기 요청을 보내고 여기서 받아서 처리
+  function closeWidget() {
+    isOpen = false;
+    container.style.display = 'none';
+    btnImg.style.display = 'block';
+    closeMark.style.display = 'none';
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen) closeWidget();
+  });
+
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'tounou-cs-bot-close' && isOpen) closeWidget();
+  });
+
+  // 7. DOM에 삽입
   document.body.appendChild(btn);
   document.body.appendChild(container);
 })();
