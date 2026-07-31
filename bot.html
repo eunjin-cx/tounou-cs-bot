@@ -3870,6 +3870,9 @@ function toggleDrawer() {
 function closeDrawer() {
   drawerOpen = false;
   document.getElementById('cat-drawer').classList.remove('open');
+  // ☰ 버튼 클릭으로 포커스가 버튼 쪽에 남아있으면 이후 카드/드롭다운 키보드 내비게이션이
+  // (입력창 포커스 기준으로 동작하는 onKeyDown이 전혀 호출되지 않아) 먹통이 되므로, 입력창으로 포커스 복귀
+  document.getElementById('input-box').focus();
 }
 
 function openCategory(cat) {
@@ -4717,13 +4720,19 @@ document.addEventListener('click', () => {
 // '/' : 카테고리 드로어 열기/닫기 단축키. 검색창에 포커스가 있어도 항상 드로어를 토글함
 // (검색어로 '/'를 칠 일이 없어서, 입력 방해보다 단축키로 쓰는 게 더 편함).
 // 드로어가 열려있을 때는 방향키로 행 이동, Enter로 선택.
-// Esc는 우선순위대로 처리: 드로어 열려있으면 드로어 닫기 → 검색 드롭다운 열려있으면 그것만 닫기 →
-// 둘 다 아니면 위젯 전체를 닫도록 부모 페이지(widget-loader.js)에 postMessage 전송
+// Esc는 드로어/검색 드롭다운 등 열려있는 하위 목록만 닫음 (위젯 전체를 닫지는 않음 — 그건 Alt+C로 통일)
+// Alt+C(맥은 Option+C): 위젯 열기/닫기 단축키. 이 iframe 안에서 눌렸다는 건 위젯이 이미 열려있는 상태라는
+// 뜻이므로, 부모 페이지(widget-loader.js)에 postMessage로 닫기 요청을 보냄
 document.addEventListener('keydown', e => {
   const isDrawerCombo = e.key === '/';
   if (isDrawerCombo) {
     e.preventDefault();
     toggleDrawer();
+    return;
+  }
+  if (e.altKey && e.key.toLowerCase() === 'c') {
+    e.preventDefault();
+    window.parent.postMessage({ type: 'tounou-cs-bot-close' }, '*');
     return;
   }
   if (e.key === 'Escape') {
@@ -4733,10 +4742,6 @@ document.addEventListener('keydown', e => {
       closeDrawer();
     } else if (dd.classList.contains('show')) {
       dd.classList.remove('show');
-    } else {
-      // 열려있는 게 없으면 위젯 자체를 닫도록 부모(widget-loader.js)에 요청
-      // (이 iframe 안에서는 부모 DOM에 직접 접근 불가하므로 postMessage로 전달)
-      window.parent.postMessage({ type: 'tounou-cs-bot-close' }, '*');
     }
     return;
   }
