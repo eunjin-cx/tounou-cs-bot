@@ -106,17 +106,14 @@
   adjustForMobile();
   window.addEventListener('resize', adjustForMobile);
 
-  // 6. 단축키: Alt+C(맥은 Option+C)로 위젯 열기, Esc로 닫기
+  // 6. 단축키: Alt+C(맥은 Option+C)로 위젯 열기/닫기 토글 (열기/닫기 단축키를 하나로 통일)
   //   - 여기 리스너는 포커스가 위젯 바깥(부모 페이지)에 있을 때 동작
   //   - 포커스가 iframe(bot.html) 안에 있을 때는 키 이벤트가 부모로 안 올라오므로,
-  //     bot.html이 postMessage로 닫기 요청을 보내고 아래에서 받아서 처리
-  //     (Alt+C는 위젯이 닫혀있을 때만 의미가 있고, 닫혀있으면 포커스가 항상 부모 페이지에 있어서 별도 postMessage 불필요)
+  //     bot.html이 Alt+C를 감지해 postMessage로 닫기 요청을 보내고 아래에서 받아서 처리
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && isOpen) {
-      closeWidget();
-    } else if (e.altKey && e.key.toLowerCase() === 'c' && !isOpen) {
+    if (e.altKey && e.key.toLowerCase() === 'c') {
       e.preventDefault();
-      openWidget();
+      if (isOpen) closeWidget(); else openWidget();
     }
   });
 
