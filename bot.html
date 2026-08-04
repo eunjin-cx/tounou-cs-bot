@@ -207,6 +207,7 @@ const ITEMS = [
   {cat:'클레임', label:'교환_뚜누 사유(불량 등)', keys:['교환']},
   {cat:'클레임', label:'반품/교환 불가', keys:['반품 불가']},
   {cat:'클레임', label:'불량 여부 확인', keys:['불량']},
+  {cat:'클레임', label:'초도 불량 의심 건(사유 불분명)', keys:['초도 불량','사유 불분명','불량 의심']},
   {cat:'클레임', label:'배송 완료 미수령', keys:['미수령']},
   {cat:'상품-공통', label:'재입고 > 품절/단종', keys:['품절']},
   {cat:'상품-공통', label:'재입고 > 품절/단종 (테크류)', keys:['테크류']},
@@ -448,6 +449,13 @@ const SCRIPTS = {
     주의사항:`- 디자인 불량 오인지 건 → <span class="inline-note-trigger" onclick="jumpToItem('디자인 불량 오인지')">디자인 불량 오인지 ↗</span> 가이드로 전환
 - 상품 특성(극세사 발매트, PVC 주방매트 등) 불량 오인지 건 → 각 상품별 가이드로 전환`,
     tip:`- 노션 페이지에 별도 취합 중인 유형의 경우, 조치 결과에 상관없이 추가 기재 필요 → CS 인입 추이 대시보드 이슈 트래커에 반영`
+  },
+  '초도 불량 의심 건(사유 불분명)': {
+    guide:`__LABEL__초기 응대 가이드__ENDLABEL__- 아직 불량으로 확정되지 않은 의심 사유가 초기에 인입될 경우, 고객에게 비슷한 사례가 있다는 식의 안내 금지
+
+- 확정된 불량이 아닌 상황에서 비슷한 양상이 있음으로 안내할 경우, 이후 정상으로 안내해야 하거나, 고객이 그 사유를 다시 확인 요청할 때 응대가 곤란해질 수 있음
+
+- 따라서 다량/반복 발생 사유가 아닌, 건수가 적은 초반 인입 건에는 고객에게 내부 사정(유사 사례 등) 언급 금지`
   },
   '배송 완료 미수령': {
     guide:`- 고객님께 기재된 주소를 먼저 확인하여, 주소 오기재로 인한 오배송 여부를 선확인합니다.
@@ -4855,9 +4863,16 @@ function addGuideCard(s) {
     </div></div>`;
   }
   if (s.guide) {
+    let guideLabel = '응대 가이드';
+    let guideContent = s.guide;
+    const labelMatch = guideContent.match(/^__LABEL__(.*?)__ENDLABEL__\n?/);
+    if (labelMatch) {
+      guideLabel = labelMatch[1];
+      guideContent = guideContent.slice(labelMatch[0].length);
+    }
     inner += `<div class="guide-wrap"><div class="guide-box">
-      <div class="guide-lbl" onclick="toggleAcc(this)">📋 응대 가이드<span class="acc-arrow">▾</span></div>
-      <div class="guide-txt acc-body">${renderGuide(s.guide)}</div>
+      <div class="guide-lbl" onclick="toggleAcc(this)">📋 ${guideLabel}<span class="acc-arrow">▾</span></div>
+      <div class="guide-txt acc-body">${renderGuide(guideContent)}</div>
     </div></div>`;
   }
   if (s['주의사항'] && s['주의사항'] !== '준비 중입니다.') {
