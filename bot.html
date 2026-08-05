@@ -250,7 +250,7 @@ const ITEMS = [
   {cat:'쿠션 커버', label:'쿠션 커버 > 세트 오인지', keys:['쿠션 커버 세트','구성','디자인']},
   {cat:'침구', label:'차렵이불 > 두께 복원', keys:['두께']},
   {cat:'침구', label:'차렵이불 차이점 (리버시블-알러지케어)', keys:['차이점']},
-  {cat:'침구', label:'차렵이불 > 리버시블 온스', keys:['온스']},
+  {cat:'침구', label:'차렵이불 > 리버시블 온스', keys:['온스','무게']},
   {cat:'침구', label:'차렵이불 > 알러지케어 여부', keys:['알러지케어']},
   {cat:'침구', label:'차렵이불 > 촉감/재질', keys:['촉감']},
   {cat:'침구', label:'차렵이불 > 솜 분리(탈착) 가능 여부', keys:['솜 분리']},
@@ -848,7 +848,8 @@ L : 발매트, 규조토 발매트, 주방매트 러너, 러그, PVC 주방매�
 너무 얇지 않으면서도 과하게 무겁지 않은 두께감으로, 가볍게 포근한 사용감을 원하실 때 사계절 내내 실용적으로 사용하시기 좋습니다.
 
 추가로 궁금하신 점이 있으시면 편하게 말씀 남겨주세요.
-감사합니다.`
+감사합니다.`,
+    tip:`리버시블 차렵이불 사이즈별 무게`
   },
   '차렵이불 > 알러지케어 여부': {
     draftOnly:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 조이 입니다. 😻
@@ -1071,7 +1072,11 @@ L : 발매트, 규조토 발매트, 주방매트 러너, 러그, PVC 주방매�
 
 <b>원단 두께 실측 (고무판 미포함)</b>
 - 리뉴얼 전 : 0.4mm
-- 리뉴얼 후 : 0.9mm`
+-  리뉴얼 후 : 0.9mm
+
+<b>전체 두께 실측 (고무판 포함)</b>
+- 리뉴얼 전 : 3.3mm
+-  리뉴얼 후 : 3.8mm`
   }
 ,
   '극세사 > 스크래치': {
@@ -4518,6 +4523,8 @@ const POSTER_WEIGHT_TABLE = `<div style="background:#ffffff;border-radius:10px;p
     <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">500X700</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.85kg</td></tr>
     <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">500X500</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.25kg</td></tr>
     <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">400X400</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 0.95kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">S (20.5x74.5cm)</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.01kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">M (25.5x75.5cm)</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.12kg</td></tr>
   </tbody>
 </table>
 </div>`;
@@ -4539,10 +4546,21 @@ const POSTER_PIN_TABLE = `<div style="background:#ffffff;border-radius:10px;padd
 </table>
 </div>`;
 
+const CHARYUP_WEIGHT_TABLE = `<div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
+<table style="border-collapse:collapse;font-size:12px;border:1px solid #e5e5e0;width:auto;">
+  <thead><tr style="background:#f5f5f0;"><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">사이즈</th><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">무게</th></tr></thead>
+  <tbody>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">SS</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.55kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">Q/K</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 2.24kg</td></tr>
+  </tbody>
+</table>
+</div>`;
+
 const TIP_TABLE_MARKERS = {
   '결제수단별 환불기간': REFUND_TABLE,
   '포스터+액자 사이즈별 무게': POSTER_WEIGHT_TABLE,
-  '사이즈별 꼭꼬핀 동봉 개수': POSTER_PIN_TABLE
+  '사이즈별 꼭꼬핀 동봉 개수': POSTER_PIN_TABLE,
+  '리버시블 차렵이불 사이즈별 무게': CHARYUP_WEIGHT_TABLE
 };
 
 const LEADTIME_TABLE = `<div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
