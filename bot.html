@@ -1068,15 +1068,8 @@ L : 발매트, 규조토 발매트, 주방매트 러너, 러그, PVC 주방매�
 
 - 3PL 출고 건과 POD 상품을 함께 받은 경우, 일부만 리뉴얼이 진행 중이라 두께감이 상이하게 느껴질 수 있음
 
-- 이 경우에도 내부 흡수 기능 등은 기존과 동일하다는 점 안내 필요
-
-<b>원단 두께 실측 (고무판 미포함)</b>
-- 리뉴얼 전 : 0.4mm
--  리뉴얼 후 : 0.9mm
-
-<b>전체 두께 실측 (고무판 포함)</b>
-- 리뉴얼 전 : 3.3mm
--  리뉴얼 후 : 3.8mm`
+- 이 경우에도 내부 흡수 기능 등은 기존과 동일하다는 점 안내 필요`,
+    tip:`규조토 리뉴얼 두께 실측`
   }
 ,
   '극세사 > 스크래치': {
@@ -4556,11 +4549,22 @@ const CHARYUP_WEIGHT_TABLE = `<div style="background:#ffffff;border-radius:10px;
 </table>
 </div>`;
 
+const GYUJOTO_THICKNESS_TABLE = `<div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
+<table style="border-collapse:collapse;font-size:12px;border:1px solid #e5e5e0;width:auto;">
+  <thead><tr style="background:#f5f5f0;"><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">구분</th><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">리뉴얼 전</th><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">리뉴얼 후</th></tr></thead>
+  <tbody>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">원단 두께 (고무판 미포함)</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">0.4mm</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">0.9mm</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">전체 두께 (고무판 포함)</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">3.3mm</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">3.8mm</td></tr>
+  </tbody>
+</table>
+</div>`;
+
 const TIP_TABLE_MARKERS = {
   '결제수단별 환불기간': REFUND_TABLE,
   '포스터+액자 사이즈별 무게': POSTER_WEIGHT_TABLE,
   '사이즈별 꼭꼬핀 동봉 개수': POSTER_PIN_TABLE,
-  '리버시블 차렵이불 사이즈별 무게': CHARYUP_WEIGHT_TABLE
+  '리버시블 차렵이불 사이즈별 무게': CHARYUP_WEIGHT_TABLE,
+  '규조토 리뉴얼 두께 실측': GYUJOTO_THICKNESS_TABLE
 };
 
 const LEADTIME_TABLE = `<div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
