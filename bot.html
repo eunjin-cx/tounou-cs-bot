@@ -4957,7 +4957,8 @@ function addGuideCard(s) {
     inner += `<div class="caution-wrap"><div class="caution-box"><div class="caution-lbl" onclick="toggleAcc(this)">⚠️ 주의사항<span class="acc-arrow">▾</span></div><div class="caution-txt acc-body">${renderCaution(s['주의사항'])}</div></div></div>`;
   }
   if (s['tip'] && s['tip'] !== '준비 중입니다.') {
-    inner += `<div class="tip-wrap"><div class="tip-box"><div class="tip-lbl" onclick="toggleAcc(this)">💡 PLUS TIP<span class="acc-arrow">▾</span></div><div class="tip-txt acc-body">${renderTip(s['tip'])}</div></div></div>`;
+    const tipWrapStyle = s['tip'].includes('리버시블 차렵이불 사이즈별 무게') ? ' style="max-width:220px;"' : '';
+    inner += `<div class="tip-wrap"${tipWrapStyle}><div class="tip-box"><div class="tip-lbl" onclick="toggleAcc(this)">💡 PLUS TIP<span class="acc-arrow">▾</span></div><div class="tip-txt acc-body">${renderTip(s['tip'])}</div></div></div>`;
   }
   row.innerHTML = `<div class="ans-card">${inner}</div>`;
   chat.appendChild(row);
