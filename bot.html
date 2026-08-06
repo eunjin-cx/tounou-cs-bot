@@ -222,6 +222,7 @@ const ITEMS = [
   {cat:'상품-사이즈', label:'사이즈 오인지 [쇼핑백 옵션]', keys:['쇼핑백']},
   {cat:'상품-사이즈', label:'쇼핑백 사이즈 추천', keys:['쇼핑백 사이즈']},
   {cat:'상품-사이즈', label:'매트류 규격 외 사이즈 문의', keys:['규격 외','다른 사이즈']},
+  {cat:'상품-사이즈', label:'실측 사이즈/무게', keys:['사이즈','무게','실측','오차']},
   {cat:'매트류/러그', label:'규조토 > 세탁 방법', keys:['세탁','매트','발매트','주방매트']},
   {cat:'매트류/러그', label:'규조토 > 초기 세탁 여부', keys:['초기 세탁','매트','발매트','주방매트']},
   {cat:'매트류/러그', label:'규조토 > 고무 냄새', keys:['냄새','매트','발매트','주방매트']},
@@ -1241,6 +1242,56 @@ PVC 주방매트는 원단 소재가 아닌 생활 방수 기능이 있는 PVC �
 
 추가로 궁금하신 점이 있으시면 편하게 문의 남겨주세요.
 감사합니다.`
+  }
+,
+  '실측 사이즈/무게': {
+    draftOnly:`고객님, 안녕하세요. 뚜누 고객경험팀의 고객접점 운영 담당 조이 입니다. 😻
+
+문의주신 OO상품의 무게/실측 사이즈는 [약 OOkg / 약 OOXOOcm] 입니다.
+※ 무게는 측정 방법에 따라 ±50g 내외의 오차가 있을 수 있습니다.
+※ 사이즈는 측정 방법에 따라 ±1~3cm 내외의 오차가 있을 수 있습니다.
+
+추가로 궁금하신 부분이 있으시다면 편하게 말씀 남겨주세요.
+감사합니다.`,
+    tip:`__RAWHTML__<div><span class="inline-note-trigger" onclick="toggleNote('note-size-poster')">포스터+액자 무게 ▾</span></div>
+<div id="note-size-poster" class="inline-note-body"><div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
+<table style="border-collapse:collapse;font-size:12px;border:1px solid #e5e5e0;width:auto;">
+  <thead><tr style="background:#f5f5f0;"><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">사이즈</th><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">무게</th></tr></thead>
+  <tbody>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">A1</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 3.4kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">A2</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 2kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">A3</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.25kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">A4</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 0.65kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">500X700</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.85kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">500X500</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.25kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">400X400</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 0.95kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">S (20.5x74.5cm)</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.01kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">M (25.5x75.5cm)</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.12kg</td></tr>
+  </tbody>
+</table>
+</div></div>
+<br>
+<div><span class="inline-note-trigger" onclick="toggleNote('note-size-charyup')">리버시블 차렵이불 무게 ▾</span></div>
+<div id="note-size-charyup" class="inline-note-body"><div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
+<table style="border-collapse:collapse;font-size:12px;border:1px solid #e5e5e0;width:auto;">
+  <thead><tr style="background:#f5f5f0;"><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">사이즈</th><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">무게</th></tr></thead>
+  <tbody>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">SS</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 1.55kg</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">Q/K</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">약 2.24kg</td></tr>
+  </tbody>
+</table>
+</div></div>
+<br>
+<div><span class="inline-note-trigger" onclick="toggleNote('note-size-gyujoto')">규조토 두께 ▾</span></div>
+<div id="note-size-gyujoto" class="inline-note-body"><div style="background:#ffffff;border-radius:10px;padding:12px;display:inline-block;">
+<table style="border-collapse:collapse;font-size:12px;border:1px solid #e5e5e0;width:auto;">
+  <thead><tr style="background:#f5f5f0;"><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">구분</th><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">리뉴얼 전</th><th style="text-align:center;padding:6px 10px;font-weight:600;color:#444;border:1px solid #e5e5e0;">리뉴얼 후</th></tr></thead>
+  <tbody>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">원단 두께 (고무판 미포함)</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">0.4mm</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">0.9mm</td></tr>
+    <tr><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">전체 두께 (고무판 포함)</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">3.3mm</td><td style="padding:6px 10px;border:1px solid #e5e5e0;color:#333;text-align:center;white-space:nowrap;">3.8mm</td></tr>
+  </tbody>
+</table>
+</div></div>`
   }
 ,
   '규조토 > 세탁 방법': {
@@ -4666,6 +4717,7 @@ function renderCaution(text) {
 }
 
 function renderTip(tip) {
+  if (tip.startsWith('__RAWHTML__')) return tip.slice('__RAWHTML__'.length);
   const indentLine = line => bulletLine(line).replace(/^( +)/, m => '&nbsp;'.repeat(m.length * 2));
   const toHtml = t => t.split('\n').map(indentLine).join('<br>');
   const markerNames = Object.keys(TIP_TABLE_MARKERS);
@@ -4957,8 +5009,11 @@ function addGuideCard(s) {
     inner += `<div class="caution-wrap"><div class="caution-box"><div class="caution-lbl" onclick="toggleAcc(this)">⚠️ 주의사항<span class="acc-arrow">▾</span></div><div class="caution-txt acc-body">${renderCaution(s['주의사항'])}</div></div></div>`;
   }
   if (s['tip'] && s['tip'] !== '준비 중입니다.') {
-    const tipWrapStyle = s['tip'].includes('리버시블 차렵이불 사이즈별 무게') ? ' style="max-width:220px;"' : '';
-    inner += `<div class="tip-wrap"${tipWrapStyle}><div class="tip-box"><div class="tip-lbl" onclick="toggleAcc(this)">💡 PLUS TIP<span class="acc-arrow">▾</span></div><div class="tip-txt acc-body">${renderTip(s['tip'])}</div></div></div>`;
+    let tipWrapStyle = '';
+    let tipLabel = '💡 PLUS TIP';
+    if (s['tip'].includes('리버시블 차렵이불 사이즈별 무게')) tipWrapStyle = ' style="max-width:220px;"';
+    else if (s['tip'].includes('__RAWHTML__')) { tipWrapStyle = ' style="max-width:290px;"'; tipLabel = '💡 실측 정보'; }
+    inner += `<div class="tip-wrap"${tipWrapStyle}><div class="tip-box"><div class="tip-lbl" onclick="toggleAcc(this)">${tipLabel}<span class="acc-arrow">▾</span></div><div class="tip-txt acc-body">${renderTip(s['tip'])}</div></div></div>`;
   }
   row.innerHTML = `<div class="ans-card">${inner}</div>`;
   chat.appendChild(row);
